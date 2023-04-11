@@ -19,6 +19,7 @@ input{
     border-radius: 10px;
     border: solid $dark 2px;
     padding-left: 50px;
+    transform: translateX(-30px);
   }
   #email{
     width: 350px;
@@ -32,9 +33,10 @@ input{
         width: 50px;
         font-weight: 700;
         color: $dark;
+        z-index: 1;
     }
-  }
-  #password{
+}
+#password{
     width: 350px;
     display: flex;
     flex-direction: column;
@@ -46,9 +48,10 @@ input{
         color: $dark;
         width: 80px;
         font-weight: 700;
+        z-index: 1;
     }
-  }
-  #agreements{
+}
+#agreements{
     display: flex;
     align-items: center;
     justify-content: center;
