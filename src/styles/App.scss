@@ -1,0 +1,18 @@
+#root {
+  text-align: center;
+}
+
+.App{
+  display: flex;
+  flex-direction: column;
+
+  #logo img{
+    width: 300px;
+    height: 300px;
+    margin-bottom: 0;
+  }
+
+  input{
+    margin: 15px auto;
+  }
+}
