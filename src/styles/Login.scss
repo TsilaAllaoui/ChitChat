@@ -7,6 +7,10 @@
     width: 300px;
     height: 240px;
     margin-bottom: 0;
+    transition: 750ms;
+    &:hover{
+        scale: 1.25;
+    }
   }
 
   #sign-in{
@@ -108,10 +112,16 @@ input{
     width: 300px;
     display: flex;
     margin: 15px auto;
+    *{
+        transition: 750ms;
+        &:hover{
+            scale: 1.25;
+        }
+    }
     #google{
         width: 100px;
         height: 40px;
-        color: rgb(3, 119, 48)
+        color: rgb(3, 119, 48);
     }
     #mail{
         width: 90px;
