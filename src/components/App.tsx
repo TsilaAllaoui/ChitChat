@@ -1,17 +1,20 @@
 import { useState } from 'react'
 import Login from './Login'
 import '../styles/App.scss'
-import UserList from './UserList'
+import UserList from './Conversations'
+import Messages from './Messages'
 
 function App() {
   const [count, setCount] = useState(0)
 
   const id: string = "cKRWwlRPOfPaWdtv58SB";
   const name: string = "Tsila";
+  const senderName: string = "Kal";//"Ariane";
+  const senderId = "NeLZhBOa04SkiEVcAEPf";//"mwNgONnUJLMSVMF7cn6x";
 
   return (
     <div className="App">
-      <UserList userId={id} name={name}/>
+      <Messages senderName={senderName} senderId={senderId}/>
     </div>
   )
 }

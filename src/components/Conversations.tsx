@@ -5,11 +5,11 @@ import { useState, useEffect } from "react";
 
 function UserList({ userId, name }: { userId: string, name: string }) {
 
-    // Type for a message object
-    type Message = { owner: string, creationTime: Timestamp, message: string, id: string }
+    // Type for a conversation object
+    type Conversation = { owner: string, senderId: string, senderName: string, id: string }
 
     // Hook for the convresations
-    const [convs, setConvs] = useState<Message[]>([{ owner: "", creationTime: Timestamp.now(), message: "", id: "" }]);
+    const [convs, setConvs] = useState<Conversation[]>([{ owner: "", senderId: "", senderName: "", id: "" }]);
 
     // To get data from firebase
     const getData = () => {
@@ -32,8 +32,6 @@ function UserList({ userId, name }: { userId: string, name: string }) {
 
                 // Setting conversations
                 setConvs(convsInFirebase);
-
-                console.log(convs);
             });
         })
     };
@@ -45,11 +43,11 @@ function UserList({ userId, name }: { userId: string, name: string }) {
 
     return (
         <div>
-            <h1>Firebase conversations:</h1>
+            <h1>{name} conversations:</h1>
             <ul>
                 {
-                    convs.map((message: Message) => {
-                        return <li key={message.id}>{message.message}<br></br>{message.creationTime.toDate().toString()}</li>
+                    convs.map((conversation: Conversation) => {
+                        return <li key={conversation.id}>{conversation.senderName}<br></br>{conversation.id}</li>
                     })
                 }
             </ul>
