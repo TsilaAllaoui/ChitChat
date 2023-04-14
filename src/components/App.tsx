@@ -9,8 +9,8 @@ function App() {
 
   const id: string = "cKRWwlRPOfPaWdtv58SB";
   const name: string = "Tsila";
-  const senderName: string = "Kal";//"Ariane";
-  const senderId = "NeLZhBOa04SkiEVcAEPf";//"mwNgONnUJLMSVMF7cn6x";
+  const senderName: string = "Ariane";
+  const senderId = "NeLZhBOa04SkiEVcAEPf";
 
   return (
     <div className="App">

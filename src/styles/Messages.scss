@@ -1,0 +1,54 @@
+@import "./Color.scss";
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+#inputs {
+  display: flex;
+  flex-direction: column;
+  #main-input{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+    input {
+        width: 75%;
+        height: 40px;
+        justify-content: flex-start;
+        margin: 0 auto;
+        border-radius: 10px;
+        outline: unset;
+        border: solid black 1px;
+        margin: 0;
+      }
+      #send-button {
+        width: 35px;
+        height: 35px;
+        margin-left: 5px;
+        color: white;
+        background-color: lighten($color: green, $amount: 15%);
+        border-radius: 5px;
+        border: solid lighten($color: green, $amount: 15%) 5px;
+      }
+  }
+  #buttons {
+    display: flex;
+    justify-content: flex-start;
+    margin: 0 auto;
+    width: 75%; 
+    #emoji-button {
+      width: 25px;
+      height: 25px;
+    }
+    #attachment-button {
+      width: 25px;
+      height: 25px;
+    }
+    #gif-button {
+      width: 25px;
+      height: 25px;
+    }
+  }
+}
