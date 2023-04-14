@@ -2,7 +2,7 @@ import "../styles/Messages.scss";
 import app from "../Firebase";
 import MessageEntry from "./MessageEntry";
 import { getAuth } from "firebase/auth";
-import { collection, doc, getFirestore, onSnapshot, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getFirestore, onSnapshot, setDoc } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { BsFillEmojiSmileFill, BsFillSendFill } from "react-icons/bs";
 import { IoIosAttach } from "react-icons/io";
@@ -40,8 +40,15 @@ function Messages({senderName, senderId}:{senderName: string, senderId: string})
 
     // For adding new message to firebase
     const sendToFirebase = (e: any) => {
-        console.log(e.target.value);
-        setDoc(doc(db, "conversations", senderId, "mess", "messtest"), {message: e.target.value});
+        e.preventDefault();
+        console.log(e.target.elements.texts.value);
+        const messRef = collection(db, "conversations", senderId, "mess");
+        addDoc(messRef, {id: messRef.id, message: e.target.elements.texts.value}).then(() => {
+            console.log("doc added");
+        })
+        .catch(() => {
+            console.log("error when adding doc");
+        })
     };
 
     return (
@@ -56,10 +63,11 @@ function Messages({senderName, senderId}:{senderName: string, senderId: string})
             </ul>
         </div>
         <div id="inputs">
-            <div id="main-input">
-                <input type="text" name="texts"/>
-                <BsFillSendFill id="send-button" onClick={(e: any) => sendToFirebase(e)}/>
-            </div>
+            <form id="main-input" onSubmit={(e) => sendToFirebase(e)}>
+                <input type="text" name="texts" id="text-input"/>
+                <BsFillSendFill id="send-button"/>
+                <button type="submit">Submit</button>
+            </form>
             <div id="buttons">
                 <BsFillEmojiSmileFill id="emoji-button"/>
                 <IoIosAttach id="attachment-button"/>
