@@ -1,38 +1,34 @@
 import { spawn } from "child_process";
 import "../styles/MessageEntry.scss";
 
-function MessageEntry({ content, senderId, getterId }: { content: string; senderId: string, getterId :string }) {
-    // Characters limit by line
-    const limit: number = 42;
+function MessageEntry({ content, senderId, getterId, masterId }: { content: string; senderId: string, getterId: string, masterId: string }) {
+  // Characters limit by line
+  const limit: number = 42;
 
-    // Splitting the content if there is new lines
+  // Splitting the content if there is new lines
   let parts: string[] = content.split("\\n");
 
-  console.log(parts);
   // Splitting long texts
   let tmp: string[] = [];
   parts.forEach((part: string) => {
     if (part.length <= limit) tmp.push(part);
     else {
-        let val: string = "";
+      let val: string = "";
       for (let i = 0; i < part.length; i++) {
-        if (i % limit == 0)
-        {
-            tmp.push(val);
-            val = "";
+        if (i % limit == 0) {
+          tmp.push(val);
+          val = "";
         }
-        val+=part[i];
+        val += part[i];
       }
       tmp.push(val);
     }
   });
   parts = tmp;
-  console.log(parts);
 
   //Getting longest part
   let longest = parts[0].length;
   for (let part of parts) {
-    console.log(part);
     if (part.length > longest) longest = part.length;
   }
 
@@ -43,12 +39,14 @@ function MessageEntry({ content, senderId, getterId }: { content: string; sender
   const height: number = parts.length * 35;
 
   return (
-    <li style={{ width: width, height: height }} key={senderId}>
-      <p>
-        {parts.map((part) => {
-          return <p>{part}</p>;
-        })}
-      </p>
+    <li style={{ width: width === 12 ? width + 10 : width, height: height, alignSelf: masterId === getterId ? "flex-end" : "flex-start" }} key={senderId}>
+      {
+        <p>
+          {parts.map((part, index) => {
+            return <p>{part}</p>;
+          })}
+        </p>
+      }
     </li>
   );
 }

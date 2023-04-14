@@ -2,16 +2,16 @@ import "../styles/Messages.scss";
 import app from "../Firebase";
 import MessageEntry from "./MessageEntry";
 import { getAuth } from "firebase/auth";
-import { addDoc, collection, doc, getFirestore, onSnapshot, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getFirestore, onSnapshot, orderBy, query, setDoc, Timestamp } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { BsFillEmojiSmileFill, BsFillSendFill } from "react-icons/bs";
 import { IoIosAttach } from "react-icons/io";
 import { AiOutlineFileGif } from "react-icons/ai";
 
-function Messages({senderName, senderId, getterId}:{senderName: string, senderId: string, getterId: string}){
+function Messages({senderName, senderId, receiverId}:{senderName: string, senderId: string, receiverId: string}){
 
     // Type for a message object
-    type Message = { message: string , id: string};//, sentTime: Timestamp, id: string }
+    type Message = { message: string , receiverId: string, senderId: string, id: string};//, sentTime: Timestamp, id: string }
 
     // Messages
     const [messages, setMessages] = useState<Message[]>([]);
@@ -20,17 +20,20 @@ function Messages({senderName, senderId, getterId}:{senderName: string, senderId
     const auth = getAuth(app);
     const db = getFirestore();
     const messagesRef = collection(db, "conversations", senderId, "mess");
+
+    // Query to fetch by sent time
+    const q = query(messagesRef, orderBy("sentTime"));
     
     // Getting messages from firebase
     const getMessages = async () => {
-        onSnapshot(messagesRef, (snapshot) => {
+        onSnapshot(q, (snapshot) => {
             let messagesInfirebase: Message[] = [];
             snapshot.forEach((doc: any) => {
                 messagesInfirebase.push({...doc.data(), id: doc.id});
             });
             setMessages(messagesInfirebase);
+            console.log(messages);
         });
-        console.log(messages);
     };
 
     // Run once at start
@@ -43,7 +46,7 @@ function Messages({senderName, senderId, getterId}:{senderName: string, senderId
         e.preventDefault();
         console.log(e.target.elements.texts.value);
         const messRef = collection(db, "conversations", senderId, "mess");
-        addDoc(messRef, {id: messRef.id, message: e.target.elements.texts.value}).then(() => {
+        addDoc(messRef, {message: e.target.elements.texts.value, senderId: receiverId, receiverId: senderId, sentTime: Timestamp.now()}).then(() => {
             console.log("doc added");
         })
         .catch(() => {
@@ -57,7 +60,7 @@ function Messages({senderName, senderId, getterId}:{senderName: string, senderId
             <ul>
                 {
                     messages.map((message: Message) => {
-                        return <MessageEntry key={message.id} senderId={senderId} getterId={getterId} content={message.message}/>;
+                        return <MessageEntry key={message.id} senderId={message.senderId} getterId={message.receiverId} content={message.message} masterId={receiverId}/>;
                     })
                 }
             </ul>
@@ -65,8 +68,7 @@ function Messages({senderName, senderId, getterId}:{senderName: string, senderId
         <div id="inputs">
             <form id="main-input" onSubmit={(e) => sendToFirebase(e)}>
                 <input type="text" name="texts" id="text-input"/>
-                <BsFillSendFill id="send-button"/>
-                <button type="submit">Submit</button>
+                <button type="submit">Send</button>
             </form>
             <div id="buttons">
                 <BsFillEmojiSmileFill id="emoji-button"/>

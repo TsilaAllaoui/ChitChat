@@ -7,14 +7,14 @@ import Messages from './Messages'
 function App() {
   const [count, setCount] = useState(0)
 
-  const id: string = "cKRWwlRPOfPaWdtv58SB";
-  const name: string = "Tsila";
+  const receiverName: string = "Tsila";
+  const receiverId: string = "cKRWwlRPOfPaWdtv58SB";
   const senderName: string = "Ariane";
   const senderId = "NeLZhBOa04SkiEVcAEPf";
 
   return (
     <div className="App">
-      <Messages senderName={senderName} senderId={senderId}/>
+      <Messages senderName={senderName} senderId={senderId} receiverId={receiverId}/>
     </div>
   )
 }
