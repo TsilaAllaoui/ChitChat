@@ -1,7 +1,7 @@
 import { spawn } from "child_process";
 import "../styles/MessageEntry.scss";
 
-function MessageEntry({ content, id }: { content: string; id: string }) {
+function MessageEntry({ content, senderId, getterId }: { content: string; senderId: string, getterId :string }) {
     // Characters limit by line
     const limit: number = 42;
 
@@ -43,10 +43,12 @@ function MessageEntry({ content, id }: { content: string; id: string }) {
   const height: number = parts.length * 35;
 
   return (
-    <li style={{ width: width, height: height }} key={id}>
-      {parts.map((part) => {
-        return <p>{part}</p>;
-      })}
+    <li style={{ width: width, height: height }} key={senderId}>
+      <p>
+        {parts.map((part) => {
+          return <p>{part}</p>;
+        })}
+      </p>
     </li>
   );
 }

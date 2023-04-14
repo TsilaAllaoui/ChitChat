@@ -8,7 +8,7 @@ import { BsFillEmojiSmileFill, BsFillSendFill } from "react-icons/bs";
 import { IoIosAttach } from "react-icons/io";
 import { AiOutlineFileGif } from "react-icons/ai";
 
-function Messages({senderName, senderId}:{senderName: string, senderId: string}){
+function Messages({senderName, senderId, getterId}:{senderName: string, senderId: string, getterId: string}){
 
     // Type for a message object
     type Message = { message: string , id: string};//, sentTime: Timestamp, id: string }
@@ -57,7 +57,7 @@ function Messages({senderName, senderId}:{senderName: string, senderId: string})
             <ul>
                 {
                     messages.map((message: Message) => {
-                        return <MessageEntry key={message.id} id={message.id} content={message.message}/>;
+                        return <MessageEntry key={message.id} senderId={senderId} getterId={getterId} content={message.message}/>;
                     })
                 }
             </ul>
