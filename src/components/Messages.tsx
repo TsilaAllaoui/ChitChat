@@ -1,10 +1,9 @@
-import { getAuth } from "firebase/auth";
-import { collection, doc, Firestore, getDoc, getDocs, getFirestore, onSnapshot, query, Timestamp, where } from "firebase/firestore";
-import { useState, useEffect } from "react";
-import app from "../Firebase";
 import "../styles/Messages.scss";
+import app from "../Firebase";
 import MessageEntry from "./MessageEntry";
-import { FiSend } from "react-icons/fi";
+import { getAuth } from "firebase/auth";
+import { collection, doc, getFirestore, onSnapshot, setDoc } from "firebase/firestore";
+import { useState, useEffect } from "react";
 import { BsFillEmojiSmileFill, BsFillSendFill } from "react-icons/bs";
 import { IoIosAttach } from "react-icons/io";
 import { AiOutlineFileGif } from "react-icons/ai";
@@ -17,15 +16,13 @@ function Messages({senderName, senderId}:{senderName: string, senderId: string})
     // Messages
     const [messages, setMessages] = useState<Message[]>([]);
 
+    // Authentification
+    const auth = getAuth(app);
+    const db = getFirestore();
+    const messagesRef = collection(db, "conversations", senderId, "mess");
+    
     // Getting messages from firebase
-
     const getMessages = async () => {
-        // Authentification
-        const auth = getAuth(app);
-        const db = getFirestore();
-
-        const messagesRef = collection(db, "conversations", senderId, "mess");
-
         onSnapshot(messagesRef, (snapshot) => {
             let messagesInfirebase: Message[] = [];
             snapshot.forEach((doc: any) => {
@@ -36,9 +33,16 @@ function Messages({senderName, senderId}:{senderName: string, senderId: string})
         console.log(messages);
     };
 
+    // Run once at start
     useEffect(() => {
         getMessages();
     }, []);
+
+    // For adding new message to firebase
+    const sendToFirebase = (e: any) => {
+        console.log(e.target.value);
+        setDoc(doc(db, "conversations", senderId, "mess", "messtest"), {message: e.target.value});
+    };
 
     return (
         <>
@@ -53,8 +57,8 @@ function Messages({senderName, senderId}:{senderName: string, senderId: string})
         </div>
         <div id="inputs">
             <div id="main-input">
-                <input type="text" />
-                <BsFillSendFill id="send-button"/>
+                <input type="text" name="texts"/>
+                <BsFillSendFill id="send-button" onClick={(e: any) => sendToFirebase(e)}/>
             </div>
             <div id="buttons">
                 <BsFillEmojiSmileFill id="emoji-button"/>
