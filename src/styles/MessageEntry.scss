@@ -1,7 +1,17 @@
 @import "./Color.scss";
 
-li{
-    border-radius: 10px;
-    background-color: $light;
-    margin: 15px 0;
+ul{
+    display: flex;
+    flex-direction: column;
+    li{
+        border-radius: 10px;
+        background-color: $light;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: left;
+        padding-left:  10px;
+        margin: 10px 0;
+    }
 }
+
