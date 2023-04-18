@@ -1,9 +1,8 @@
-import { useState } from 'react'
+import { BrowserRouter, Route, Routes, Link, useParams, useLocation } from "react-router-dom";
+import Messages from './Messages'
 import Login from './Login'
 import '../styles/App.scss'
-import UserList from './Conversations'
-import Messages from './Messages'
-import { BrowserRouter, Route, Routes, Link, useParams, useLocation } from "react-router-dom";
+import SignUp from "./SignUp";
 
 // Sender and Receiver types
 type Receiver = {
@@ -25,7 +24,7 @@ function App() {
     <div>
       <BrowserRouter>
           <Routes>
-            <Route path='/' element={<Login />} />
+            <Route path='/' element={<SignUp />} />
             <Route path='/login' element={<Login />} />
             <Route path='/messages' element={<Messages/>} />
           </Routes>

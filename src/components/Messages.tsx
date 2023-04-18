@@ -1,13 +1,13 @@
-import "../styles/Messages.scss";
-import app from "../Firebase";
-import MessageEntry from "./MessageEntry";
-import { getAuth } from "firebase/auth";
 import { addDoc, collection, doc, getFirestore, onSnapshot, orderBy, query, setDoc, Timestamp } from "firebase/firestore";
-import { useState, useEffect } from "react";
 import { BsFillEmojiSmileFill, BsFillSendFill } from "react-icons/bs";
-import { IoIosAttach } from "react-icons/io";
 import { AiOutlineFileGif } from "react-icons/ai";
 import { useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { IoIosAttach } from "react-icons/io";
+import MessageEntry from "./MessageEntry";
+import { getAuth } from "firebase/auth";
+import "../styles/Messages.scss";
+import app from "../Firebase";
 
 function Messages(){
 
