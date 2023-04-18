@@ -1,0 +1,42 @@
+@import "./Color.scss";
+
+
+@keyframes rotate {
+    from {
+        transform: rotate(0);
+    } 
+    to{
+        transform: rotate(360deg);
+    }
+}
+
+.spinner{
+    font-size: 3rem;
+    animation: rotate 1s both infinite linear;
+}
+
+#conversation-root{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    #conversation-list{
+        margin: 0;
+        .conversation{
+            text-align: center;
+            background-color: $lighter;
+            color: black;
+            height: 45px;
+            border-bottom: solid black 1px;
+            margin: 1px 0;
+            transition: 250ms;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            &:hover{
+                background-color: darken($color: $lighter, $amount: 15%);
+            }
+        }
+    }
+}
+

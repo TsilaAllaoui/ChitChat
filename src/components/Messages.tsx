@@ -9,12 +9,21 @@ import { getAuth } from "firebase/auth";
 import "../styles/Messages.scss";
 import app from "../Firebase";
 
-function Messages(){
+// Sender and Receiver types
+type Receiver = {
+    name: string,
+    id: string
+  };
+  type Sender = Receiver;
+
+function Messages({receiver, sender}: {receiver: Receiver, sender: Sender}){
 
     // Getting props passed from Link
-    const location = useLocation();
-    let _receiver = location.state.receiver;
-    let _sender = location.state.sender;
+    // const location = useLocation();
+    // let _receiver = location.state.receiver;
+    // let _sender = location.state.sender;
+    let _receiver = receiver;
+    let _sender = sender;
 
     // Type for a message object
     type Message = { message: string , receiverId: string, senderId: string, id: string };

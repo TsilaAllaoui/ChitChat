@@ -1,9 +1,10 @@
 import { BrowserRouter, Route, Routes, Link, useParams, useLocation } from "react-router-dom";
+import Conversations from "./Conversations";
 import Messages from './Messages'
+import SignUp from "./SignUp";
 import Login from './Login'
 import '../styles/App.scss'
-import SignUp from "./SignUp";
-import Conversations from "./Conversations";
+import Main from "./Main";
 
 // Sender and Receiver types
 type Receiver = {
@@ -28,8 +29,8 @@ function App() {
             <Route path='/' element={<SignUp />} />
             <Route path='/signup' element={<SignUp />} />
             <Route path='/login' element={<Login />} />
-            <Route path='/messages' element={<Messages/>} />
-            <Route path='/conversations' element={<Conversations name="" userId=""/>} />
+            <Route path='/messages' element={<Messages receiver={{name: "", id: ""}} sender={{name: "", id: ""}}/>} />
+            <Route path='/main' element={<Main/>} />
           </Routes>
       </BrowserRouter>
     </div>

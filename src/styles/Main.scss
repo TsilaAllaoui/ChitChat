@@ -1,0 +1,43 @@
+@import "./Color.scss";
+
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  #app-name {
+    margin: 15px auto;
+    font-weight: 800;
+    font-size: 1.75rem;
+    background-color: $light;
+    width: 100vw;
+    height: 75px;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    transition: 750ms;
+    &:hover{
+        font-size: 2.25rem;
+        transition: 750ms;
+    }
+  }
+  #conversations {
+    background-color: $dark;
+    width: 33%;
+    transition: 750ms;
+    height: 100vh;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    #toggle-button {
+        background-color: $dark;
+        border: none;
+        align-self: flex-end;
+        width: 35px;
+        height: 35px;
+        color: white;
+      }
+  }
+}

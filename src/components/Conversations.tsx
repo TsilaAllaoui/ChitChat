@@ -1,65 +1,80 @@
-import { getFirestore, collection, onSnapshot, getDocs, query, where, Timestamp } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  onSnapshot,
+  getDocs,
+  query,
+  where,
+  Timestamp,
+} from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import app from "../Firebase";
+import { ImSpinner10 } from "react-icons/im";
+import "../styles/Conversations.scss";
 
-function UserList({ userId, name }: { userId: string, name: string }) {
+function UserList() {
+  // Type for a conversation object
+  type Conversation = { participants: string[]; host: string; other: string, id: string };
 
-    // Authentification and getting datas
+  // Hook for the conversations
+  const [convs, setConvs] = useState<Conversation[]>([]);
+
+  // State for user ID
+  const [userId, setUserId] = useState("");
+
+  // Authentification and getting datas
+  useEffect(() => {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
-        if (user)
-            console.log(user);
-        else console.log("Error getting user datas...");
-    });
-
-    // Type for a conversation object
-    type Conversation = { owner: string, senderId: string, senderName: string, id: string }
-
-    // Hook for the convresations
-    const [convs, setConvs] = useState<Conversation[]>([{ owner: "", senderId: "", senderName: "", id: "" }]);
-
-    // To get data from firebase
-    const getData = () => {
-
-        // Getting db
-        const db = getFirestore();
-        const convsRef: any = collection(db, "conversations");
-
-        // Query for conversations only with the user id as the owner
-        const q = query(convsRef, where("owner", "==", userId));
-
-        // Getting only conversations for the current user
-        onSnapshot(q, (snapshot) => {
-
-            // setConvs([{ owner: "", timeStamp: Timestamp.now(), message: "", id:"" }]);
-            let convsInFirebase: any = [];
-            snapshot.forEach((doc: any) => {
-                convsInFirebase.push({ ...doc.data(), id: doc.id })
-
-                // Setting conversations
-                setConvs(convsInFirebase);
-            });
-        })
-    };
-
-    // Get data at page load
-    useEffect(() => {
+      if (user) {
+        setUserId(user.uid);
         getData();
-    }, []);
+      } else console.log("Error getting user datas...");
+    });
+  }, [userId]);
 
-    return (
-        <div>
-            <h1>{name} conversations:</h1>
-            <ul>
-                {
-                    convs.map((conversation: Conversation) => {
-                        return <li key={conversation.id}>{conversation.senderName}<br></br>{conversation.id}</li>
-                    })
-                }
-            </ul>
-        </div>
-    )
+  // To get data from firebase
+  const getData = () => {
+    // Getting db
+    const db = getFirestore();
+    const convsRef: any = collection(db, "conversations");
+
+    // Query for conversations only with the user id as the owner
+    const q = query(convsRef, where("participants", "array-contains", userId));
+
+    // Getting only conversations for the current user
+    onSnapshot(q, (snapshot) => {
+      // setConvs([{ owner: "", timeStamp: Timestamp.now(), message: "", id:"" }]);
+      let convsInFirebase: any = [];
+      snapshot.forEach((doc: any) => {
+        convsInFirebase.push({ ...doc.data(), id: doc.id });
+        console.log(convs);
+      });
+
+      // Setting conversations
+      setConvs(convsInFirebase);
+    });
+  };
+
+  return (
+    <div id="conversation-root">
+      <h1>Conversations</h1>
+      {convs.length > 0 ? (
+        <ul id="conversation-list">
+          {convs.map((conversation: Conversation) => {
+            return (
+              <li key={userId + conversation.id} className="conversation">
+                {conversation.host === userId ? conversation.host : conversation.other}
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <ImSpinner10 className="spinner"/>
+      )}
+    </div>
+  );
 }
 
 export default UserList;

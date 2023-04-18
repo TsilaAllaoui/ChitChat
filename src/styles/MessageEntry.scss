@@ -1,17 +1,12 @@
 @import "./Color.scss";
 
-ul{
+.message{
+    border-radius: 10px;
+    background-color: $light;
     display: flex;
     flex-direction: column;
-    li{
-        border-radius: 10px;
-        background-color: $light;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        text-align: left;
-        padding-left:  10px;
-        margin: 10px 0;
-    }
+    justify-content: center;
+    text-align: left;
+    padding-left:  10px;
+    margin: 10px 0;
 }
-
