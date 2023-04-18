@@ -9,7 +9,6 @@ import { IoIosAttach } from "react-icons/io";
 import { AiOutlineFileGif } from "react-icons/ai";
 import { useLocation } from "react-router-dom";
 
-<<<<<<< HEAD
 function Messages(){
 
     // Getting props passed from Link
@@ -19,12 +18,6 @@ function Messages(){
 
     // Type for a message object
     type Message = { message: string , receiverId: string, senderId: string, id: string };
-=======
-function Messages({senderName, senderId, receiverId}:{senderName: string, senderId: string, receiverId: string}){
-
-    // Type for a message object
-    type Message = { message: string , receiverId: string, senderId: string, id: string};//, sentTime: Timestamp, id: string }
->>>>>>> d3ecfed078efe0c6ea9cd1d51aebd9503716d609
 
     // Messages
     const [messages, setMessages] = useState<Message[]>([]);
@@ -32,11 +25,7 @@ function Messages({senderName, senderId, receiverId}:{senderName: string, sender
     // Authentification
     const auth = getAuth(app);
     const db = getFirestore();
-<<<<<<< HEAD
     const messagesRef = collection(db, "conversations", _sender.id, "mess");
-=======
-    const messagesRef = collection(db, "conversations", senderId, "mess");
->>>>>>> d3ecfed078efe0c6ea9cd1d51aebd9503716d609
 
     // Query to fetch by sent time
     const q = query(messagesRef, orderBy("sentTime"));
@@ -62,7 +51,6 @@ function Messages({senderName, senderId, receiverId}:{senderName: string, sender
     const sendToFirebase = (e: any) => {
         e.preventDefault();
         console.log(e.target.elements.texts.value);
-<<<<<<< HEAD
         const messRef = collection(db, "conversations", _sender.id, "mess");
         addDoc(messRef, 
             {
@@ -75,15 +63,6 @@ function Messages({senderName, senderId, receiverId}:{senderName: string, sender
                 .catch(() => {
                     console.log("error when adding doc");
                 })
-=======
-        const messRef = collection(db, "conversations", senderId, "mess");
-        addDoc(messRef, {message: e.target.elements.texts.value, senderId: receiverId, receiverId: senderId, sentTime: Timestamp.now()}).then(() => {
-            console.log("doc added");
-        })
-        .catch(() => {
-            console.log("error when adding doc");
-        })
->>>>>>> d3ecfed078efe0c6ea9cd1d51aebd9503716d609
     };
 
     return (
@@ -92,11 +71,7 @@ function Messages({senderName, senderId, receiverId}:{senderName: string, sender
             <ul>
                 {
                     messages.map((message: Message) => {
-<<<<<<< HEAD
                         return <MessageEntry key={message.id} senderId={message.senderId} getterId={message.receiverId} content={message.message} masterId={_receiver.id}/>;
-=======
-                        return <MessageEntry key={message.id} senderId={message.senderId} getterId={message.receiverId} content={message.message} masterId={receiverId}/>;
->>>>>>> d3ecfed078efe0c6ea9cd1d51aebd9503716d609
                     })
                 }
             </ul>
