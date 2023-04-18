@@ -39,13 +39,9 @@ function MessageEntry({ content, senderId, getterId, masterId }: { content: stri
   const height: number = parts.length * 35;
 
   return (
-    <li className="message" style={{ width: width === 12 ? width + 10 : width, height: height, alignSelf: masterId === getterId ? "flex-end" : "flex-start" }} key={senderId}>
+    <li className="message" style={{ width: width === 12 ? width + 10 : width, height: height, alignSelf: masterId === getterId ? "flex-end" : "flex-start" }} key={senderId + Date.now()}>
       {
-        <p>
-          {parts.map((part, index) => {
-            return <p>{part}</p>;
-          })}
-        </p>
+        parts.map((part, index) => part)
       }
     </li>
   );

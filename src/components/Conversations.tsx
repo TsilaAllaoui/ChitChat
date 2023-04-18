@@ -13,9 +13,9 @@ import app from "../Firebase";
 import { ImSpinner10 } from "react-icons/im";
 import "../styles/Conversations.scss";
 
-function UserList() {
+function Conversations({setSender, setReceiver}: {setSender: any, setReceiver: any}) {
   // Type for a conversation object
-  type Conversation = { participants: string[]; host: string; other: string, id: string };
+  type Conversation = { participants: string[]; hostName: string; hostId: string, otherName: string, otherId: string, id: string };
 
   // Hook for the conversations
   const [convs, setConvs] = useState<Conversation[]>([]);
@@ -49,12 +49,17 @@ function UserList() {
       let convsInFirebase: any = [];
       snapshot.forEach((doc: any) => {
         convsInFirebase.push({ ...doc.data(), id: doc.id });
-        console.log(convs);
       });
 
       // Setting conversations
       setConvs(convsInFirebase);
     });
+  };
+
+  const setProps = (conversation: Conversation) => {
+    console.log(conversation);
+    setReceiver({name: conversation.hostName,id: conversation.hostId});
+    setSender({name: conversation.otherName,id: conversation.otherId});
   };
 
   return (
@@ -64,8 +69,8 @@ function UserList() {
         <ul id="conversation-list">
           {convs.map((conversation: Conversation) => {
             return (
-              <li key={userId + conversation.id} className="conversation">
-                {conversation.host === userId ? conversation.host : conversation.other}
+              <li key={userId + conversation.id} className="conversation" onClick={setProps}>
+                {conversation.hostId === userId ? conversation.hostName : conversation.otherName}
               </li>
             );
           })}
@@ -77,4 +82,4 @@ function UserList() {
   );
 }
 
-export default UserList;
+export default Conversations;

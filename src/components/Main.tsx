@@ -8,47 +8,50 @@ import Messages from "./Messages";
 type Receiver = {
     name: string,
     id: string
-  };
-  type Sender = Receiver;
+};
+type Sender = Receiver;
 
-function Main(){
+function Main() {
 
     const [show, setShow] = useState(false);
-    const [_receiver, setReceiver] = useState<Receiver>({name: "", id: ""})
-    const [_sender, setSender] = useState<Sender>({name: "", id: ""})
+    const [receiver, setReceiver] = useState<Receiver>({
+        name: "Tsila",
+        id: "cKRWwlRPOfPaWdtv58SB"
+    })
+    const [sender, setSender] = useState<Sender>({
+        name: "Ariane",
+        id: "NeLZhBOa04SkiEVcAEPf"
+    })
+
 
     const toggleConvs = () => {
         setShow(!show);
-        let convs = document.getElementById("conversations")!;
-        if (show){
+        let convs = document.getElementById("row")!;
+        if (show) {
             convs.style.marginLeft = "0";
         }
-        else{
+        else {
             convs.style.marginLeft = "-29%";
         }
         console.log(show);
     };
 
-    let receiver: Receiver = {
-        name: "Tsila",
-        id: "cKRWwlRPOfPaWdtv58SB"
-    };
-
-    let sender: Sender = {
-        name: "Ariane",
-        id: "NeLZhBOa04SkiEVcAEPf"
-    };
-
     return (
         <div className="root">
-            <div id="app-name">ChiChat</div>
-            <div id="conversations">
-                <button id="toggle-button" onClick={toggleConvs}>
-                {show ? <SlArrowRight/> : <SlArrowLeft/> }
-                </button>
-                <Conversations/> 
+            <div>{receiver.name}</div>
+            <div>{sender.name}</div>
+            <div id="app-name">ChitChat</div>
+            <div id="row">
+                <div id="conversations">
+                    <button id="toggle-button" onClick={toggleConvs}>
+                        {show ? <SlArrowRight /> : <SlArrowLeft />}
+                    </button>
+                    <Conversations setSender={setSender} setReceiver={setReceiver} />
+                </div>
+                <div className="messages">
+                    <Messages receiver={receiver} sender={sender} />
+                </div>
             </div>
-            <Messages receiver={receiver} sender={sender}/>
         </div>
     )
 }

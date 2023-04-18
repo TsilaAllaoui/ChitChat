@@ -9,6 +9,7 @@ import { FcGoogle } from "react-icons/fc";
 import logo from "../assets/logo.svg";
 import { useEffect, useState } from "react";
 import "../styles/Login.scss";
+import app from "../Firebase";
 
 function Login() {
   // States for the inputs
@@ -21,12 +22,12 @@ function Login() {
   useEffect(() => {
     if (redirect) {
       alert("Login success... Redirecting to conversations...");
-      navigate("/conversations");
+      navigate("/main");
     }
   }, [redirect]);
 
   const test = () => {
-    const auth = getAuth();
+    const auth = getAuth(app);
     console.log(emailValue, " : ", passwordValue);
     signInWithEmailAndPassword(auth, emailValue, passwordValue)
       .then((userCred) => {
