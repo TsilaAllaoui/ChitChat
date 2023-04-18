@@ -15,13 +15,17 @@ type Sender = Receiver;
 
 function App() {
 
+<<<<<<< HEAD
   // Hardcoded value for debugging
+=======
+>>>>>>> d3ecfed078efe0c6ea9cd1d51aebd9503716d609
   const receiverName: string = "Tsila";
   const receiverId: string = "cKRWwlRPOfPaWdtv58SB";
   const senderName: string = "Ariane";
   const senderId = "NeLZhBOa04SkiEVcAEPf";
 
   return (
+<<<<<<< HEAD
     <div>
       <BrowserRouter>
           <Routes>
@@ -30,6 +34,10 @@ function App() {
             <Route path='/messages' element={<Messages/>} />
           </Routes>
       </BrowserRouter>
+=======
+    <div className="App">
+      <Messages senderName={senderName} senderId={senderId} receiverId={receiverId}/>
+>>>>>>> d3ecfed078efe0c6ea9cd1d51aebd9503716d609
     </div>
   )
 }
