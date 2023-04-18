@@ -3,6 +3,7 @@ import Messages from './Messages'
 import Login from './Login'
 import '../styles/App.scss'
 import SignUp from "./SignUp";
+import Conversations from "./Conversations";
 
 // Sender and Receiver types
 type Receiver = {
@@ -25,8 +26,10 @@ function App() {
       <BrowserRouter>
           <Routes>
             <Route path='/' element={<SignUp />} />
+            <Route path='/signup' element={<SignUp />} />
             <Route path='/login' element={<Login />} />
             <Route path='/messages' element={<Messages/>} />
+            <Route path='/conversations' element={<Conversations name="" userId=""/>} />
           </Routes>
       </BrowserRouter>
     </div>

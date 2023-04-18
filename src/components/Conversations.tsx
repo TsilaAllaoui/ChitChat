@@ -1,9 +1,17 @@
-import app from "../Firebase";
-import { getAuth } from "firebase/auth";
 import { getFirestore, collection, onSnapshot, getDocs, query, where, Timestamp } from "firebase/firestore";
 import { useState, useEffect } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import app from "../Firebase";
 
 function UserList({ userId, name }: { userId: string, name: string }) {
+
+    // Authentification and getting datas
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+        if (user)
+            console.log(user);
+        else console.log("Error getting user datas...");
+    });
 
     // Type for a conversation object
     type Conversation = { owner: string, senderId: string, senderName: string, id: string }
@@ -14,8 +22,7 @@ function UserList({ userId, name }: { userId: string, name: string }) {
     // To get data from firebase
     const getData = () => {
 
-        // Authentification and getting db
-        const auth = getAuth(app);
+        // Getting db
         const db = getFirestore();
         const convsRef: any = collection(db, "conversations");
 
