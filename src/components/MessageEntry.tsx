@@ -40,7 +40,7 @@ function MessageEntry({ content, senderId, receiverId, hostId }: { content: stri
   const height: number = parts.length * 35;
 
   // Condition to know if message entry was sent by who
-  const senderCondition = hostId === receiverId;
+  const senderCondition = hostId === senderId;
 
   return (
     <li className="message" style={{ width: width === 12 ? width + 10 : width, 

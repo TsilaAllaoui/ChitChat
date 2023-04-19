@@ -24,8 +24,9 @@ function Main() {
   // State for current selected conversation
   const [convId, setConvId] = useState("");
 
-  // State for user Id
+  // State for user Id adn the guest Id
   const [userId, setUserId] = useState("");
+  const [guestId, setGuestId] = useState("");
 
   useEffect(() => {
     const auth = getAuth();
@@ -83,7 +84,7 @@ function Main() {
         </div>
         <div className="messages">
           {convId !== "" ? (
-            <Messages receiver={receiver} sender={sender} convId={convId} hostId={userId}/>
+            <Messages convId={convId} hostId={userId} guestId={guestId}/>
           ) : null}
         </div>
       </div>

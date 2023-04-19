@@ -16,7 +16,7 @@ type Receiver = {
 };
 type Sender = Receiver;
 
-function Messages({ receiver, sender, convId, hostId }: { receiver: Receiver, sender: Sender, convId: string , hostId: string}) {
+function Messages({ convId, hostId, guestId }: { convId: string , hostId: string, guestId: string}) {
 
     console.log("Conversation id: ",convId);
 
@@ -41,15 +41,12 @@ function Messages({ receiver, sender, convId, hostId }: { receiver: Receiver, se
                 navigate("/login");
             }
         });
-    }, [userId, receiver, sender]);
+    }, [userId, hostId, guestId]);
 
     // Getting messages from firebase
     const getMessages = () => {
 
-        console.log("Get messages");
-        console.log(sender);
-        console.log(receiver);
-
+        // Authentification
         const auth = getAuth();
         const db = getFirestore();
         const messagesRef = collection(db, "conversations", convId, "mess");
@@ -79,7 +76,7 @@ function Messages({ receiver, sender, convId, hostId }: { receiver: Receiver, se
             {
                 message: e.target.elements.texts.value,
                 senderId: hostId,
-                receiverId: sender.id,
+                receiverId: guestId,
                 sentTime: Timestamp.now()
             })
     };
