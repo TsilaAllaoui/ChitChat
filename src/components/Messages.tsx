@@ -18,8 +18,6 @@ type Sender = Receiver;
 
 function Messages({ convId, hostId, guestId }: { convId: string , hostId: string, guestId: string}) {
 
-    console.log("Conversation id: ",convId);
-
     // Type for a message object
     type Message = { message: string, receiverId: string, senderId: string, id: string };
 
@@ -35,7 +33,6 @@ function Messages({ convId, hostId, guestId }: { convId: string , hostId: string
             if (user) {
                 setUserId(user.uid);
                 getMessages();
-                console.log("user", userId, " logged in...");
             } else {
                 const navigate = useNavigate();
                 navigate("/login");
@@ -60,14 +57,12 @@ function Messages({ convId, hostId, guestId }: { convId: string , hostId: string
                 messagesInfirebase.push({ ...doc.data(), id: doc.id });
             });
             setMessages(messagesInfirebase);
-            console.log("messages: ",messages);
         });
     };
 
     // For adding new message to firebase
     const sendToFirebase = (e: any) => {
         e.preventDefault();
-        console.log(e.target.elements.texts.value);
 
         const auth = getAuth();
         const db = getFirestore();

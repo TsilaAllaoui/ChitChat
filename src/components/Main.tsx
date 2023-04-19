@@ -5,6 +5,7 @@ import Messages from "./Messages";
 import "../styles/Main.scss";
 import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
 import { useNavigate } from "react-router";
+import Popup from "./Popup";
 
 // Sender and Receiver types
 type Receiver = {
