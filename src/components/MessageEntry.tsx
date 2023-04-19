@@ -39,14 +39,18 @@ function MessageEntry({ content, senderId, receiverId, hostId }: { content: stri
   // Content height
   const height: number = parts.length * 35;
 
+  // Condition to know if message entry was sent by who
+  const senderCondition = hostId === receiverId;
+
   return (
     <li className="message" style={{ width: width === 12 ? width + 10 : width, 
                                      height: height, 
-                                     alignSelf: hostId === receiverId ? "flex-end" : "flex-start",
-                                     backgroundColor: hostId === receiverId ? "$lighter" : "$light"}} key={senderId + Date.now()}>
-      {
-        parts.map((part, index) => part)
-      }
+                                     alignSelf: senderCondition ? "flex-end" : "flex-start",
+                                     backgroundColor: senderCondition ? "#A5D7E8" : "#576CBC",
+                                     borderRadius: senderCondition ? "10px 10px 0 10px" : "10px 10px 10px 0"}} key={senderId + Date.now()}>
+        {
+          parts.map((part, index) => part)
+        } 
     </li>
   );
 }

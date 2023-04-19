@@ -74,18 +74,13 @@ function Messages({ receiver, sender,convId }: { receiver: Receiver, sender: Sen
 
         const auth = getAuth();
         const db = getFirestore();
-        const messRef = collection(db, "conversations", sender.id, "mess");
+        const messRef = collection(db, "conversations", convId, "mess");
         addDoc(messRef,
             {
                 message: e.target.elements.texts.value,
                 senderId: receiver.id,
                 receiverId: sender.id,
                 sentTime: Timestamp.now()
-            }).then(() => {
-                console.log("doc added");
-            })
-            .catch(() => {
-                console.log("error when adding doc");
             })
     };
 
