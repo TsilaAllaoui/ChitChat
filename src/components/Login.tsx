@@ -43,9 +43,7 @@ function Login() {
       </div>
       <p id="sign-up-suggestion">
         First time here? then{" "}
-        <a id="sign-in" href="#">
-          Sign in!
-        </a>
+        <Link to="/signup">Sign up!</Link>
       </p>
       <div id="email">
         <span>Email</span>

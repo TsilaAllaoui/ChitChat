@@ -16,7 +16,7 @@ type Receiver = {
 };
 type Sender = Receiver;
 
-function Messages({ receiver, sender,convId }: { receiver: Receiver, sender: Sender, convId: string }) {
+function Messages({ receiver, sender, convId, hostId }: { receiver: Receiver, sender: Sender, convId: string , hostId: string}) {
 
     console.log("Conversation id: ",convId);
 
@@ -78,7 +78,7 @@ function Messages({ receiver, sender,convId }: { receiver: Receiver, sender: Sen
         addDoc(messRef,
             {
                 message: e.target.elements.texts.value,
-                senderId: receiver.id,
+                senderId: hostId,
                 receiverId: sender.id,
                 sentTime: Timestamp.now()
             })
@@ -94,7 +94,7 @@ function Messages({ receiver, sender,convId }: { receiver: Receiver, sender: Sen
                                <MessageEntry content={message.message}
                                 senderId={message.senderId}
                                 receiverId={message.receiverId}
-                                hostId={receiver.id}
+                                hostId={hostId}
                                />
                             )
                         })
