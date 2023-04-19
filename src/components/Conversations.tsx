@@ -1,23 +1,15 @@
-import {
-  getFirestore,
-  collection,
-  onSnapshot,
-  getDocs,
-  query,
-  where,
-  Timestamp,
-} from "firebase/firestore";
-import { useState, useEffect } from "react";
+import { getFirestore, collection, onSnapshot, query, where } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import app from "../Firebase";
 import { ImSpinner10 } from "react-icons/im";
+import { useState, useEffect } from "react";
 import "../styles/Conversations.scss";
 
-function Conversations({setSender, setReceiver}: {setSender: any, setReceiver: any}) {
+function Conversations({setSender, setReceiver, setConvId}: {setSender: any, setReceiver: any, setConvId: any}) {
+
   // Type for a conversation object
   type Conversation = { participants: string[]; hostName: string; hostId: string, otherName: string, otherId: string, id: string };
 
-  // Hook for the conversations
+  // State for the conversations
   const [convs, setConvs] = useState<Conversation[]>([]);
 
   // State for user ID
@@ -36,6 +28,7 @@ function Conversations({setSender, setReceiver}: {setSender: any, setReceiver: a
 
   // To get data from firebase
   const getData = () => {
+
     // Getting db
     const db = getFirestore();
     const convsRef: any = collection(db, "conversations");
@@ -43,9 +36,9 @@ function Conversations({setSender, setReceiver}: {setSender: any, setReceiver: a
     // Query for conversations only with the user id as the owner
     const q = query(convsRef, where("participants", "array-contains", userId));
 
-    // Getting only conversations for the current user
+    // Getting queried conversations datas
     onSnapshot(q, (snapshot) => {
-      // setConvs([{ owner: "", timeStamp: Timestamp.now(), message: "", id:"" }]);
+    
       let convsInFirebase: any = [];
       snapshot.forEach((doc: any) => {
         convsInFirebase.push({ ...doc.data(), id: doc.id });
@@ -56,10 +49,12 @@ function Conversations({setSender, setReceiver}: {setSender: any, setReceiver: a
     });
   };
 
+  // For updating parent states
   const setProps = (conversation: Conversation) => {
     console.log(conversation);
     setReceiver({name: conversation.hostName,id: conversation.hostId});
     setSender({name: conversation.otherName,id: conversation.otherId});
+    setConvId(conversation.id);
   };
 
   return (
@@ -69,8 +64,8 @@ function Conversations({setSender, setReceiver}: {setSender: any, setReceiver: a
         <ul id="conversation-list">
           {convs.map((conversation: Conversation) => {
             return (
-              <li key={userId + conversation.id} className="conversation" onClick={setProps}>
-                {conversation.hostId === userId ? conversation.hostName : conversation.otherName}
+              <li key={userId + conversation.id} className="conversation" onClick={() => setProps(conversation)}>
+                    {conversation.hostId !== userId ? conversation.hostName : conversation.otherName}
               </li>
             );
           })}

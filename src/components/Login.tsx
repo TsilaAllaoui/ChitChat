@@ -1,17 +1,14 @@
-import {
-  AiOutlineGoogle,
-  AiOutlineMail,
-  AiOutlineFacebook,
-} from "react-icons/ai";
+import { AiOutlineGoogle, AiOutlineMail, AiOutlineFacebook } from "react-icons/ai";
 import { getAuth, signInWithEmailAndPassword } from "@firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import logo from "../assets/logo.svg";
-import { useEffect, useState } from "react";
 import "../styles/Login.scss";
 import app from "../Firebase";
 
 function Login() {
+
   // States for the inputs
   const [emailValue, setEmailValue] = useState("ratsilakwel@gmail.com");
   const [passwordValue, setPasswordValue] = useState("123456789");
@@ -26,9 +23,9 @@ function Login() {
     }
   }, [redirect]);
 
-  const test = () => {
+  // For login redirection
+  const redirectToLogin = () => {
     const auth = getAuth(app);
-    console.log(emailValue, " : ", passwordValue);
     signInWithEmailAndPassword(auth, emailValue, passwordValue)
       .then((userCred) => {
         setRedirect(true);
@@ -74,17 +71,9 @@ function Login() {
       </div>
       <div id="buttons">
         <button id="forgot-password-button">Forgot password</button>
-        {/* <Link
-          to="/messages"
-          state={{
-            receiver: { name: emailValue, id: passwordValue },
-            sender: { name: "Ariane", id: "NeLZhBOa04SkiEVcAEPf" },
-          }}
-        > */}
-        <button id="login-button" onClick={test}>
+        <button id="login-button" onClick={redirectToLogin}>
           Login
         </button>
-        {/* </Link> */}
       </div>
       <p>Or login with: </p>
       <div id="social-login">
@@ -97,5 +86,3 @@ function Login() {
 }
 
 export default Login;
-
-//<Link to="/messages" state={{ receiver: { name: emailValue, id: passwordValue }, sender: { name: "Ariane", id: "NeLZhBOa04SkiEVcAEPf" } }}>Login</Link>

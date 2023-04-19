@@ -1,7 +1,7 @@
 import { getAuth, createUserWithEmailAndPassword } from '@firebase/auth';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import "../styles/SignUp.scss";
 import { useNavigate } from 'react-router';
+import "../styles/SignUp.scss";
 
 function SignUp(){
 

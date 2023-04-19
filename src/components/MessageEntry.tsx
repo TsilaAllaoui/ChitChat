@@ -1,7 +1,8 @@
 import { spawn } from "child_process";
 import "../styles/MessageEntry.scss";
 
-function MessageEntry({ content, senderId, getterId, masterId }: { content: string; senderId: string, getterId: string, masterId: string }) {
+function MessageEntry({ content, senderId, receiverId, hostId }: { content: string; senderId: string, receiverId: string, hostId: string }) {
+
   // Characters limit by line
   const limit: number = 42;
 
@@ -39,7 +40,10 @@ function MessageEntry({ content, senderId, getterId, masterId }: { content: stri
   const height: number = parts.length * 35;
 
   return (
-    <li className="message" style={{ width: width === 12 ? width + 10 : width, height: height, alignSelf: masterId === getterId ? "flex-end" : "flex-start" }} key={senderId + Date.now()}>
+    <li className="message" style={{ width: width === 12 ? width + 10 : width, 
+                                     height: height, 
+                                     alignSelf: hostId === receiverId ? "flex-end" : "flex-start",
+                                     backgroundColor: hostId === receiverId ? "$lighter" : "$light"}} key={senderId + Date.now()}>
       {
         parts.map((part, index) => part)
       }

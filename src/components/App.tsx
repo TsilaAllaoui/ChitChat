@@ -29,7 +29,6 @@ function App() {
             <Route path='/' element={<SignUp />} />
             <Route path='/signup' element={<SignUp />} />
             <Route path='/login' element={<Login />} />
-            <Route path='/messages' element={<Messages receiver={{name: "", id: ""}} sender={{name: "", id: ""}}/>} />
             <Route path='/main' element={<Main/>} />
           </Routes>
       </BrowserRouter>

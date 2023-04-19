@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, Firestore, getFirestore, onSnapshot, orderBy, query, setDoc, Timestamp } from "firebase/firestore";
+import { addDoc, collection, doc, Firestore, getFirestore, onSnapshot, orderBy, query, setDoc, Timestamp, where } from "firebase/firestore";
 import { BsFillEmojiSmileFill, BsFillSendFill } from "react-icons/bs";
 import { AiOutlineFileGif } from "react-icons/ai";
 import { useState, useEffect, SetStateAction } from "react";
@@ -16,7 +16,9 @@ type Receiver = {
 };
 type Sender = Receiver;
 
-function Messages({ receiver, sender }: { receiver: Receiver, sender: Sender }) {
+function Messages({ receiver, sender,convId }: { receiver: Receiver, sender: Sender, convId: string }) {
+
+    console.log("Conversation id: ",convId);
 
     // Type for a message object
     type Message = { message: string, receiverId: string, senderId: string, id: string };
@@ -39,16 +41,18 @@ function Messages({ receiver, sender }: { receiver: Receiver, sender: Sender }) 
                 navigate("/login");
             }
         });
-    }, [userId]);
+    }, [userId, receiver, sender]);
 
     // Getting messages from firebase
     const getMessages = () => {
 
         console.log("Get messages");
+        console.log(sender);
+        console.log(receiver);
 
         const auth = getAuth();
         const db = getFirestore();
-        const messagesRef = collection(db, "conversations", sender.id, "mess");
+        const messagesRef = collection(db, "conversations", convId, "mess");
 
         // Query to fetch by sent time
         const q = query(messagesRef, orderBy("sentTime"));
@@ -59,7 +63,7 @@ function Messages({ receiver, sender }: { receiver: Receiver, sender: Sender }) 
                 messagesInfirebase.push({ ...doc.data(), id: doc.id });
             });
             setMessages(messagesInfirebase);
-            console.log(messages);
+            console.log("messages: ",messages);
         });
     };
 
@@ -91,13 +95,13 @@ function Messages({ receiver, sender }: { receiver: Receiver, sender: Sender }) 
                 <ul>
                     {
                         messages.map((message: Message) => {
-                            return (<li key={Date.now() + message.id}>
+                            return (
                                <MessageEntry content={message.message}
                                 senderId={message.senderId}
-                                getterId={message.receiverId}
-                                masterId={receiver.id}
+                                receiverId={message.receiverId}
+                                hostId={receiver.id}
                                />
-                            </li>)
+                            )
                         })
                     }
                 </ul>
