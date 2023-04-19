@@ -1,4 +1,4 @@
-import { getFirestore, collection, onSnapshot, query, where } from "firebase/firestore";
+import { getFirestore, collection, onSnapshot, query, where, getDocs } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { ImSpinner10 } from "react-icons/im";
 import { useState, useEffect } from "react";
@@ -57,6 +57,22 @@ function Conversations({setSender, setReceiver, setConvId}: {setSender: any, set
     setConvId(conversation.id);
   };
 
+  // For adding new conversation
+  const addNewConversation = () => {
+    const auth = getAuth();
+    const db = getFirestore();
+    const usersRef = collection(db, "users");
+    
+    getDocs(usersRef).then((snapshot) => {
+    
+        let usersInFirebase: any = [];
+        snapshot.forEach((doc: any) => {
+            usersInFirebase.push({ ...doc.data(), id: doc.id });
+        });
+        console.log(usersInFirebase);
+      });
+  };
+
   return (
     <div id="conversation-root">
       <h1>Conversations</h1>
@@ -73,6 +89,9 @@ function Conversations({setSender, setReceiver, setConvId}: {setSender: any, set
       ) : (
         <ImSpinner10 className="spinner"/>
       )}
+      <div>
+        <button id="new-conv-button" onClick={addNewConversation}>New Conversation</button>
+      </div>
     </div>
   );
 }

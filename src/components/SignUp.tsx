@@ -2,6 +2,7 @@ import { getAuth, createUserWithEmailAndPassword } from '@firebase/auth';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import "../styles/SignUp.scss";
+import { addDoc, collection, getFirestore } from '@firebase/firestore';
 
 function SignUp(){
 
@@ -25,7 +26,18 @@ function SignUp(){
     
     // Sign up new user
     const auth = getAuth();
-    
+
+    // Adding user to user list collection in firebase
+    const addNewUser = (name: string, email: string, uid: string) => {
+        const db = getFirestore();
+        const usersRef = collection(db, "users");
+        addDoc(usersRef, {
+            name: name,
+            email: email,
+            uid: uid
+        });
+    };
+
     // For signup on submit
     const signUp = (e: any) => {
         e.preventDefault();
@@ -37,6 +49,7 @@ function SignUp(){
         // Create user into firebase
         createUserWithEmailAndPassword(auth, email, password)
         .then((userCreds) => {
+            addNewUser(name, email, userCreds.user.uid);
             alert("Account successfully created. Redirecting to login page...");
             setRedirect(true);
         })
