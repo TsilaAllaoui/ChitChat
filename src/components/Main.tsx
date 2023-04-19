@@ -1,20 +1,21 @@
+import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
 import { SlArrowRight, SlArrowLeft } from "react-icons/sl";
 import Conversations from "./Conversations";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { Receiver, Sender } from "./Models";
 import Messages from "./Messages";
 import "../styles/Main.scss";
-import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
-import { useNavigate } from "react-router";
 import Popup from "./Popup";
+import { auth } from "../Firebase";
 
-// Sender and Receiver types
-type Receiver = {
-  name: string;
-  id: string;
-};
-type Sender = Receiver;
+
 
 function Main() {
+
+  // ************  States   ************
+
+
   // State for showing or hiding conversations list
   const [show, setShow] = useState(false);
 
@@ -25,12 +26,19 @@ function Main() {
   // State for current selected conversation
   const [convId, setConvId] = useState("");
 
-  // State for user Id adn the guest Id
+  // State for user Id and the guest Id
   const [userId, setUserId] = useState("");
+
+  // State for guest Id
   const [guestId, setGuestId] = useState("");
 
+
+
+  // ************  Effects   ************
+
+  // For getting user infos on authentification
   useEffect(() => {
-    const auth = getAuth();
+
     onAuthStateChanged(auth, (user) => {
         if (user) {
             setUserId(user.uid);
@@ -40,8 +48,14 @@ function Main() {
     });
 }, [userId]);
 
+
+
+  // ************  Functions   ************
+
+
   // Toggling conversations list state
   const toggleConvs = () => {
+    
     setShow(!show);
     let convs = document.getElementById("row")!;
     if (show) {
@@ -63,6 +77,10 @@ function Main() {
         alert("Can't log out. Contact admin...");
     });
   };
+
+
+
+  // ************  Rendering   ************
 
   return (
     <div className="root">

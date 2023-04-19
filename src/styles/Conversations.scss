@@ -4,25 +4,24 @@
 @keyframes rotate {
     from {
         transform: rotate(0);
-    } 
-    to{
+    }
+
+    to {
         transform: rotate(360deg);
     }
 }
 
-.spinner{
-    font-size: 3rem;
-    animation: rotate 1s both infinite linear;
-}
-
-#conversation-root{
+#conversation-root {
     display: flex;
     flex-direction: column;
     width: 100%;
-    #conversation-list{
+    align-items: center;
+
+    #conversation-list {
         margin: 0;
         padding: 0;
-        .conversation{
+
+        .conversation {
             text-align: center;
             background-color: $lighter;
             color: black;
@@ -34,14 +33,25 @@
             justify-content: center;
             align-items: center;
             font-size: 22px;
-            &:hover{
+
+            &:hover {
                 background-color: darken($color: $lighter, $amount: 15%);
+            }
+
+            .delButton {
+                justify-self: flex-end;
             }
         }
     }
+
+    .spinner {
+        font-size: 3rem;
+        animation: rotate 1s both infinite linear;
+        margin-bottom: 25px;
+    }
 }
 
-#popup{
+#popup {
     width: 100vw;
     height: 100vh;
     position: absolute;

@@ -1,34 +1,32 @@
 import { addDoc, collection, doc, Firestore, getFirestore, onSnapshot, orderBy, query, setDoc, Timestamp, where } from "firebase/firestore";
 import { BsFillEmojiSmileFill, BsFillSendFill } from "react-icons/bs";
-import { AiOutlineFileGif } from "react-icons/ai";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useState, useEffect, SetStateAction } from "react";
+import { AiOutlineFileGif } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 import { IoIosAttach } from "react-icons/io";
 import MessageEntry from "./MessageEntry";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { Message } from "./Models";
 import "../styles/Messages.scss";
-import app from "../Firebase";
-import { useNavigate } from "react-router-dom";
+import { auth } from "../Firebase";
 
-// Sender and Receiver types
-type Receiver = {
-    name: string,
-    id: string
-};
-type Sender = Receiver;
+function Messages({ convId, hostId, guestId }: { convId: string, hostId: string, guestId: string }) {
 
-function Messages({ convId, hostId, guestId }: { convId: string , hostId: string, guestId: string}) {
+    // ************  States   ************
 
-    // Type for a message object
-    type Message = { message: string, receiverId: string, senderId: string, id: string };
-
-    // Messages
+    // State for the messages
     const [messages, setMessages] = useState<Message[]>([]);
 
-    // Set up userId and trigger get messages function
+    // State for user id
     const [userId, setUserId] = useState("");
-    const [wait, setWait] = useState(0);
+
+    
+
+    // ************  Effects   ************  
+
+    // For getting messages when the conversation change
     useEffect(() => {
-        const auth = getAuth();
+        
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 setUserId(user.uid);
@@ -38,7 +36,11 @@ function Messages({ convId, hostId, guestId }: { convId: string , hostId: string
                 navigate("/login");
             }
         });
-    }, [userId, hostId, guestId]);
+    }, [userId, hostId, guestId, convId]);
+
+
+
+    // ************  Functions   ************
 
     // Getting messages from firebase
     const getMessages = () => {
@@ -76,6 +78,10 @@ function Messages({ convId, hostId, guestId }: { convId: string , hostId: string
             })
     };
 
+
+    
+    // ************  Rendering   ************
+
     return (
         <div id="root-message">
             <div id="messages-list">
@@ -83,27 +89,30 @@ function Messages({ convId, hostId, guestId }: { convId: string , hostId: string
                     {
                         messages.map((message: Message) => {
                             return (
-                               <MessageEntry content={message.message}
-                                senderId={message.senderId}
-                                receiverId={message.receiverId}
-                                hostId={hostId}
-                               />
+                                <MessageEntry content={message.message}
+                                    senderId={message.senderId}
+                                    receiverId={message.receiverId}
+                                    hostId={hostId}
+                                />
                             )
                         })
                     }
                 </ul>
             </div>
-            <div id="inputs">
-            <form id="main-input" onSubmit={(e) => sendToFirebase(e)}>
-                <input type="text" name="texts" id="text-input"/>
-                <button type="submit">Send</button>
-            </form>
-            <div id="buttons">
-                <BsFillEmojiSmileFill id="emoji-button"/>
-                <IoIosAttach id="attachment-button"/>
-                <AiOutlineFileGif id="gif-button"/>
-            </div>
-        </div>
+            {
+                messages.length > 0 ? (<div id="inputs">
+                <form id="main-input" onSubmit={(e) => sendToFirebase(e)}>
+                    <input type="text" name="texts" id="text-input" />
+                    <button type="submit">Send</button>
+                </form>
+                <div id="buttons">
+                    <BsFillEmojiSmileFill id="emoji-button" />
+                    <IoIosAttach id="attachment-button" />
+                    <AiOutlineFileGif id="gif-button" />
+                </div>
+            </div>) 
+            : null
+            }
         </div>
     )
 }
