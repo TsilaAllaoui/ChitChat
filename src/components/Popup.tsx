@@ -40,6 +40,7 @@ function Popup({
 
   const createConversations = (user: ID) => {
     setNewUser(user);
+    console.log("newUser: ", user);
     setPopupState(false);
   };
 
