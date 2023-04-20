@@ -25,14 +25,16 @@ import { ID } from "./Models";
 import { useCollection } from "react-firebase-hooks/firestore";
 
 function Conversations({
+  setSender,
+  setReceiver,
   hostId,
   hostName,
 }: {
-  setSender: (param: { name: string; id: string }) => void;
-  setReceiver: (param: { name: string; id: string }) => void;
-  setConvId: (param: string) => void;
-  hostId: string;
-  hostName: string;
+  setSender: (param: { name: string; id: string }) => void,
+  setReceiver: (param: { name: string; id: string }) => void,
+  setConvId: (param: string) => void,
+  hostId: string,
+  hostName: string,
 }) {
   // ************  States   ************
 
@@ -140,10 +142,10 @@ function Conversations({
       const messRef = collection(db, "conversations", conversation.id, "mess");
       getDocs(messRef).then((snapshot) => {
         snapshot.forEach((doc) => {
-          deleteDoc(doc.ref).then(() => {}).catch((err) => console.log("ERROR ", err));;
+          deleteDoc(doc.ref);
         });
+        })
       });
-    }).catch((err) => console.log("ERROR ", err));
     setConvId("");
     setShowPopup(false);
   };
@@ -153,6 +155,7 @@ function Conversations({
     if (convList?.docs.length === 0)
     {
       setNoConvs(true);
+      setConvs([]);
       return;
     }
     let list: any[] = [];
@@ -168,6 +171,15 @@ function Conversations({
     setShowPopup(true);
   };
 
+  // Updating messages for current discussion
+   const setProps = (conversation: Conversation) => {
+    console.log("message updated:" , conversation);
+    setReceiver({name: conversation.hostName,id: conversation.hostId});
+    setSender({name: conversation.otherName,id: conversation.otherId});
+    setConvId(conversation.id);
+  };
+
+
   // ************  Rendering   ************
 
   return (
@@ -178,7 +190,7 @@ function Conversations({
           {convs &&
             convs.map((conversation: Conversation) => {
               return (
-                <li key={Math.random() + Date.now()} className="conversation">
+                <li key={Math.random() + Date.now()} className="conversation" onClick={() => setProps(conversation)}>
                   {conversation.hostId !== userId
                     ? conversation.hostName
                     : conversation.otherName}

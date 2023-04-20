@@ -20,7 +20,7 @@ function Messages({ convId, hostId, guestId }: { convId: string, hostId: string,
     // State for user id
     const [userId, setUserId] = useState("");
 
-    
+    // ************  Firebase Hooks   ************
 
     // ************  Effects   ************  
 

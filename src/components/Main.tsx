@@ -25,7 +25,7 @@ function Main() {
   const [sender, setSender] = useState<Sender>({ name: "", id: "" });
 
   // State for current selected conversation
-  const [convId, setConvId] = useState("");
+  const [convId, setConvId] = useState("3ZqjO3qWsr61gDsurRHV");
 
   // State for user Id and the guest Id
   const [userId, setUserId] = useState("");
