@@ -1,53 +1,88 @@
-import { userCreationContext } from "./Context";
-import { useContext, useState } from "react";
-import { User } from "./Models";
+import { useEffect, useState } from "react";
+import { ID, User, UserInFb } from "./Models";
 import "../styles/Popup.scss";
+import { collection, getDoc, getDocs, onSnapshot, query, where } from "firebase/firestore";
+import { db } from "../Firebase";
 
 function Popup({
   setPopupState,
-  users,
+  setNewUser,
+  hostId
 }: {
-  setPopupState: (b: boolean) => void,
-  users: User[];
+  setPopupState: (param: boolean) => void;
+  setNewUser: (param: ID) => void;
+  hostId: string
 }) {
+  //  ************** State **************
+  
   const [keyword, setKeyword] = useState("");
-  const [userList, setUserList] = useState<User[]>(users)
+  const [userList, setUserList] = useState<ID[]>([]);
+  
+  
+  //  ************** State **************
 
-  const filter = (word: string ,keyword: string) => {
+    // Getting users in firebase that are not the current host
+    useEffect(() => {
+
+        let users: {name:string, id: string}[] = [];
+
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("uid", "!=", hostId));
+      onSnapshot(q, (snapshot) => {
+        snapshot.forEach((doc: any) => {
+            const data: UserInFb = {...doc.data()};
+            users.push({name: data.name, id: data.uid});
+        });
+        setUserList(users);
+      });
+      
+    }, [])
     
-  };
-
-  const userToCreate = useContext(userCreationContext)
 
 
-  const createConversations = (user: User) => {
-      userToCreate.userToBeCreated = {
-          name: user.name,
-          id: user.uid
-      };
+  //  ************** Functions **************
+
+  const createConversations = (user: ID) => {
+    setNewUser(user);
     setPopupState(false);
   };
 
 
+
+  //  ************** Rendering **************
+
   return (
-    <div id="modal">
+    <div>
+      <div id="modal">
         <button onClick={() => setPopupState(false)}>Close</button>
         <label>Name</label>
-        <input type="text" id="search-input" onChange={(e) => setKeyword(e.target.value)}/>
+        <input
+          type="text"
+          id="search-input"
+          onChange={(e) => setKeyword(e.target.value)}
+        />
         <button>Search</button>
         <div id="user-list">
-        {userList &&
+          {userList.length > 0 &&
             userList.map((user) => {
-                return <div onClick={() => createConversations(user)}>
-                    {
-                       (keyword === "") ? <p>{user.name}</p> : (user.name.includes(keyword) ? <p>{user.name}</p> : null)
-                    }
+              return (
+                <div
+                  key={user.id + Date.now()}
+                  onClick={() => createConversations(user)}
+                >
+                  {keyword === "" ? (
+                    <p>{user.name}</p>
+                  ) : user.name.includes(keyword) ? (
+                    <p>{user.name}</p>
+                  ) : null}
                 </div>
-
+              );
             })}
         </div>
         <button type="submit"></button>
+      </div>
     </div>
   );
 }
+
 export default Popup;

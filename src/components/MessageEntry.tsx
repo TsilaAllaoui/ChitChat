@@ -83,10 +83,9 @@ function MessageEntry({ content, senderId, receiverId, hostId }: { content: stri
       alignSelf: senderCondition ? "flex-end" : "flex-start",
       backgroundColor: senderCondition ? "#A5D7E8" : "#576CBC",
       borderRadius: senderCondition ? "10px 10px 0 10px" : "10px 10px 10px 0"
-    }}
-      key={content + Date.now()}>
+    }}>
       {
-        parts.map((part, index) => <p>{part}</p>)
+        parts.map((part, index) => <p key={content + Date.now()}>{part}</p>)
       }
     </li>
   );

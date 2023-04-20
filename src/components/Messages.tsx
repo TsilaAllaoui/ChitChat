@@ -89,7 +89,7 @@ function Messages({ convId, hostId, guestId }: { convId: string, hostId: string,
                     {
                         messages.map((message: Message) => {
                             return (
-                                <MessageEntry content={message.message}
+                                <MessageEntry key={message.id + Date.now()} content={message.message}
                                     senderId={message.senderId}
                                     receiverId={message.receiverId}
                                     hostId={hostId}

@@ -3,6 +3,11 @@ export interface User {
   uid: string
 };
 
+export interface ID {
+    name: string,
+    id: string
+}
+
 // Type for a conversation object
 export interface Conversation {
   participants: string[],
@@ -28,3 +33,9 @@ export interface Message{
   senderId: string, 
   id: string 
 };
+
+export interface UserInFb {
+    name: string,
+    uid: string,
+    email: string
+}
