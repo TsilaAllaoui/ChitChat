@@ -3,6 +3,7 @@ import { ID, User, UserInFb } from "./Models";
 import "../styles/Popup.scss";
 import { collection, getDoc, getDocs, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "../Firebase";
+import { useCollection } from "react-firebase-hooks/firestore";
 
 function Popup({
   setPopupState,
@@ -16,29 +17,24 @@ function Popup({
   //  ************** State **************
   
   const [keyword, setKeyword] = useState("");
-  const [userList, setUserList] = useState<ID[]>([]);
-  
-  
-  //  ************** State **************
+  const [users, setUsers] = useState<ID[]>([]);
 
-    // Getting users in firebase that are not the current host
-    useEffect(() => {
+  // *************** Firbase Hooks ****************
 
-        let users: {name:string, id: string}[] = [];
+  const usersRef = collection(db, "users");
+  const [userList,loading, error] = useCollection(usersRef);
 
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, where("uid", "!=", hostId));
-      onSnapshot(q, (snapshot) => {
-        snapshot.forEach((doc: any) => {
-            const data: UserInFb = {...doc.data()};
-            users.push({name: data.name, id: data.uid});
-        });
-        setUserList(users);
-      });
-      
-    }, [])
-    
 
+  // *************** Effects ****************
+
+  useEffect(() => {
+    let tmp: any = [];
+    userList?.docs.forEach((doc) => {
+        tmp.push({...doc.data()});
+    });
+    console.log(userList);
+    setUsers(tmp);
+  }, [userList]);
 
   //  ************** Functions **************
 
@@ -46,8 +42,6 @@ function Popup({
     setNewUser(user);
     setPopupState(false);
   };
-
-
 
   //  ************** Rendering **************
 
@@ -63,11 +57,11 @@ function Popup({
         />
         <button>Search</button>
         <div id="user-list">
-          {userList.length > 0 &&
-            userList.map((user) => {
+          {users.length > 0 &&
+            users.map((user) => {
               return (
                 <div
-                  key={user.id + Date.now()}
+                  key={Math.random() + Date.now()}
                   onClick={() => createConversations(user)}
                 >
                   {keyword === "" ? (

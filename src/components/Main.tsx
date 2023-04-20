@@ -7,7 +7,8 @@ import { Receiver, Sender } from "./Models";
 import Messages from "./Messages";
 import "../styles/Main.scss";
 import Popup from "./Popup";
-import { auth } from "../Firebase";
+import { auth, db } from "../Firebase";
+import { collection, onSnapshot, query, where } from "@firebase/firestore";
 
 
 
@@ -32,6 +33,8 @@ function Main() {
   // State for guest Id
   const [guestId, setGuestId] = useState("");
 
+  const [userName, setUserName] = useState("");
+
 
 
   // ************  Effects   ************
@@ -42,11 +45,18 @@ function Main() {
     onAuthStateChanged(auth, (user) => {
         if (user) {
             setUserId(user.uid);
-        } else {
-
-        }
-    });
-}, [userId]);
+            
+            const usersRef = collection(db, "users");
+            const q = query(usersRef, where("uid", "!=", userId));
+            onSnapshot(q, (snapshot) => {
+              snapshot.forEach((doc: any) => {
+                  setUserName(doc.data().name);
+                  return;
+              });
+            });
+          } 
+      });
+    }, []);
 
 
 
@@ -99,6 +109,8 @@ function Main() {
             setSender={setSender}
             setReceiver={setReceiver}
             setConvId={setConvId}
+            hostId={userId}
+            hostName={userName}
           />
         </div>
         <div className="messages">
