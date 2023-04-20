@@ -5,7 +5,7 @@ export interface User {
 
 export interface ID {
     name: string,
-    id: string
+    uid: string
 }
 
 // Type for a conversation object

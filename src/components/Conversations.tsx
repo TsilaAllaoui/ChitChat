@@ -10,6 +10,8 @@ import {
   addDoc,
   Timestamp,
   or,
+  setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { useState, useEffect } from "react";
@@ -50,7 +52,7 @@ function Conversations({
   const [noConvs, setNoConvs] = useState(false);
 
   // State for the user to create convs to
-  const [newUser, setNewUser] = useState<ID>({ name: "", id: "" });
+  const [newUser, setNewUser] = useState<ID>({ name: "", uid: "" });
 
   const [convId, setConvId] = useState("");
 
@@ -81,7 +83,9 @@ function Conversations({
 
   // ************  Functions   ************
 
+  // To add new conversation
   const addNewConversation = (user: ID) => {
+    console.log("when add", user);
     if (user.uid === "" || user.name === "") return;
 
     const conv: Conversation = {
@@ -90,13 +94,14 @@ function Conversations({
       hostId: userId,
       otherName: user.name,
       otherId: user.uid,
-      id: Date.now().toString(),
+      id: "",
     };
 
     let pass = false;
 
     for (let c of convs) {
-      if (c.otherId === conv.otherId || c.otherId === conv.hostId) {
+      if (c.otherId === conv.otherId) {
+        console.log("pass")
         pass = true;
         break;
       }
@@ -111,16 +116,18 @@ function Conversations({
         otherName: user.name,
         participants: [userId, user.uid]
       };
-      addDoc(convsRef, obj).then((docRef) => {
-        const messRef: any = collection(db, "conversations", docRef.id, "mess");
-        const mess = {
-          senderId: userId,
-          receiverId: user.uid,
-          message: "First message",
-          sentTime: Timestamp.fromDate(new Date()),
-        };
-        addDoc(messRef, mess);
-      });
+      addDoc(convsRef, obj).then((docRef)=> {
+        updateDoc(doc(db, "conversations", docRef.id), {
+          id: docRef.id
+        }).then(() => {
+          addDoc(collection(db, "conversations", docRef.id, "mess"), {
+            receiverId: user.uid,
+            senderId: userId,
+            message: "First message",
+            hostId: userId
+          })
+        })
+      })
     }
   };
 
@@ -133,15 +140,21 @@ function Conversations({
       const messRef = collection(db, "conversations", conversation.id, "mess");
       getDocs(messRef).then((snapshot) => {
         snapshot.forEach((doc) => {
-          deleteDoc(doc.ref).then(() => {});
+          deleteDoc(doc.ref).then(() => {}).catch((err) => console.log("ERROR ", err));;
         });
       });
-    });
+    }).catch((err) => console.log("ERROR ", err));
     setConvId("");
     setShowPopup(false);
   };
 
+  // To get datas
   const getData = () => {
+    if (convList?.docs.length === 0)
+    {
+      setNoConvs(true);
+      return;
+    }
     let list: any[] = [];
     convList?.docs.forEach ((doc) => {
         list.push({ ...doc.data() , id: doc.id});
@@ -150,6 +163,7 @@ function Conversations({
     });
   };
 
+  // To toggle modal form
   const togglePopup = () => {
     setShowPopup(true);
   };
@@ -158,9 +172,6 @@ function Conversations({
 
   return (
     <div id="conversation-root">
-      <div>
-        {newUser.name} : {newUser.id}
-      </div>
       <h1>Conversations</h1>
       {convs.length > 0 ? (
         <ul id="conversation-list">
