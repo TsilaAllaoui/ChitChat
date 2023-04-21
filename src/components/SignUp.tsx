@@ -1,4 +1,4 @@
-import { getAuth, createUserWithEmailAndPassword } from '@firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from '@firebase/auth';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import "../styles/SignUp.scss";
@@ -50,8 +50,12 @@ function SignUp(){
         createUserWithEmailAndPassword(auth, email, password)
         .then((userCreds) => {
             addNewUser(name, email, userCreds.user.uid);
-            alert("Account successfully created. Redirecting to login page...");
-            setRedirect(true);
+            updateProfile(userCreds.user, {
+                displayName: name
+            }).then(() => {
+                alert("Account successfully created. Redirecting to login page...");
+                setRedirect(true);
+            });
         })
 
         // Catching possible error

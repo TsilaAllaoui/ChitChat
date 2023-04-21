@@ -13,8 +13,8 @@ export interface Conversation {
   participants: string[],
   hostName: string,
   hostId: string,
-  otherName: string,
-  otherId: string,
+  guestName: string,
+  guestId: string,
   id: string
 };
 
@@ -34,8 +34,8 @@ export interface Message{
   id: string 
 };
 
-export interface UserInFb {
+export interface UserInFirebase {
     name: string,
-    uid: string,
+    id: string,
     email: string
 }

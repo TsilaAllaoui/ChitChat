@@ -1,223 +1,163 @@
-import {
-  getFirestore,
-  collection,
-  onSnapshot,
-  query,
-  where,
-  getDocs,
-  deleteDoc,
-  doc,
-  addDoc,
-  Timestamp,
-  or,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
-import { useState, useEffect } from "react";
-import { UserContext } from "./Context";
-import { Conversation, User } from "./Models";
-import { ImSpinner10 } from "react-icons/im";
-import "../styles/Conversations.scss";
-import Popup from "./Popup";
-import { auth, db } from "../Firebase";
-import { ID } from "./Models";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../redux/store";
+import { update } from "../redux/slices/userSlice";
+import { updateChosenUser } from "../redux/slices/chosenUserSlice";
+import { set } from "../redux/slices/popUpSlice";
 import { useCollection } from "react-firebase-hooks/firestore";
+import { Conversation, UserInFirebase } from "./Models";
+import { useEffect, useState } from "react";
+import { addDoc, collection, deleteDoc, doc, getDoc, or, query, serverTimestamp, updateDoc, where } from "firebase/firestore";
+import { auth, db } from "../Firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import Popup from "./Popup";
+import { setCurrentConvId } from "../redux/slices/currentConversationSlice";
 
-function Conversations({
-  setSender,
-  setReceiver,
-  hostId,
-  hostName,
-}: {
-  setSender: (param: { name: string; id: string }) => void,
-  setReceiver: (param: { name: string; id: string }) => void,
-  setConvId: (param: string) => void,
-  hostId: string,
-  hostName: string,
-}) {
-  // ************  States   ************
+function Conversations() {
 
-  // State for the conversations
-  const [convs, setConvs] = useState<Conversation[]>([]);
+  const name = useSelector((state: RootState) => state.user.name);
+  const id = useSelector((state: RootState) => state.user.id);
+  const popUpState = useSelector((state: RootState) => state.popUp.popUpShown);
+  const chosenUser = useSelector((state: RootState) => state.chosenUser.chosenUser);
+  const dispatch = useDispatch();
 
-  // State for user ID and name
-  const [userId, setUserId] = useState("");
-
-  // State for user name
-  const [userName, setUserName] = useState(hostName);
-
-  // State for showing popup
-  const [showPopup, setShowPopup] = useState(false);
-
-  // State for knowing if there is no conversations for current user
-  const [noConvs, setNoConvs] = useState(false);
-
-  // State for the user to create convs to
-  const [newUser, setNewUser] = useState<ID>({ name: "", uid: "" });
-
-  const [convId, setConvId] = useState("");
-
-  // ************* Firebase Hooks **************
-
+  const [conversations, setConversations] = useState<Conversation[]>([]);
   const convsRef = collection(db, "conversations");
-  const q = query(convsRef, where("participants", "array-contains", hostId)); 
-  const [convList, loading, error] = useCollection(q);
-
-  // ************  Effects   ************
+  const q = query(convsRef, or(where("hostId", "==", id), where("guestId","==",id)));
+  const [conversationsInFirestore, loading, error] = useCollection(q);
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserId(user.uid);
-        getData();
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    addNewConversation(newUser);
-  }, [newUser]);
-
-  useEffect(() => {
-    getData();
-  }, [convList])
-
-  // ************  Functions   ************
-
-  // To add new conversation
-  const addNewConversation = (user: ID) => {
-    console.log("when add", user);
-    if (user.uid === "" || user.name === "") return;
-
-    const conv: Conversation = {
-      participants: [userId, user.uid],
-      hostName: hostName,
-      hostId: userId,
-      otherName: user.name,
-      otherId: user.uid,
-      id: "",
-    };
-
-    let pass = false;
-
-    for (let c of convs) {
-      if (c.otherId === conv.otherId) {
-        console.log("pass")
-        pass = true;
-        break;
-      }
+    let tmp: any[] = [];
+    conversationsInFirestore?.docs.forEach((doc) => {
+      tmp.push({...doc.data(), id: doc.data().id})
+    })
+    setConversations(tmp);
+    if (conversationsInFirestore?.docs.length === 0)
+    {
+      console.log("In effect");
+      dispatch(setCurrentConvId(""))
     }
+  }, [conversationsInFirestore]);
 
+  useEffect(() => {
+    if (!popUpState && chosenUser.id != "" && chosenUser.name != "")
+    {
+      addNewConversation();
+      dispatch(updateChosenUser({
+        name: "",
+        email: "",
+        id: ""
+      }));
+    }
+  }, [popUpState]);
+
+  const showPopup = () => {
+    dispatch(set(true));
+  };
+
+  const addNewConversation = () => {
+
+    const user: UserInFirebase = chosenUser;
+    if (user.id === "" || user.name === "")
+    {
+      console.log("empty chosen user")
+      return;
+    } 
+      
+    let pass = false;
+    conversationsInFirestore?.docs.forEach((doc) => {
+      const data: any = {...doc.data(), id: doc.data().id};
+      if (data.guestId === user.id)
+        pass = true;
+    });
+
+    let newConvId: string = "";
     if (!pass) {
-      const convsRef: any = collection(db, "conversations");
-      const obj = {
-        hostId: userId,
-        hostName: userName,
-        otherId: user.uid,
-        otherName: user.name,
-        participants: [userId, user.uid]
+      const conv: Conversation = {
+        participants: [id, user.id],
+        hostName: name,
+        hostId: id,
+        guestName: user.name,
+        guestId: user.id,
+        id: "",
       };
-      addDoc(convsRef, obj).then((docRef)=> {
+      const convsRef: any = collection(db, "conversations");
+      addDoc(convsRef, conv).then((docRef) => {
         updateDoc(doc(db, "conversations", docRef.id), {
           id: docRef.id
         }).then(() => {
+          newConvId = docRef.id;
           addDoc(collection(db, "conversations", docRef.id, "mess"), {
-            receiverId: user.uid,
-            senderId: userId,
-            message: "First message",
-            hostId: userId
-          })
-        })
+                    receiverId: user.id,
+                    senderId: id,
+                    message: "First message",
+                    hostId: id,
+                    sentTime: serverTimestamp()
+                  }).then(() => {
+
+                    if (conversations.length === 0)
+                      dispatch(setCurrentConvId(newConvId));
+                  });
+        });
       })
     }
   };
 
-  // To delete conversation
   const deleteConversation = (conversation: Conversation) => {
-    console.log(conversation.id);
-
-    const docRef = doc(db, "conversations", conversation.id);
-    deleteDoc(docRef).then(() => {
-      const messRef = collection(db, "conversations", conversation.id, "mess");
-      getDocs(messRef).then((snapshot) => {
-        snapshot.forEach((doc) => {
-          deleteDoc(doc.ref);
+    conversationsInFirestore?.docs.forEach((doc) => {
+      const data = {...doc.data(), id: doc.data().id};
+      if (data.id === conversation.id)
+      {
+        deleteDoc(doc.ref).then(() => {
+          if (conversationsInFirestore.docs.length === 0)
+          {
+            console.log("IS 0");
+            dispatch(setCurrentConvId(""));
+          }
         });
-        })
-      });
-    setConvId("");
-    setShowPopup(false);
+      }
+    })
   };
 
-  // To get datas
-  const getData = () => {
-    if (convList?.docs.length === 0)
-    {
-      setNoConvs(true);
-      setConvs([]);
-      return;
-    }
-    let list: any[] = [];
-    convList?.docs.forEach ((doc) => {
-        list.push({ ...doc.data() , id: doc.id});
-      if (list.length === 0) setNoConvs(true);
-      else setConvs(list);
-    });
-  };
-
-  // To toggle modal form
-  const togglePopup = () => {
-    setShowPopup(true);
-  };
-
-  // Updating messages for current discussion
-   const setProps = (conversation: Conversation) => {
-    console.log("message updated:" , conversation);
-    setReceiver({name: conversation.hostName,id: conversation.hostId});
-    setSender({name: conversation.otherName,id: conversation.otherId});
-    setConvId(conversation.id);
-  };
-
-
-  // ************  Rendering   ************
+  const loadMessages = (conversation: Conversation) => {
+    console.log("Here")
+    const _id = conversation.guestId !== id ? conversation.guestId : conversation.hostId;
+    const _name = conversation.guestName !== name ? conversation.guestName : conversation.hostName;
+    dispatch(updateChosenUser({
+      name: _name,
+      id: _id,
+      email: ""
+    }))
+    dispatch(setCurrentConvId(conversation.id)); 
+  }
 
   return (
-    <div id="conversation-root">
-      <h1>Conversations</h1>
-      {convs.length > 0 ? (
-        <ul id="conversation-list">
-          {convs &&
-            convs.map((conversation: Conversation) => {
-              return (
-                <li key={Math.random() + Date.now()} className="conversation" onClick={() => setProps(conversation)}>
-                  {conversation.hostId !== userId
-                    ? conversation.hostName
-                    : conversation.otherName}
-                  <button className="delButton" onClick={() => deleteConversation(conversation)}>
-                    Delete
-                  </button>
-                </li>
-              );
-            })}
-        </ul>
-      ) : noConvs ? null : (
-        <ImSpinner10 className="spinner" />
-      )}
+    <div>
+      <div>Conversations</div>
+      <div>User: {name} {id}</div>
       <div>
-        <button id="new-conv-button" onClick={togglePopup}>
-          New Conversation
-        </button>
+         {error && <p>{JSON.stringify(error)}</p>}
+         {loading && <p>Loading...</p>}
+          {conversationsInFirestore && <ul>
+          {
+            conversations.map((conversation: Conversation) => {
+              return <li 
+                        key={conversation.id + Math.random() + Date.now()}
+                        onClick={() => loadMessages(conversation)}
+                        >
+                {conversation.guestId !== id ? conversation.guestName : conversation.hostName}
+                <button onClick={() => deleteConversation(conversation)}>Delete</button>
+                </li>
+            })
+          }
+        </ul>}
       </div>
-      {showPopup ? (
-        <Popup
-          setPopupState={setShowPopup}
-          setNewUser={setNewUser}
-          hostId={userId}
-        />
-      ) : null}
+      <button onClick={showPopup}>Add conversation</button>
+      {
+        !popUpState ? null :
+        <Popup/>
+      }
     </div>
-  );
+  )
 }
 
 export default Conversations;
