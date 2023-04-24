@@ -121,6 +121,8 @@ function Messages() {
     });
 
     setInputValue("");
+    const list = document.querySelector("#text-input") as HTMLDivElement;
+    list.value = "";
   };
 
   /*// ************  States   ************
@@ -221,7 +223,7 @@ function Messages() {
                 id="text-input"
                 onChange={(e) => handleChange(e)}
               />
-              <IoSend onClick={(e) => sendToFirebase(e)} />
+              <IoSend id="send-button" onClick={(e) => sendToFirebase(e)} />
             </form>
           </div>
         )}

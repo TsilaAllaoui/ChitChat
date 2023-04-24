@@ -86,6 +86,12 @@
         width: 25px;
         height: 25px;
         margin: 0;
+        transition: transform 500ms, color 500ms;
+        &:hover{
+          color: $main-blue;
+          transform: scale(1.1);
+          transition: transform 500ms, color 500ms;
+        }
       }
     }
     ul {
@@ -120,6 +126,12 @@
           height: 30px;
           width: 30px;
           color: white;
+          transition: transform 500ms, color 500ms;
+          &:hover{
+            color: $main-blue;
+            transform: scale(1.1);
+            transition: transform 500ms, color 500ms;
+          }
         }
       }
     }
