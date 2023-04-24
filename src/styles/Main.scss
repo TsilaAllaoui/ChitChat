@@ -1,5 +1,13 @@
 @import "./Color.scss";
 
+#main{
+  display: flex;
+  #separator{
+    height: 100vh;
+    border: solid red 5px;
+  }
+}
+
 .root {
   display: flex;
   flex-direction: column;

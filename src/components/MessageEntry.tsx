@@ -1,5 +1,6 @@
 import "../styles/MessageEntry.scss";
 import { useEffect, useState } from "react";
+import { serverTimestamp } from "firebase/firestore";
 
 function MessageEntry({ content, senderId, receiverId, hostId }: { content: string; senderId: string, receiverId: string, hostId: string }) {
 
@@ -77,16 +78,17 @@ function MessageEntry({ content, senderId, receiverId, hostId }: { content: stri
   // ************  Rendering   ************
 
   return (
-    <li className="message" style={{
+    <li 
+      
+      className="message" style={{
       width: width === 12 ? width + 10 : width,
       height: height,
       alignSelf: senderCondition ? "flex-end" : "flex-start",
       backgroundColor: senderCondition ? "#A5D7E8" : "#576CBC",
       borderRadius: senderCondition ? "10px 10px 0 10px" : "10px 10px 10px 0"
-    }}
-      key={content + Date.now()}>
+    }}>
       {
-        parts.map((part, index) => <p>{part}</p>)
+        parts.map((part, index) => <p key={content + index}>{part}</p>)
       }
     </li>
   );

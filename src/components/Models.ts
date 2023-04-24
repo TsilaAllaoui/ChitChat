@@ -3,13 +3,18 @@ export interface User {
   uid: string
 };
 
+export interface ID {
+    name: string,
+    uid: string
+}
+
 // Type for a conversation object
 export interface Conversation {
   participants: string[],
   hostName: string,
   hostId: string,
-  otherName: string,
-  otherId: string,
+  guestName: string,
+  guestId: string,
   id: string
 };
 
@@ -28,3 +33,9 @@ export interface Message{
   senderId: string, 
   id: string 
 };
+
+export interface UserInFirebase {
+    name: string,
+    id: string,
+    email: string
+}
