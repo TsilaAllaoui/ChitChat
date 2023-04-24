@@ -1,78 +1,211 @@
-import { getFirestore, collection, onSnapshot, query, where } from "firebase/firestore";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { ImSpinner10 } from "react-icons/im";
-import { useState, useEffect } from "react";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  or,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { setCurrentConv } from "../redux/slices/currentConversationSlice";
+import { updateChosenUser } from "../redux/slices/chosenUserSlice";
+import { useCollection } from "react-firebase-hooks/firestore";
+import { Conversation, UserInFirebase } from "./Models";
+import { AppDispatch, RootState } from "../redux/store";
+import { useSelector, useDispatch } from "react-redux";
+import { BiMessageSquareAdd } from "react-icons/bi";
+import { onAuthStateChanged } from "firebase/auth";
+import { update } from "../redux/slices/userSlice";
+import { set } from "../redux/slices/popUpSlice";
+import { useEffect, useState } from "react";
+import { MdDelete } from "react-icons/md";
+import { getInitiials } from "./Modules";
+import { auth, db } from "../Firebase";
 import "../styles/Conversations.scss";
+import Popup from "./Popup";
 
-function Conversations({setSender, setReceiver, setConvId}: {setSender: any, setReceiver: any, setConvId: any}) {
+function Conversations() {
+  const name = useSelector((state: RootState) => state.user.name);
+  const id = useSelector((state: RootState) => state.user.id);
+  const popUpState = useSelector((state: RootState) => state.popUp.popUpShown);
+  const chosenUser = useSelector(
+    (state: RootState) => state.chosenUser.chosenUser
+  );
+  const dispatch = useDispatch();
 
-  // Type for a conversation object
-  type Conversation = { participants: string[]; hostName: string; hostId: string, otherName: string, otherId: string, id: string };
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  //   {
+  //     participants: ["Participant1, Participant2"],
+  //     hostName: "Tsila",
+  //     hostId: "123",
+  //     guestName: "Ariane",
+  //     guestId: "456",
+  //     id: "123",
+  //   },
+  //   {
+  //     participants: ["Participant1, Participant2"],
+  //     hostName: "Tsila",
+  //     hostId: "123",
+  //     guestName: "Kal",
+  //     guestId: "456",
+  //     id: "123",
+  //   },
+  //   {
+  //     participants: ["Participant1, Participant2"],
+  //     hostName: "Tsila",
+  //     hostId: "123",
+  //     guestName: "Allaoui",
+  //     guestId: "456",
+  //     id: "123",
+  //   },
+  // ]);
+  const convsRef = collection(db, "conversations");
+  const q = query(
+    convsRef,
+    or(where("hostId", "==", id), where("guestId", "==", id))
+  );
+  const [conversationsInFirestore, loading, error] = useCollection(q);
 
-  // State for the conversations
-  const [convs, setConvs] = useState<Conversation[]>([]);
-
-  // State for user ID
-  const [userId, setUserId] = useState("");
-
-  // Authentification and getting datas
   useEffect(() => {
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserId(user.uid);
-        getData();
-      } else console.log("Error getting user datas...");
+    let tmp: any[] = [];
+    conversationsInFirestore?.docs.forEach((doc) => {
+      tmp.push({ ...doc.data(), id: doc.data().id });
     });
-  }, [userId]);
+    setConversations(tmp);
+    if (conversationsInFirestore?.docs.length === 0) {
+      dispatch(setCurrentConv({ id: "", guestName: "", hostId: "" }));
+    }
+  }, [conversationsInFirestore]);
 
-  // To get data from firebase
-  const getData = () => {
+  useEffect(() => {
+    if (!popUpState && chosenUser.id != "" && chosenUser.name != "") {
+      addNewConversation();
+      dispatch(
+        updateChosenUser({
+          name: "",
+          email: "",
+          id: "",
+        })
+      );
+    }
+  }, [popUpState]);
 
-    // Getting db
-    const db = getFirestore();
-    const convsRef: any = collection(db, "conversations");
+  const showPopup = () => {
+    dispatch(set(true));
+  };
 
-    // Query for conversations only with the user id as the owner
-    const q = query(convsRef, where("participants", "array-contains", userId));
+  const addNewConversation = () => {
+    const user: UserInFirebase = chosenUser;
+    if (user.id === "" || user.name === "") {
+      return;
+    }
 
-    // Getting queried conversations datas
-    onSnapshot(q, (snapshot) => {
-    
-      let convsInFirebase: any = [];
-      snapshot.forEach((doc: any) => {
-        convsInFirebase.push({ ...doc.data(), id: doc.id });
+    let pass = false;
+    conversationsInFirestore?.docs.forEach((doc) => {
+      const data: any = { ...doc.data(), id: doc.data().id };
+      if (data.guestId === user.id) pass = true;
+    });
+
+    let newConvId: string = "";
+    if (!pass) {
+      const conv: Conversation = {
+        participants: [id, user.id],
+        hostName: name,
+        hostId: id,
+        guestName: user.name,
+        guestId: user.id,
+        id: "",
+      };
+      const convsRef: any = collection(db, "conversations");
+      addDoc(convsRef, conv).then((docRef) => {
+        updateDoc(doc(db, "conversations", docRef.id), {
+          id: docRef.id,
+        }).then(() => {
+          newConvId = docRef.id;
+          addDoc(collection(db, "conversations", docRef.id, "mess"), {
+            receiverId: user.id,
+            senderId: id,
+            message: "First message",
+            hostId: id,
+            sentTime: serverTimestamp(),
+          }).then(() => {
+            if (conversations.length === 0)
+              dispatch(setCurrentConv({ id: newConvId, guestName: user.id, hostId: id }));
+          });
+        });
       });
+    }
+  };
 
-      // Setting conversations
-      setConvs(convsInFirebase);
+  const deleteConversation = (conversation: Conversation) => {
+    conversationsInFirestore?.docs.forEach((doc) => {
+      const data = { ...doc.data(), id: doc.data().id };
+      if (data.id === conversation.id) {
+        deleteDoc(doc.ref).then(() => {
+          if (conversationsInFirestore.docs.length === 0) {
+            dispatch(setCurrentConv({ id: "", guestName: "", hostId:"" }));
+          }
+        });
+      }
     });
   };
 
-  // For updating parent states
-  const setProps = (conversation: Conversation) => {
-    console.log(conversation);
-    setReceiver({name: conversation.hostName,id: conversation.hostId});
-    setSender({name: conversation.otherName,id: conversation.otherId});
-    setConvId(conversation.id);
+  const loadMessages = (conversation: Conversation) => {
+    const _id =
+      conversation.guestId !== id ? conversation.guestId : conversation.hostId;
+    const _name =
+      conversation.guestName !== name
+        ? conversation.guestName
+        : conversation.hostName;
+    dispatch(
+      updateChosenUser({
+        name: _name,
+        id: _id,
+        email: "",
+      })
+    );
+    dispatch(setCurrentConv({ id: conversation.id, guestName: _name, hostId: id}));
   };
 
   return (
-    <div id="conversation-root">
-      <h1>Conversations</h1>
-      {convs.length > 0 ? (
-        <ul id="conversation-list">
-          {convs.map((conversation: Conversation) => {
-            return (
-              <li key={userId + conversation.id} className="conversation" onClick={() => setProps(conversation)}>
-                    {conversation.hostId !== userId ? conversation.hostName : conversation.otherName}
-              </li>
-            );
-          })}
-        </ul>
-      ) : (
-        <ImSpinner10 className="spinner"/>
-      )}
+    <div>
+      <div>
+        {error && <p>{JSON.stringify(error)}</p>}
+        {loading && <p>Loading...</p>} 
+        {conversationsInFirestore && (
+          <ul id="conversations-list">
+            {conversations.map((conversation: Conversation) => {
+              // Guest name
+              const guestName =
+                conversation.guestId !== id
+                  ? conversation.guestName
+                  : conversation.hostName;
+
+              return (
+                <li
+                  key={conversation.id + Math.random() + Date.now()}
+                  onClick={() => loadMessages(conversation)}
+                  className="conversation"
+                >
+                  <div id="profile">
+                    <div id="image">{getInitiials(guestName)}</div>
+                    <p>{guestName}</p>
+                  </div>
+                  <MdDelete
+                    className="delete"
+                    onClick={() => deleteConversation(conversation)}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+      <BiMessageSquareAdd id="add" onClick={showPopup} />
+      {!popUpState ? null : <Popup />}
     </div>
   );
 }

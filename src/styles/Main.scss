@@ -1,62 +1,147 @@
 @import "./Color.scss";
 
-.root {
+#main {
   display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  align-items: flex-start;
+  background-color: lighten($color: rgb(41, 43, 55), $amount: 5%);
   height: 100vh;
-  #app-name {
+  width: 100vw;
+  color: white;
+  #separator {
+    height: 100vh;
+    border: solid red 5px;
+  }
+  #menu-section {
     display: flex;
-    background-color: $dark-green;
-    width: 100vw;
-    height: 75px;
-    p {
-      font-weight: 800;
-      font-size: 1.75rem;
-      width: 50%;
-      color: white;
+    flex-direction: column;
+    height: 100vh;
+    width: 10%;
+    #menus {
+      height: 60%;
       display: flex;
+      flex-direction: column;
       justify-content: flex-end;
       align-items: center;
+      .actions {
+        padding: 15px;
+        height: 35px;
+        width: 35px;
+        transition: color 500ms, transform 500ms;
+        &:hover {
+          transition: color 500ms, transform 500ms;
+          transform: scale(1.25);
+          color: $main-blue;
+        }
+      }
     }
-    #logout-button {
-      width: 50%;
+    #others {
+      height: 40%;
       display: flex;
+      flex-direction: column;
       justify-content: flex-end;
       align-items: center;
-      button{
-        height: 50%;
+      #image-profile {
+        height: 50px;
+        width: 50px;
+        border-radius: 25px;
+        border: solid black 1px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        font-size: 25px;
+        div{
+          display: flex;
+          align-self: center;
+          justify-self: center;
+          margin-bottom: 10px;
+        }
+      }
+      #shutdown {
+        height: 30px;
+        width: 30px;
+        margin: 15px;
+        transform: rotate(90deg);
+        transition: transform 400ms;
+        &:hover {
+          transition: transform 400ms;
+          transform: rotate(0);
+          color: red;
+        }
       }
     }
   }
-  #row {
-    width: 100%;
-    display: flex;
-    transition: 750ms;
-    #conversations {
-      background-color: $green;
-      height: 100vh;
-      color: white;
+  #convsersations-section {
+    width: 25%;
+    #headers {
       display: flex;
-      flex-direction: column;
+      justify-content: space-around;
       align-items: center;
-      width: 33%;
-      #toggle-button {
-        background-color: $dark-green;
-        border: none;
-        align-self: flex-end;
-        width: 35px;
-        height: 35px;
-        color: white;
+      margin-top: 17px;
+      p {
+        font-weight: 700;
+        font-size: 25px;
+        margin: 0;
+      }
+      #search {
+        width: 25px;
+        height: 25px;
+        margin: 0;
       }
     }
-    .messages {
+    ul {
+      list-style: none;
+    }
+  }
+  #messages-section {
+    width: 65%;
+    padding: 15px;
+    #actions {
+      display: flex;
+      justify-content: space-between;
+      #profile {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        #image {
+          height: 35px;
+          width: 35px;
+          border: solid black 1px;
+          border-radius: 25px;
+          margin-right: 10px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+      #actions-profile {
+        display: flex;
+        * {
+          margin: 0 10px;
+          height: 30px;
+          width: 30px;
+          color: white;
+        }
+      }
+    }
+    #messages-placeholder{
       display: flex;
       flex-direction: column;
-      align-items: center;
-      width: 67%;
-      max-height: 100vh;
+      width: 60%;
+      height: 60%;
+      margin: 100px auto;
+
+      p{
+        display: flex;
+        font-size: 20px;
+        font-weight: 400;
+        margin: 15px auto;
+      }
+
+      img{
+        max-width: 500px;
+        aspect-ratio: 1;
+      }
+      
     }
   }
 }

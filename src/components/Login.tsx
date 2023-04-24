@@ -1,5 +1,5 @@
 import { AiOutlineGoogle, AiOutlineMail, AiOutlineFacebook } from "react-icons/ai";
-import { getAuth, signInWithEmailAndPassword } from "@firebase/auth";
+import { browserSessionPersistence, getAuth, setPersistence, signInWithEmailAndPassword } from "@firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
@@ -26,14 +26,14 @@ function Login() {
   // For login redirection
   const redirectToLogin = () => {
     const auth = getAuth(app);
+
+    setPersistence(auth, browserSessionPersistence).then(() => 
     signInWithEmailAndPassword(auth, emailValue, passwordValue)
-      .then((userCred) => {
-        setRedirect(true);
-      })
-      .catch((err) => {
-        console.log("Error login...");
-        console.log(err.code, " : ", err.message);
-      });
+    .then((userCred) => {
+      setRedirect(true);
+    })
+    .catch((err) => {
+    }))
   };
 
   return (

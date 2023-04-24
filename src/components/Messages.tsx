@@ -1,74 +1,177 @@
-import { addDoc, collection, doc, Firestore, getFirestore, onSnapshot, orderBy, query, setDoc, Timestamp, where } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  Firestore,
+  getFirestore,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc,
+  Timestamp,
+  where,
+} from "firebase/firestore";
 import { BsFillEmojiSmileFill, BsFillSendFill } from "react-icons/bs";
-import { AiOutlineFileGif } from "react-icons/ai";
-import { useState, useEffect, SetStateAction } from "react";
-import { IoIosAttach } from "react-icons/io";
-import MessageEntry from "./MessageEntry";
+import React, { useState, useEffect, SetStateAction, ReactNode } from "react";
+import { useCollection } from "react-firebase-hooks/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import "../styles/Messages.scss";
-import app from "../Firebase";
+import { useDispatch, useSelector } from "react-redux";
+import { AiOutlineFileGif } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import { IoIosAttach } from "react-icons/io";
+import { IoSend } from "react-icons/io5";
+import { RootState } from "../redux/store";
+import MessageEntry from "./MessageEntry";
+import { auth, db } from "../Firebase";
+import { Message } from "./Models";
+import "../styles/Messages.scss";
+import { setCurrentConv } from "../redux/slices/currentConversationSlice";
 
-// Sender and Receiver types
-type Receiver = {
-    name: string,
-    id: string
-};
-type Sender = Receiver;
+function Messages() {
+  // State for the messages
+  const [messages, setMessages] = useState<Message[]>([]);
+  //     {
+  //         message: "Kez",
+  //         receiverId: "456",
+  //         senderId: "123",
+  //         id: "123"
+  //     },
+  //     {
+  //         message: "Salut",
+  //         receiverId: "123",
+  //         senderId: "456",
+  //         id: "123"
+  //     }
+  // ]);
 
-function Messages({ convId, hostId, guestId }: { convId: string , hostId: string, guestId: string}) {
+  const currentConvId = useSelector((state: RootState) => state.currentConvId.id);
+  const currentConvHostId = useSelector((state: RootState) => state.currentConvId.hostId);
+  const id = useSelector((state: RootState) => state.user.id);
+  const user = useSelector((state: RootState) => state.user);
+  const guestId = useSelector(
+    (state: RootState) => state.chosenUser.chosenUser.id
+  );
 
-    console.log("Conversation id: ",convId);
+  const [inputValue, setInputValue] = useState("");
 
-    // Type for a message object
-    type Message = { message: string, receiverId: string, senderId: string, id: string };
+  // ************  Firebase Hooks   ************
+  const messRefs = collection(db, "conversations", currentConvId, "mess");
+  const q = query(messRefs, orderBy("sentTime"));
+  const [messageList, loading, error] = useCollection(q);
 
-    // Messages
+  // ************  Effects   ************
+
+  useEffect(() => {
+    let tmp: any[] = [];
+    messageList?.docs.forEach((doc) => {
+      tmp.push({ ...doc.data(), id: doc.data().id });
+    });
+    setMessages(tmp);
+  }, [currentConvId]);
+
+//   useEffect(() => {
+//     if (messageList?.docs.length === 0) {
+//       let tmp: any[] = [];
+//       messageList?.docs.forEach((doc) => {
+//         tmp.push({ ...doc.data(), id: doc.data().id });
+//       });
+//       setMessages(tmp);
+//     } else {
+//       let tmp: any[] = messages;
+//       tmp.push(messageList?.docs[messageList?.docs.length - 1]);
+//       setMessages(tmp);
+//     }
+//     console.log(messages);
+//   }, [messageList]);
+
+  useEffect(() => {
+    let tmp: any[] = [];
+    messageList?.docs.forEach((doc) => {
+      tmp.push({ ...doc.data(), id: doc.data().id });
+    });
+    setMessages(tmp);
+    
+    const list = document.querySelector("#messages-list ul") as HTMLDivElement;
+    list.scrollTop = list.scrollHeight;
+
+    console.log(user);
+  }, [messageList]);
+
+  // ************ Functions **************
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const sendToFirebase = (
+    e:
+      | React.MouseEvent<SVGElement, MouseEvent>
+      | React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+
+    const messRef = collection(db, "conversations", currentConvId, "mess");
+    addDoc(messRef, {
+      message: inputValue,
+      senderId: id,
+      receiverId: guestId,
+      hostId: currentConvHostId,
+      sentTime: serverTimestamp(),
+    });
+
+    setInputValue("");
+  };
+
+  /*// ************  States   ************
+ 
+    // State for the messages
     const [messages, setMessages] = useState<Message[]>([]);
-
-    // Set up userId and trigger get messages function
+ 
+    // State for user id
     const [userId, setUserId] = useState("");
-    const [wait, setWait] = useState(0);
+ 
+    // ************  Firebase Hooks   ************
+    const messRefs = collection(db, "conversations", convId, "mess");
+    const q = query(messRefs, );
+    const [messageList, loading, error] = useCollection(q);
+ 
+    // ************  Effects   ************  
+ 
+    // For getting messages when the conversation change
     useEffect(() => {
-        const auth = getAuth();
+        
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 setUserId(user.uid);
                 getMessages();
-                console.log("user", userId, " logged in...");
             } else {
                 const navigate = useNavigate();
                 navigate("/login");
             }
         });
-    }, [userId, hostId, guestId]);
-
+    }, [userId]);
+ 
+    useEffect(() => {
+        getMessages();
+    }, [messageList]);
+ 
+    // ************  Functions   ************
+ 
     // Getting messages from firebase
     const getMessages = () => {
-
-        // Authentification
-        const auth = getAuth();
-        const db = getFirestore();
-        const messagesRef = collection(db, "conversations", convId, "mess");
-
-        // Query to fetch by sent time
-        const q = query(messagesRef, orderBy("sentTime"));
-
-        onSnapshot(q, (snapshot) => {
-            let messagesInfirebase: Message[] = [];
-            snapshot.forEach((doc: any) => {
-                messagesInfirebase.push({ ...doc.data(), id: doc.id });
-            });
-            setMessages(messagesInfirebase);
-            console.log("messages: ",messages);
+ 
+        let list: any[] = [];
+        messageList?.forEach((doc) => {
+            list.push({...doc.data(), id: doc.data().id});
         });
+        setMessages(list);
     };
-
+ 
     // For adding new message to firebase
     const sendToFirebase = (e: any) => {
         e.preventDefault();
-        console.log(e.target.elements.texts.value);
-
+ 
         const auth = getAuth();
         const db = getFirestore();
         const messRef = collection(db, "conversations", convId, "mess");
@@ -80,37 +183,51 @@ function Messages({ convId, hostId, guestId }: { convId: string , hostId: string
                 sentTime: Timestamp.now()
             })
     };
+*/
 
-    return (
-        <div id="root-message">
-            <div id="messages-list">
-                <ul>
-                    {
-                        messages.map((message: Message) => {
-                            return (
-                               <MessageEntry content={message.message}
-                                senderId={message.senderId}
-                                receiverId={message.receiverId}
-                                hostId={hostId}
-                               />
-                            )
-                        })
-                    }
-                </ul>
-            </div>
-            <div id="inputs">
-            <form id="main-input" onSubmit={(e) => sendToFirebase(e)}>
-                <input type="text" name="texts" id="text-input"/>
-                <button type="submit">Send</button>
+  // ************  Rendering   ************
+
+  return (
+    <div id="root-message">
+      <div id="messages-list">
+        <ul>
+          {error && <p>{JSON.stringify(error)}</p>}
+          {loading && <p>Loading messages...</p>}
+          {messages &&
+            messages.map((message: Message) => {
+                console.log("hostId: ",currentConvHostId)
+                console.log("senderId: ",message.senderId)
+                console.log("receiverId: ",message.receiverId)
+
+              return (
+                <MessageEntry
+                  key={message.id + message.message}
+                  content={message.message}
+                  senderId={message.senderId}
+                  receiverId={message.receiverId}
+                  hostId={currentConvHostId}
+                />
+              );
+            })}
+        </ul>
+      </div>
+      <div>
+        {messages.length === 0 ? null : (
+          <div id="input">
+            <form onSubmit={(e) => sendToFirebase(e)}>
+              <input
+                type="text"
+                name="texts"
+                id="text-input"
+                onChange={(e) => handleChange(e)}
+              />
+              <IoSend onClick={(e) => sendToFirebase(e)} />
             </form>
-            <div id="buttons">
-                <BsFillEmojiSmileFill id="emoji-button"/>
-                <IoIosAttach id="attachment-button"/>
-                <AiOutlineFileGif id="gif-button"/>
-            </div>
-        </div>
-        </div>
-    )
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default Messages;
