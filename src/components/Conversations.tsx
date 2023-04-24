@@ -62,16 +62,25 @@ function Conversations() {
   //     id: "123",
   //   },
   // ]);
+  
+  const [keyword, setKeyword] = useState("Ari");
+
   const convsRef = collection(db, "conversations");
-  const q = query(
+  let q = query(
     convsRef,
     or(where("hostId", "==", id), where("guestId", "==", id))
   );
   const [conversationsInFirestore, loading, error] = useCollection(q);
 
   useEffect(() => {
+
+    const filter = document.querySelector("#filter-input");
+
+
     let tmp: any[] = [];
     conversationsInFirestore?.docs.forEach((doc) => {
+      if (filter.value)
+        console.log(filter.value)
       tmp.push({ ...doc.data(), id: doc.data().id });
     });
     setConversations(tmp);

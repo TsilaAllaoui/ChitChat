@@ -70,6 +70,7 @@ function Main() {
       <div id="convsersations-section">
         <div id="headers">
           <p>Chats</p>
+          <input type="text" id="filter-input"/>
           <FaSearch id="search" />
         </div>
         <Conversations />
