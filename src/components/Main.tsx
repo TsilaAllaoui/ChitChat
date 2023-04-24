@@ -1,98 +1,107 @@
 import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
-import { SlArrowRight, SlArrowLeft } from "react-icons/sl";
+import { useSelector, useDispatch } from "react-redux";
+import { BsFillChatDotsFill } from "react-icons/bs";
+import { update } from "../redux/slices/userSlice";
+import { AiFillSetting, AiFillHome } from "react-icons/ai";
+import { RiShutDownLine } from "react-icons/ri";
 import Conversations from "./Conversations";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { Receiver, Sender, UserInFirebase } from "./Models";
+import { Receiver, Sender } from "./Models";
+import { RootState } from "../redux/store";
+import { FaSearch } from "react-icons/fa";
+import { auth } from "../Firebase";
 import Messages from "./Messages";
 import "../styles/Main.scss";
-import Popup from "./Popup";
-import { auth, db } from "../Firebase";
-import { collection, onSnapshot, query, where } from "@firebase/firestore";
-import { RootState, store } from "../redux/store";
-import { Provider, useSelector, useDispatch } from "react-redux";
-import { update, UserState } from "../redux/slices/userSlice";
+import "./Modules";
+import { getInitiials } from "./Modules";
+import { IoMdCall, IoMdAttach } from "react-icons/io";
+import { MdDelete } from "react-icons/md";
+import messagesSvg from "../assets/messages.svg";
 
 function Main() {
-
   // ************  States   ************
-
 
   // State for showing or hiding conversations list
   const [show, setShow] = useState(false);
-  
-  // States for setting receiver and sender
-  const [receiver, setReceiver] = useState<Receiver>({ name: "", id: "" });
-  const [sender, setSender] = useState<Sender>({ name: "", id: "" });
-  
-  const currentConvId = useSelector((state: RootState) => state.currentConvId.id);
-  const name = useSelector((state: RootState) => state.user.name);
-  const id = useSelector((state: RootState) => state.user.id);
+
+  // ************ Redux Selector and Dispatches ************
+
+  const user = useSelector((state: RootState) => state.user);
+  const currentConv = useSelector((state: RootState) => state.currentConvId);
   const dispatch = useDispatch();
-  
 
   // ************  Effects   ************
-
 
   // For getting user infos on authentification
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        dispatch(update({
-          name: user.displayName!,
-          id: user.uid
-        }));
+        const initials = getInitiials(user.displayName!);
+
+        dispatch(
+          update({
+            name: user.displayName!, //"Tsila",
+            id: user.uid, //"123",
+            initials: initials,
+          })
+        );
       }
     });
   }, []);
 
-
-
-  // ************  Functions   ************
-
-
-  // Toggling conversations list state
-  const toggleConvs = () => {
-
-    setShow(!show);
-    let convs = document.getElementById("row")!;
-    if (show) {
-      convs.style.marginLeft = "0";
-    } else {
-      convs.style.marginLeft = "-29.5%";
-    }
-  };
-
-  // To log out
-  const navigate = useNavigate();
-  const logOut = () => {
-    const auth = getAuth();
-    signOut(auth).then(() => {
-      alert("You logged out...");
-      navigate("/login");
-    })
-      .catch(() => {
-        alert("Can't log out. Contact admin...");
-      });
-  };
-
-
-
-
   // ************  Rendering   ************
 
   return (
-   <div>
-    <h1>Main</h1>
     <div id="main">
-      <Conversations/>
-      <div id="separator"></div>
-      {
-        currentConvId === "" ? null :
-        <Messages/>
-      }
+      <div id="menu-section">
+        <div id="menus">
+          <AiFillHome className="actions" />
+          <BsFillChatDotsFill className="actions" />
+          <AiFillSetting className="actions" />
+        </div>
+        <div id="others">
+          <div id="image-profile">
+            <div>{user.initials}</div>
+          </div>
+          <RiShutDownLine id="shutdown" />
+        </div>
+      </div>
+      <div id="convsersations-section">
+        <div id="headers">
+          <p>Chats</p>
+          <FaSearch id="search" />
+        </div>
+        <Conversations />
+      </div>
+      <div id="messages-section">
+        {currentConv.id === "" ?
+        <div id="messages-placeholder">
+          <p>Click on conversation to see messages...</p>
+          <div>
+            <img src={messagesSvg}  />
+          </div>
+        </div>
+        : (
+          <div>
+            <div id="actions">
+              <div id="profile">
+                <div id="image">{getInitiials(currentConv.guestName)}</div>
+                <div id="name">{currentConv.guestName}</div>
+              </div>
+              <div id="actions-profile">
+                <IoMdAttach id="attachment" />
+                <IoMdCall id="call" />
+                <MdDelete id="delete" />
+              </div>
+            </div>
+            <div id="messages-list">
+              {currentConv.id === "" ? null : <Messages />}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
-   </div>
   );
 }
 

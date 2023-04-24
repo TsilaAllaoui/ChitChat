@@ -1,64 +1,41 @@
 @import "./Color.scss";
 
-#messages-list {
-  // overflow: hidden;
-  // max-height: 65vh;
-  ul{
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    width: 500px;
-    height: 500px;
-    overflow: auto;
-  }
-}
-
-#inputs {
-  margin: 0 25%;
-  display: flex;
-  flex-direction: column;
-  #main-input{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 5px;
-    input {
-        width: 75%;
-        height: 40px;
-        justify-content: flex-start;
-        margin: 0 auto;
-        border-radius: 10px;
-        outline: unset;
-        border: solid black 1px;
-        margin: 0;
+#root-message {
+  background-color: rgb(61, 63, 75);
+  border-radius: 10px;
+  #messages-list {
+    width: 100%;
+    ul {
+      width: 65%;
+      display: flex;
+      flex-direction: column;
+      margin: auto;
+      &::-webkit-scrollbar {
+        display: none;
+        list-style: none;
       }
-      #send-button {
-        width: 35px;
-        height: 35px;
-        margin-left: 5px;
+      height: 80vh;
+      overflow: auto;
+      padding: 0;
+    }
+  }
+  #input {
+    padding-bottom: 20px;
+    width: 100%;
+    #text-input {
+      width: 75%;
+      height: 30px;
+      background-color: transparent;
+      border: solid rgb(27, 145, 251) 2px;
+      border-radius: 10px;
+      margin-right: 10px;
+      padding-left: 50px;
+      transition: box-shadow 500ms;
+      &:hover {
+        transition: box-shadow 500ms;
         color: white;
-        background-color: lighten($color: green, $amount: 15%);
-        border-radius: 5px;
-        border: solid lighten($color: green, $amount: 15%) 5px;
+        box-shadow: 0 0 10px $main-blue;
       }
-  }
-  #buttons {
-    display: flex;
-    justify-content: flex-start;
-    margin: 0 auto;
-    width: 75%; 
-    #emoji-button {
-      width: 25px;
-      height: 25px;
-    }
-    #attachment-button {
-      width: 25px;
-      height: 25px;
-    }
-    #gif-button {
-      width: 25px;
-      height: 25px;
     }
   }
 }

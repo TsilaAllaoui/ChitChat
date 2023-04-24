@@ -11,53 +11,50 @@
     }
 }
 
-#conversation-root {
+#conversations-list {
+    padding: 0;
+}
+
+.conversation {
+    height: 40px;
     display: flex;
-    flex-direction: column;
-    width: 100%;
     align-items: center;
-
-    #conversation-list {
-        margin: 0;
-        padding: 0;
-
-        .conversation {
-            text-align: center;
-            background-color: $lighter;
-            color: black;
-            height: 45px;
-            border-bottom: solid black 1px;
-            margin: 1px 0;
-            transition: 250ms;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 22px;
-
-            &:hover {
-                background-color: darken($color: $lighter, $amount: 15%);
-            }
-
-            .delButton {
-                justify-self: flex-end;
-            }
+    padding: 15px;
+    margin: 10px 0;
+    background-color: rgb(61,63,75);
+    border-radius: 10px;
+    color: white;
+    font-size: 25px;
+    transition: background-color 750ms;
+    #profile{
+        display: flex;
+        width: 85%;
+        #image{
+            width: 40px;
+            height: 40px;
+            border: solid black 1px;
+            border-radius: 25px;
+            align-self: center;
+        }
+        p{
+            width: 60%;
         }
     }
-
-    .spinner {
-        font-size: 3rem;
-        animation: rotate 1s both infinite linear;
-        margin-bottom: 25px;
+    .delete{
+        width: 15%;
+        justify-self: end;
+        color: rgb(184, 35, 35);
+    }
+    &:hover{
+        background-color: $main-blue;
     }
 }
 
-#popup {
-    width: 100vw;
-    height: 100vh;
-    position: absolute;
-    backdrop-filter: blur(5px);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+#add {
+    width: 35px;
+    height: 35px;
+    transition: color 750ms;
+    &:hover {
+        color: $main-blue;
+    }
 }

@@ -101,7 +101,6 @@ function Conversations({
 
     for (let c of convs) {
       if (c.otherId === user.uid) {
-        console.log("pass")
         pass = true;
         break;
       }
@@ -185,7 +184,6 @@ function Conversations({
 
   // Updating messages for current discussion
    const setProps = (conversation: Conversation) => {
-    console.log("message updated:" , conversation);
     setReceiver({name: conversation.hostName,id: conversation.hostId});
     setSender({name: conversation.otherName,id: conversation.otherId});
     setConvId(conversation.id);

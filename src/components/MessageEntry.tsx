@@ -2,10 +2,18 @@ import "../styles/MessageEntry.scss";
 import { useEffect, useState } from "react";
 import { serverTimestamp } from "firebase/firestore";
 
-function MessageEntry({ content, senderId, receiverId, hostId }: { content: string; senderId: string, receiverId: string, hostId: string }) {
-
+function MessageEntry({
+  content,
+  senderId,
+  receiverId,
+  hostId,
+}: {
+  content: string;
+  senderId: string;
+  receiverId: string;
+  hostId: string;
+}) {
   // ************  States   ************
-
 
   // Characters limit by line
   const [limit, setLimit] = useState(42);
@@ -16,20 +24,15 @@ function MessageEntry({ content, senderId, receiverId, hostId }: { content: stri
   // State for the heigth of the message body
   const [height, setHeight] = useState(0);
 
-  // Condition to know if message entry was sent by who
-  const senderCondition = hostId === senderId;
-
   // State for message parts
   const [parts, setParts] = useState<string[]>([]);
 
-
+  const [condition, setCondition] = useState(false);
 
   // ************ Effects **************
 
-
-  // Getting and splitting messages on first render 
+  // Getting and splitting messages on first render
   useEffect(() => {
-    
     // Splitting the content if there is new lines
     let parts: string[] = content.split("\\n");
 
@@ -66,30 +69,28 @@ function MessageEntry({ content, senderId, receiverId, hostId }: { content: stri
     // Set parts
     setParts(parts);
 
-  }, [])
-
-
+    // Condition to know if message entry was sent by who
+    setCondition(hostId === senderId);
+  }, []);
 
   // ************  Functions   ************
-
-
-
 
   // ************  Rendering   ************
 
   return (
-    <li 
-      
-      className="message" style={{
-      width: width === 12 ? width + 10 : width,
-      height: height,
-      alignSelf: senderCondition ? "flex-end" : "flex-start",
-      backgroundColor: senderCondition ? "#A5D7E8" : "#576CBC",
-      borderRadius: senderCondition ? "10px 10px 0 10px" : "10px 10px 10px 0"
-    }}>
-      {
-        parts.map((part, index) => <p key={content + index}>{part}</p>)
-      }
+    <li
+      className="message"
+      style={{
+        width: width === 12 ? width + 10 : width,
+        height: height,
+        alignSelf: condition ? "flex-end" : "flex-start",
+        backgroundColor: condition ? "rgb(81, 95, 111)" : "rgb(20,147,251)",
+        borderRadius: condition ? "10px 10px 0 10px" : "10px 10px 10px 0",
+      }}
+    >
+      {parts.map((part, index) => (
+        <p key={content + index}>{part}</p>
+      ))}
     </li>
   );
 }

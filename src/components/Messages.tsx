@@ -1,90 +1,129 @@
-import { addDoc, collection, doc, Firestore, getFirestore, onSnapshot, orderBy, query, serverTimestamp, setDoc, Timestamp, where } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  Firestore,
+  getFirestore,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc,
+  Timestamp,
+  where,
+} from "firebase/firestore";
 import { BsFillEmojiSmileFill, BsFillSendFill } from "react-icons/bs";
+import React, { useState, useEffect, SetStateAction, ReactNode } from "react";
+import { useCollection } from "react-firebase-hooks/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import React, { useState, useEffect, SetStateAction } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { AiOutlineFileGif } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { IoIosAttach } from "react-icons/io";
+import { IoSend } from "react-icons/io5";
+import { RootState } from "../redux/store";
 import MessageEntry from "./MessageEntry";
+import { auth, db } from "../Firebase";
 import { Message } from "./Models";
 import "../styles/Messages.scss";
-import { auth, db } from "../Firebase";
-import { useCollection } from "react-firebase-hooks/firestore";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { setCurrentConv } from "../redux/slices/currentConversationSlice";
 
 function Messages() {
+  // State for the messages
+  const [messages, setMessages] = useState<Message[]>([]);
+  //     {
+  //         message: "Kez",
+  //         receiverId: "456",
+  //         senderId: "123",
+  //         id: "123"
+  //     },
+  //     {
+  //         message: "Salut",
+  //         receiverId: "123",
+  //         senderId: "456",
+  //         id: "123"
+  //     }
+  // ]);
 
-    // State for the messages
-    const [messages, setMessages] = useState<Message[]>([]);
+  const currentConvId = useSelector((state: RootState) => state.currentConvId.id);
+  const currentConvHostId = useSelector((state: RootState) => state.currentConvId.hostId);
+  const id = useSelector((state: RootState) => state.user.id);
+  const user = useSelector((state: RootState) => state.user);
+  const guestId = useSelector(
+    (state: RootState) => state.chosenUser.chosenUser.id
+  );
 
-    const currentConvId = useSelector((state: RootState) => state.currentConvId.id);
-    const id = useSelector((state: RootState) => state.user.id);
-    const guestId = useSelector((state: RootState) => state.chosenUser.chosenUser.id);
+  const [inputValue, setInputValue] = useState("");
 
-    // ************  Firebase Hooks   ************
-    const messRefs = collection(db, "conversations", currentConvId, "mess");
-    const q = query(messRefs, orderBy("sentTime"));
-    const [messageList, loading, error] = useCollection(q);
+  // ************  Firebase Hooks   ************
+  const messRefs = collection(db, "conversations", currentConvId, "mess");
+  const q = query(messRefs, orderBy("sentTime"));
+  const [messageList, loading, error] = useCollection(q);
 
+  // ************  Effects   ************
 
+  useEffect(() => {
+    let tmp: any[] = [];
+    messageList?.docs.forEach((doc) => {
+      tmp.push({ ...doc.data(), id: doc.data().id });
+    });
+    setMessages(tmp);
+  }, [currentConvId]);
 
-    // ************  Effects   ************  
+//   useEffect(() => {
+//     if (messageList?.docs.length === 0) {
+//       let tmp: any[] = [];
+//       messageList?.docs.forEach((doc) => {
+//         tmp.push({ ...doc.data(), id: doc.data().id });
+//       });
+//       setMessages(tmp);
+//     } else {
+//       let tmp: any[] = messages;
+//       tmp.push(messageList?.docs[messageList?.docs.length - 1]);
+//       setMessages(tmp);
+//     }
+//     console.log(messages);
+//   }, [messageList]);
 
-    useEffect(() => {
-        console.log(currentConvId)
-        let tmp: any[] = [];
-        messageList?.docs.forEach((doc) => {
-            tmp.push({ ...doc.data(), id: doc.data().id });
-        });
-        setMessages(tmp);
-    }, [currentConvId]);
+  useEffect(() => {
+    let tmp: any[] = [];
+    messageList?.docs.forEach((doc) => {
+      tmp.push({ ...doc.data(), id: doc.data().id });
+    });
+    setMessages(tmp);
+    
+    const list = document.querySelector("#messages-list ul") as HTMLDivElement;
+    list.scrollTop = list.scrollHeight;
 
-    // useEffect(() => {
-    //     if (messageList?.docs.length === 0)
-    //     {
-    //         let tmp: any[] = [];
-    //         messageList?.docs.forEach((doc) => {
-    //             tmp.push({ ...doc.data(), id: doc.data().id });
-    //         });
-    //         setMessages(tmp);                                                                                   
-    //     }
-    //     else
-    //     {
-    //         let tmp: any[] = messages;
-    //         tmp.push(messageList?.docs[messageList?.docs.length - 1])
-    //         setMessages(tmp);                                                                                   
-    //     }
-    // }, [messageList]);
+    console.log(user);
+  }, [messageList]);
 
-    useEffect(() => {
-        console.log("Modified array")
-        let tmp: any[] = [];
-        messageList?.docs.forEach((doc) => {
-            tmp.push({ ...doc.data(), id: doc.data().id });
-        });
-        setMessages(tmp);
-    }, [messageList]);
+  // ************ Functions **************
 
-    // ************ Functions **************
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
 
-    const sendToFirebase = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+  const sendToFirebase = (
+    e:
+      | React.MouseEvent<SVGElement, MouseEvent>
+      | React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
 
-        console.log(guestId)
+    const messRef = collection(db, "conversations", currentConvId, "mess");
+    addDoc(messRef, {
+      message: inputValue,
+      senderId: id,
+      receiverId: guestId,
+      hostId: currentConvHostId,
+      sentTime: serverTimestamp(),
+    });
 
-        const messRef = collection(db, "conversations", currentConvId, "mess");
-        addDoc(messRef,
-            {
-                message: (e.currentTarget.elements[0] as HTMLInputElement).value,
-                senderId: id,
-                receiverId: guestId,
-                hostId: id,
-                sentTime: serverTimestamp()
-            })
-    };
+    setInputValue("");
+  };
 
-    /*// ************  States   ************
+  /*// ************  States   ************
  
     // State for the messages
     const [messages, setMessages] = useState<Message[]>([]);
@@ -146,47 +185,49 @@ function Messages() {
     };
 */
 
+  // ************  Rendering   ************
 
-    // ************  Rendering   ************
+  return (
+    <div id="root-message">
+      <div id="messages-list">
+        <ul>
+          {error && <p>{JSON.stringify(error)}</p>}
+          {loading && <p>Loading messages...</p>}
+          {messages &&
+            messages.map((message: Message) => {
+                console.log("hostId: ",currentConvHostId)
+                console.log("senderId: ",message.senderId)
+                console.log("receiverId: ",message.receiverId)
 
-    return (
-        <div id="root-message">
-            <div id="messages-list">
-                <ul>
-                    {error && <p>{JSON.stringify(error)}</p>}
-                    {loading && <p>Loading messages...</p>}
-                    {
-                        messages && messages.map((message: Message) => {
-                            return (
-                                <MessageEntry key={message.id + message.message} 
-                                    content={message.message}
-                                    senderId={message.senderId}
-                                    receiverId={message.receiverId}
-                                    hostId={id}
-                                />
-                            )
-                        })
-                    }
-                </ul>
-            </div>
-            <div>
-                {
-                    messages.length === 0 ? null :
-                        <div id="inputs">
-                            <form id="main-input" onSubmit={(e) => sendToFirebase(e)}>
-                                <input type="text" name="texts" id="text-input" />
-                                <button type="submit">Send</button>
-                            </form>
-                            <div id="buttons">
-                                <BsFillEmojiSmileFill id="emoji-button" />
-                                <IoIosAttach id="attachment-button" />
-                                <AiOutlineFileGif id="gif-button" />
-                            </div>
-                        </div>
-                }
-            </div>
-        </div>
-    )
+              return (
+                <MessageEntry
+                  key={message.id + message.message}
+                  content={message.message}
+                  senderId={message.senderId}
+                  receiverId={message.receiverId}
+                  hostId={currentConvHostId}
+                />
+              );
+            })}
+        </ul>
+      </div>
+      <div>
+        {messages.length === 0 ? null : (
+          <div id="input">
+            <form onSubmit={(e) => sendToFirebase(e)}>
+              <input
+                type="text"
+                name="texts"
+                id="text-input"
+                onChange={(e) => handleChange(e)}
+              />
+              <IoSend onClick={(e) => sendToFirebase(e)} />
+            </form>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default Messages;

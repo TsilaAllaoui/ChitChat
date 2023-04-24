@@ -1,13 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface UserState {
-    name: string
-    id: string
+    name: string,
+    id: string,
+    initials: string
   }
 
 const initialState: UserState = {
     name: "",
-    id: ""
+    id: "",
+    initials: ""
   }
 
 export const userSlice = createSlice({
@@ -17,6 +19,7 @@ export const userSlice = createSlice({
         update: (state, action: PayloadAction<UserState>) => {
             state.id = action.payload.id,
             state.name = action.payload.name
+            state.initials = action.payload.initials == undefined ? "" : action.payload.initials
         }
     },
   })

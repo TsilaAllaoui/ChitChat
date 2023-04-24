@@ -33,8 +33,6 @@ function Login() {
       setRedirect(true);
     })
     .catch((err) => {
-      console.log("Error login...");
-      console.log(err.code, " : ", err.message);
     }))
   };
 
