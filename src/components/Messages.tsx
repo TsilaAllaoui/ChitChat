@@ -1,19 +1,7 @@
-import {
-  addDoc,
-  collection,
-  doc,
-  Firestore,
-  getFirestore,
-  onSnapshot,
-  orderBy,
-  query,
-  serverTimestamp,
-  setDoc,
-  Timestamp,
-  where,
-} from "firebase/firestore";
+import { addDoc, collection, doc, Firestore, getDocs, getFirestore, onSnapshot, orderBy, query, serverTimestamp, setDoc, Timestamp, where } from "firebase/firestore";
+import React, { useState, useEffect, SetStateAction, ReactNode, useRef } from "react";
+import { setCurrentConv } from "../redux/slices/currentConversationSlice";
 import { BsFillEmojiSmileFill, BsFillSendFill } from "react-icons/bs";
-import React, { useState, useEffect, SetStateAction, ReactNode } from "react";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,42 +14,50 @@ import MessageEntry from "./MessageEntry";
 import { auth, db } from "../Firebase";
 import { Message } from "./Models";
 import "../styles/Messages.scss";
-import { setCurrentConv } from "../redux/slices/currentConversationSlice";
 
 function Messages() {
+
+  // ************* States ***************
+
   // State for the messages
   const [messages, setMessages] = useState<Message[]>([]);
-  //     {
-  //         message: "Kez",
-  //         receiverId: "456",
-  //         senderId: "123",
-  //         id: "123"
-  //     },
-  //     {
-  //         message: "Salut",
-  //         receiverId: "123",
-  //         senderId: "456",
-  //         id: "123"
-  //     }
-  // ]);
 
-  const currentConvId = useSelector((state: RootState) => state.currentConvId.id);
-  const currentConvHostId = useSelector((state: RootState) => state.currentConvId.hostId);
-  const id = useSelector((state: RootState) => state.user.id);
-  const user = useSelector((state: RootState) => state.user);
-  const guestId = useSelector(
-    (state: RootState) => state.chosenUser.chosenUser.id
-  );
+  // Debug
+  const [count, setCount] = useState(0);
 
+  // For the input value
   const [inputValue, setInputValue] = useState("");
 
+  const [lastMessage, setLastMessage] = useState<Message>();
+
+  // ************* References **************
+
+  const messagesListRef = useRef<null | HTMLUListElement>(null);
+
+  // ************* Reducers ***************
+
+  const user = useSelector((state: RootState) => state.user);
+  const guestId = useSelector((state: RootState) => state.chosenUser.chosenUser.id);
+  const id = useSelector((state: RootState) => state.user.id);
+  const currentConvId = useSelector((state: RootState) => state.currentConvId.id);
+  const currentConvHostId = useSelector((state: RootState) => state.currentConvId.hostId);
+
+
+
   // ************  Firebase Hooks   ************
+
   const messRefs = collection(db, "conversations", currentConvId, "mess");
   const q = query(messRefs, orderBy("sentTime"));
   const [messageList, loading, error] = useCollection(q);
 
+  
   // ************  Effects   ************
 
+  // useEffect(() => {
+  //   messagesListRef.current?.scroll({top: messagesListRef.current.scrollHeight, behavior: "smooth"});
+  // }, [messagesListRef]);
+  
+  // When changing curren conversation
   useEffect(() => {
     let tmp: any[] = [];
     messageList?.docs.forEach((doc) => {
@@ -69,137 +65,71 @@ function Messages() {
     });
     setMessages(tmp);
   }, [currentConvId]);
-
-//   useEffect(() => {
-//     if (messageList?.docs.length === 0) {
-//       let tmp: any[] = [];
-//       messageList?.docs.forEach((doc) => {
-//         tmp.push({ ...doc.data(), id: doc.data().id });
-//       });
-//       setMessages(tmp);
-//     } else {
-//       let tmp: any[] = messages;
-//       tmp.push(messageList?.docs[messageList?.docs.length - 1]);
-//       setMessages(tmp);
-//     }
-//     console.log(messages);
-//   }, [messageList]);
-
+  
+  // When messages list is updated
   useEffect(() => {
     let tmp: any[] = [];
     messageList?.docs.forEach((doc) => {
       tmp.push({ ...doc.data(), id: doc.data().id });
     });
-    setMessages(tmp);
+    console.log("last message: ", messages[messages.length - 1]);
     
-    const list = document.querySelector("#messages-list ul") as HTMLDivElement;
-    list.scrollTop = list.scrollHeight;
+    const element = messagesListRef.current;
+    if (element?.scrollHeight! > element?.clientHeight! || element?.scrollWidth! > element?.clientWidth!)
+    {
+      console.log("overflow")
+      const last = messagesListRef.current?.lastChild as HTMLLIElement;
+      last?.scrollIntoView();
+    }
 
-    console.log(user);
+    // function isOverflown(element: Element) {
+    //   return element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth;
+    // }
+
+    setMessages(tmp);
+
+
   }, [messageList]);
+  
+
 
   // ************ Functions **************
-
+  
+  // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
-
+  
+  // Send new message
   const sendToFirebase = (
     e:
-      | React.MouseEvent<SVGElement, MouseEvent>
-      | React.FormEvent<HTMLFormElement>
-  ) => {
-    e.preventDefault();
-
-    const messRef = collection(db, "conversations", currentConvId, "mess");
-    addDoc(messRef, {
-      message: inputValue,
-      senderId: id,
-      receiverId: guestId,
-      hostId: currentConvHostId,
-      sentTime: serverTimestamp(),
-    });
-
-    setInputValue("");
-    const list = document.querySelector("#text-input") as HTMLDivElement;
-    list.value = "";
-  };
-
-  /*// ************  States   ************
- 
-    // State for the messages
-    const [messages, setMessages] = useState<Message[]>([]);
- 
-    // State for user id
-    const [userId, setUserId] = useState("");
- 
-    // ************  Firebase Hooks   ************
-    const messRefs = collection(db, "conversations", convId, "mess");
-    const q = query(messRefs, );
-    const [messageList, loading, error] = useCollection(q);
- 
-    // ************  Effects   ************  
- 
-    // For getting messages when the conversation change
-    useEffect(() => {
-        
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                setUserId(user.uid);
-                getMessages();
-            } else {
-                const navigate = useNavigate();
-                navigate("/login");
-            }
-        });
-    }, [userId]);
- 
-    useEffect(() => {
-        getMessages();
-    }, [messageList]);
- 
-    // ************  Functions   ************
- 
-    // Getting messages from firebase
-    const getMessages = () => {
- 
-        let list: any[] = [];
-        messageList?.forEach((doc) => {
-            list.push({...doc.data(), id: doc.data().id});
-        });
-        setMessages(list);
+    | React.MouseEvent<SVGElement, MouseEvent>
+    | React.FormEvent<HTMLFormElement>
+    ) => {
+      e.preventDefault();
+      
+      const messRef = collection(db, "conversations", currentConvId, "mess");
+      addDoc(messRef, {
+        message: inputValue,
+        senderId: id,
+        receiverId: guestId,
+        hostId: currentConvHostId,
+        sentTime: serverTimestamp(),
+      });
+      
+      setInputValue("");
     };
- 
-    // For adding new message to firebase
-    const sendToFirebase = (e: any) => {
-        e.preventDefault();
- 
-        const auth = getAuth();
-        const db = getFirestore();
-        const messRef = collection(db, "conversations", convId, "mess");
-        addDoc(messRef,
-            {
-                message: e.target.elements.texts.value,
-                senderId: hostId,
-                receiverId: guestId,
-                sentTime: Timestamp.now()
-            })
-    };
-*/
 
   // ************  Rendering   ************
 
   return (
     <div id="root-message">
       <div id="messages-list">
-        <ul>
+        <ul ref={messagesListRef}>
           {error && <p>{JSON.stringify(error)}</p>}
           {loading && <p>Loading messages...</p>}
           {messages &&
             messages.map((message: Message) => {
-                console.log("hostId: ",currentConvHostId)
-                console.log("senderId: ",message.senderId)
-                console.log("receiverId: ",message.receiverId)
 
               return (
                 <MessageEntry

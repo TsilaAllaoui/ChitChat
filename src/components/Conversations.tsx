@@ -26,11 +26,14 @@ import { getInitiials } from "./Modules";
 import { auth, db } from "../Firebase";
 import "../styles/Conversations.scss";
 import Popup from "./Popup";
+import { setFilter } from "../redux/slices/filterSlice";
+import { FaSearch } from "react-icons/fa";
 
 function Conversations() {
   const name = useSelector((state: RootState) => state.user.name);
   const id = useSelector((state: RootState) => state.user.id);
   const popUpState = useSelector((state: RootState) => state.popUp.popUpShown);
+  const filter = useSelector((state: RootState) => state.filter.filter);
   const chosenUser = useSelector(
     (state: RootState) => state.chosenUser.chosenUser
   );
@@ -62,8 +65,8 @@ function Conversations() {
   //     id: "123",
   //   },
   // ]);
-  
-  const [keyword, setKeyword] = useState("Ari");
+
+  const filterValue = useSelector((state: RootState) => state.filter.filter);
 
   const convsRef = collection(db, "conversations");
   let q = query(
@@ -73,21 +76,17 @@ function Conversations() {
   const [conversationsInFirestore, loading, error] = useCollection(q);
 
   useEffect(() => {
-
-    const filter = document.querySelector("#filter-input");
-
-
     let tmp: any[] = [];
     conversationsInFirestore?.docs.forEach((doc) => {
-      if (filter.value)
-        console.log(filter.value)
-      tmp.push({ ...doc.data(), id: doc.data().id });
+      const data: any = { ...doc.data(), id: doc.data().id };
+      const guestName: string = data.guestName;
+      if (guestName.includes(filter)) tmp.push(data);
     });
     setConversations(tmp);
     if (conversationsInFirestore?.docs.length === 0) {
       dispatch(setCurrentConv({ id: "", guestName: "", hostId: "" }));
     }
-  }, [conversationsInFirestore]);
+  }, [conversationsInFirestore, filter]);
 
   useEffect(() => {
     if (!popUpState && chosenUser.id != "" && chosenUser.name != "") {
@@ -142,24 +141,17 @@ function Conversations() {
             sentTime: serverTimestamp(),
           }).then(() => {
             if (conversations.length === 0)
-              dispatch(setCurrentConv({ id: newConvId, guestName: user.id, hostId: id }));
+              dispatch(
+                setCurrentConv({
+                  id: newConvId,
+                  guestName: user.id,
+                  hostId: id,
+                })
+              );
           });
         });
       });
     }
-  };
-
-  const deleteConversation = (conversation: Conversation) => {
-    conversationsInFirestore?.docs.forEach((doc) => {
-      const data = { ...doc.data(), id: doc.data().id };
-      if (data.id === conversation.id) {
-        deleteDoc(doc.ref).then(() => {
-          if (conversationsInFirestore.docs.length === 0) {
-            dispatch(setCurrentConv({ id: "", guestName: "", hostId:"" }));
-          }
-        });
-      }
-    });
   };
 
   const loadMessages = (conversation: Conversation) => {
@@ -176,14 +168,52 @@ function Conversations() {
         email: "",
       })
     );
-    dispatch(setCurrentConv({ id: conversation.id, guestName: _name, hostId: id}));
+    dispatch(
+      setCurrentConv({ id: conversation.id, guestName: _name, hostId: id })
+    );
+  };
+
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    const filterInput: HTMLInputElement = document.querySelector(
+      "#filter-input"
+    ) as HTMLInputElement;
+    filterInput.style.color = "white";
+    if (filterInput.value === "") {
+      filterInput.style.opacity = "0";
+      dispatch(setFilter(e.target.value));
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const filterInput: HTMLInputElement = document.querySelector(
+      "#filter-input"
+    ) as HTMLInputElement;
+    if (filterInput.style.opacity === "1") dispatch(setFilter(e.target.value));
+    else filterInput.value = "";
+  };
+
+  const toggleFilterInput = () => {
+    const filterInput: HTMLInputElement = document.querySelector(
+      "#filter-input"
+    ) as HTMLInputElement;
+    filterInput.style.opacity = filterInput.style.opacity === "0" ? "1" : "0";
   };
 
   return (
     <div>
+      <div id="headers">
+        <p>Chats</p>
+        <input
+          type="text"
+          id="filter-input"
+          onChange={(e) => handleChange(e)}
+          onBlur={(e) => handleFocus(e)}
+        />
+        <FaSearch id="search" onClick={toggleFilterInput}/>
+      </div>
       <div>
         {error && <p>{JSON.stringify(error)}</p>}
-        {loading && <p>Loading...</p>} 
+        {loading && <p>Loading...</p>}
         {conversationsInFirestore && (
           <ul id="conversations-list">
             {conversations.map((conversation: Conversation) => {
@@ -203,10 +233,10 @@ function Conversations() {
                     <div id="image">{getInitiials(guestName)}</div>
                     <p>{guestName}</p>
                   </div>
-                  <MdDelete
+                  {/* <MdDelete
                     className="delete"
                     onClick={() => deleteConversation(conversation)}
-                  />
+                  /> */}
                 </li>
               );
             })}

@@ -7,10 +7,10 @@ import { RiShutDownLine } from "react-icons/ri";
 import Conversations from "./Conversations";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { Receiver, Sender } from "./Models";
+import { Conversation, Receiver, Sender } from "./Models";
 import { RootState } from "../redux/store";
 import { FaSearch } from "react-icons/fa";
-import { auth } from "../Firebase";
+import { auth, db } from "../Firebase";
 import Messages from "./Messages";
 import "../styles/Main.scss";
 import "./Modules";
@@ -18,12 +18,18 @@ import { getInitiials } from "./Modules";
 import { IoMdCall, IoMdAttach } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import messagesSvg from "../assets/messages.svg";
+import { setFilter } from "../redux/slices/filterSlice";
+import { collection, deleteDoc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { setCurrentConv } from "../redux/slices/currentConversationSlice";
+import ReactModal from "react-modal";
+
 
 function Main() {
   // ************  States   ************
 
   // State for showing or hiding conversations list
   const [show, setShow] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   // ************ Redux Selector and Dispatches ************
 
@@ -50,6 +56,36 @@ function Main() {
     });
   }, []);
 
+
+  // ************* Functions **************
+
+  // To log out
+  const navigate = useNavigate();
+  const logOut = () => {
+    signOut(auth).then(() => {
+      alert("Logged out... Redirecting to login page...");
+      navigate("/login");
+    });
+  };
+
+  const deleteConversation = (id: string) => {
+    console.log("delete");
+    const q = query(collection(db, "conversations"), where("id", "==", currentConv.id));
+    getDocs(q).then((snap) => {
+      snap.docs.forEach((doc) => {
+        const data = { ...doc.data(), id: doc.data().id };
+        if (data.id === id) {
+          deleteDoc(doc.ref).then(() => {
+            if (snap.docs.length === 0) {
+              dispatch(setCurrentConv({ id: "", guestName: "", hostId: "" }));
+            }
+          });
+        }
+      });
+    });
+    setShowConfirmation(false);
+  };
+
   // ************  Rendering   ************
 
   return (
@@ -64,17 +100,14 @@ function Main() {
           <div id="image-profile">
             <div>{user.initials}</div>
           </div>
-          <RiShutDownLine id="shutdown" />
+          <RiShutDownLine id="shutdown" onClick={logOut}/>
         </div>
       </div>
+      <div id="separator"></div>
       <div id="convsersations-section">
-        <div id="headers">
-          <p>Chats</p>
-          <input type="text" id="filter-input"/>
-          <FaSearch id="search" />
-        </div>
         <Conversations />
       </div>
+      <div id="separator"></div>
       <div id="messages-section">
         {currentConv.id === "" ?
         <div id="messages-placeholder">
@@ -93,7 +126,7 @@ function Main() {
               <div id="actions-profile">
                 <IoMdAttach id="attachment" />
                 <IoMdCall id="call" />
-                <MdDelete id="delete" />
+                <MdDelete id="delete" onClick={() => setShowConfirmation(true)} />
               </div>
             </div>
             <div id="messages-list">
@@ -102,6 +135,16 @@ function Main() {
           </div>
         )}
       </div>
+      {
+        !showConfirmation ? null :
+        <div id="confirmation">
+        <p>Delete conversation?</p>
+        <div id="buttons">
+          <button id="yes" onClick={() => {deleteConversation(currentConv.id)}}>Yes</button>
+          <button id="no" onClick={() => {setShowConfirmation(false)}}>No</button>
+        </div>
+      </div>
+      }
     </div>
   );
 }
