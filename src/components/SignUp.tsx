@@ -9,6 +9,10 @@ import "../styles/SignUp.scss";
 import { addDoc, collection, getFirestore } from "@firebase/firestore";
 import Splash1 from "../assets/splash1.svg";
 import Splash2 from "../assets/splash2.svg";
+import { BiUser } from "react-icons/bi";
+import { MdOutlineAlternateEmail } from "react-icons/md";
+import { FaLock } from "react-icons/fa";
+import { Value } from "sass";
 
 function SignUp() {
   // States for user credentials and infos
@@ -21,6 +25,8 @@ function SignUp() {
 
   // To know if we want to redirect to login page
   const [redirect, setRedirect] = useState(false);
+
+  const [style, setStyle] = useState({ width: "" });
 
   // For dynamic navigation
   const navigate = useNavigate();
@@ -63,46 +69,62 @@ function SignUp() {
 
       // Catching possible error
       .catch((err) => {
-        setError(err.code + " " + err.message);
+        setError(err.message);
       });
   };
 
+  useEffect(() => {
+    setStyle({ width: "100px" });
+  }, []);
+
   return (
     <div id="signup">
-      <div className="error">{error}</div>
-      <form onSubmit={(e) => signUp(e)} method="post" className="from-signup">
-        <label>Username</label>
-        <input
-          type="text"
-          name="name"
-          required
-          placeholder="Enter username..."
-          onChange={(e) => setName(e.target.value)}
-        />
-        <label>Email</label>
-        <input
-          type="email"
-          name="email"
-          required
-          placeholder="Enter email adress..."
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <label>Password</label>
-        <input
-          type="password"
-          name="password"
-          required
-          placeholder="********"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Signup</button>
+      <form onSubmit={(e) => signUp(e)} method="post" id="form-signup">
+        <h1>Signup</h1>
+        <div className="hseparator" style={style}></div>
+        <div id="inputs">
+          <div className="input-line">
+            <p>Username</p>
+            <div className="in">
+              <BiUser className="icon" />
+              <input type="text" onChange={(e) => setName(e.target.value)} />
+            </div>
+          </div>
+          <div className="input-line">
+          <p style={{width: "50px"}}>Email</p>
+          <div className="in">
+            <MdOutlineAlternateEmail className="icon"/>
+            <input type="email" onChange={(e) => setEmail(e.target.value)} value={""}/>
+          </div>
+          </div>
+          <div className="input-line">
+            <p>Password</p>
+            <div className="in">
+                <FaLock className="icon"/>
+                <input type="password" onChange={(e) => setPassword(e.target.value)} value={""}
+                />
+            </div>
+          </div>
+          <button type="submit">Sign up</button>
+        </div>
+        {error === "" ? null : <div className="error">{error}</div>}
+        <p>Already have an account? <a onClick={() => navigate("/login")}>Login</a></p>
       </form>
       <div id="splashes">
-        <p id="welcome">Hello! Welcome to ChitChat.</p>
+        <div id="welcome-container">
+            <p id="welcome">Hello! Welcome to ChitChat.</p>
+            <div id="welcome-line"></div>
+        </div>
         <div id="info">
-          <p id="friends">Chat with friends</p>
-          <p id="people">Chat with people</p>
-          <p id="family">Chat with family</p>
+          <p id="friends">
+            Chat with <span style={{ color: "orange" }}>friends</span>
+          </p>
+          <p id="people">
+            Chat with <span style={{ color: "green" }}>people</span>
+          </p>
+          <p id="family">
+            Chat with <span style={{ color: "grey" }}>family</span>
+          </p>
         </div>
       </div>
     </div>

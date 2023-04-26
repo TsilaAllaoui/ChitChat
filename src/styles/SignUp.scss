@@ -1,61 +1,199 @@
 @import "../styles/Color.scss";
 
+@keyframes slide {
+    from {
+        transform: translateX(-200px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes underline {
+    from {
+        width: 0;
+    }
+    to {
+       width: 300px;
+    }
+}
+
+@keyframes slide-friends {
+    from {
+        transform: translateX(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-100px);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-people {
+    from {
+        transform: translateX(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-75px);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-family {
+    from {
+        transform: translateX(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50px);
+        opacity: 1;
+    }
+}
+
 #signup {
   display: flex;
-  .from-signup {
+  #form-signup {
     width: 35%;
     height: 100vh;
+    background-color: white;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: $purple;
-    // margin: auto;
-    color: white;
-    font-size: 25px;
-    label {
-      display: flex;
-      align-self: left;
-    }
-    input {
-      width: 50%;
-      height: 30px;
-      border-radius: 7px;
-      border: solid black 1px;
-      margin: 10px auto;
+    
+
+    h1{
+        margin-bottom: 0;
     }
 
-    button {
-      width: 100px;
-      height: 35px;
+    .hseparator {
+        width: 0;
+        border: solid black 2px;
+        transition: width 2000ms;
+    }
+
+    #inputs {
+      display: flex;
+      flex-direction: column;
+      button {
+        border-radius: 5px;
+        border: none;
+        margin-top: 30px;
+        width: 150px;
+        align-self: center;
+        background-color: grey;
+        color: white;
+        font-size: 15px;
+        font-weight: 600;
+        height: 40px;
+        transition: background-color 500ms;
+        &:hover{
+            background-color: $purple;
+        }
+      }
+      .input-line{
+        background-color: transparent;
+        width: 300px;
+        display: flex;
+        flex-direction: column;
+        p{
+            position: relative;
+            top: 25px;
+            left: 25px;
+            background-color: white;
+            width: 75px;
+            display: flex;
+            justify-content: center;
+            color: $main;
+        }
+        .in{
+            display: flex;
+            border: solid grey 3px;
+            border-radius: 5px;
+            align-items: center;
+            .icon{
+                width: 25px;
+                height: 25px;
+                margin: 0 15px;
+            }
+            input, input[type=email], input[type=password]{
+                background-color: transparent;
+                border: unset;
+                height: 40px;
+                width: 100%;
+                &:focus-visible{
+                    outline: none;
+                }
+            }
+        }
+      }
+    }
+    .error {
+      font-weight: 800;
+      margin: 15px;
+      background-color: red;
+      color: white;
+      height: 30px;
+      border-radius: 5px;
+      padding: 5px;
     }
   }
 
   #splashes {
-    flex-grow: 1;
-    display: flex;
-    background: url("../assets/splash1.svg") bottom left,
-      url("../assets/splash2.svg") top right;
-    background-repeat: no-repeat;
-    background-size: 50%;
-    
-    #welcome {
-      margin: 15% 5%;
-      font-size: 30px;
-      font-weight: 500;
+    color: white;
+      flex-grow: 1;
+      display: flex;
+      background: url("../assets/splash1.svg") bottom left,
+      url("../assets/splash2.svg") top right, $purple;
+      background-repeat: no-repeat;
+      background-size: 50%;
+      overflow: hidden;
+    #welcome-container{
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        align-items: center;
+        #welcome {
+            margin-top: 25%;
+            width: 100%;
+            font-size: 30px;
+            font-weight: 500;
+            animation: slide 650ms linear;
+          }
+          #welcome-line{
+              width: 0;
+              border: solid white 3px;
+              animation: underline 1000ms 650ms linear forwards;
+          }
     }
     #info {
-        align-self: center;
-        position: absolute;
-        margin-left: 40%;
-        margin-top: 25%;
-        font-size: 30px;
-        font-weight: 500;
+      align-self: center;
+      position: absolute;
+      margin-left: 40%;
+      margin-top: 25%;
+      font-size: 25px;
+      font-weight: 500;
+      opacity: 1;
+      #friends{
+        animation: slide-friends 1000ms 650ms linear both;
+      }
+      #people{
+        animation: slide-people 1000ms 750ms linear both;
+      }
+      #family{
+        animation: slide-family 1000ms 850ms linear both;
+      }
     }
   }
 
-  .error {
-    color: red;
-    font-weight: 800;
+  a{
+    font-weight: 900;
+    color: $purple;
+    &:hover{
+        cursor: pointer;
+    }
   }
 }
