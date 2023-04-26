@@ -3,13 +3,15 @@ import userReducer from "./slices/userSlice";
 import popUpReducer from "./slices/popUpSlice";
 import chosenUserReducer from "./slices/chosenUserSlice";
 import currentConversationReducer from './slices/currentConversationSlice';
+import filterReducer from './slices/filterSlice';
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
     popUp: popUpReducer,
     chosenUser: chosenUserReducer,
-    currentConvId: currentConversationReducer
+    currentConvId: currentConversationReducer,
+    filter: filterReducer
   }
 })
 

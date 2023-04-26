@@ -7,8 +7,9 @@
   width: 100vw;
   color: white;
   #separator {
-    height: 100vh;
-    border: solid red 5px;
+    height: 90vh;
+    border: solid #3D3F4B 2px;
+    margin: auto 15px;
   }
   #menu-section {
     display: flex;
@@ -22,6 +23,7 @@
       justify-content: flex-end;
       align-items: center;
       .actions {
+        margin-left: 15px;
         padding: 15px;
         height: 35px;
         width: 35px;
@@ -49,7 +51,7 @@
         flex-direction: column;
         justify-content: center;
         font-size: 25px;
-        div{
+        div {
           display: flex;
           align-self: center;
           justify-self: center;
@@ -86,6 +88,12 @@
         width: 25px;
         height: 25px;
         margin: 0;
+        transition: transform 500ms, color 500ms;
+        &:hover {
+          color: $main-blue;
+          transform: scale(1.1);
+          transition: transform 500ms, color 500ms;
+        }
       }
     }
     ul {
@@ -120,28 +128,80 @@
           height: 30px;
           width: 30px;
           color: white;
+          transition: transform 500ms, color 500ms;
+          &:hover {
+            color: $main-blue;
+            transform: scale(1.1);
+            transition: transform 500ms, color 500ms;
+          }
         }
       }
     }
-    #messages-placeholder{
+    #messages-placeholder {
       display: flex;
       flex-direction: column;
       width: 60%;
       height: 60%;
       margin: 100px auto;
 
-      p{
+      p {
         display: flex;
         font-size: 20px;
         font-weight: 400;
         margin: 15px auto;
       }
 
-      img{
+      img {
         max-width: 500px;
         aspect-ratio: 1;
       }
-      
+    }
+  }
+}
+
+#confirmation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  backdrop-filter: blur(15px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  p {
+    font-size: 40px;
+  }
+  #buttons {
+    display: flex;
+    gap: 20px;
+    button {
+      height: 50px;
+      width: 100px;
+      border-radius: 10px;
+      color: white;
+      border: none;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    #yes {
+      background-color: $main-blue;
+      transition: background-color 750ms;
+      &:hover {
+        background-color: white;
+        color: $main-blue;
+        border: solid $main-blue 5px;
+      }
+    }
+    #no {
+      background-color: red;
+      transition: background-color 750ms;
+      &:hover {
+        background-color: white;
+        color: red;
+        border: solid red 5px;
+      }
     }
   }
 }
