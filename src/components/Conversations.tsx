@@ -1,80 +1,53 @@
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  or,
-  query,
-  serverTimestamp,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+import {addDoc, collection, doc, or, query, serverTimestamp, updateDoc, where } from "firebase/firestore";
 import { setCurrentConv } from "../redux/slices/currentConversationSlice";
 import { updateChosenUser } from "../redux/slices/chosenUserSlice";
 import { useCollection } from "react-firebase-hooks/firestore";
+import { setFilter } from "../redux/slices/filterSlice";
 import { Conversation, UserInFirebase } from "./Models";
-import { AppDispatch, RootState } from "../redux/store";
 import { useSelector, useDispatch } from "react-redux";
 import { BiMessageSquareAdd } from "react-icons/bi";
-import { onAuthStateChanged } from "firebase/auth";
-import { update } from "../redux/slices/userSlice";
 import { set } from "../redux/slices/popUpSlice";
 import { useEffect, useState } from "react";
-import { MdDelete } from "react-icons/md";
-import { getInitiials } from "./Modules";
-import { auth, db } from "../Firebase";
-import "../styles/Conversations.scss";
-import Popup from "./Popup";
-import { setFilter } from "../redux/slices/filterSlice";
+import { RootState } from "../redux/store";
 import { FaSearch } from "react-icons/fa";
+import { getInitiials } from "./Modules";
+import "../styles/Conversations.scss";
+import { db } from "../Firebase";
+import Popup from "./Popup";
 
 function Conversations() {
+
+  // *************** States ***************
+
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  
+  
+  // *************** Redux ****************
+  
   const name = useSelector((state: RootState) => state.user.name);
   const id = useSelector((state: RootState) => state.user.id);
   const popUpState = useSelector((state: RootState) => state.popUp.popUpShown);
   const filter = useSelector((state: RootState) => state.filter.filter);
-  const chosenUser = useSelector(
-    (state: RootState) => state.chosenUser.chosenUser
-  );
+  const chosenUser = useSelector((state: RootState) => state.chosenUser.chosenUser);
   const dispatch = useDispatch();
-
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-  //   {
-  //     participants: ["Participant1, Participant2"],
-  //     hostName: "Tsila",
-  //     hostId: "123",
-  //     guestName: "Ariane",
-  //     guestId: "456",
-  //     id: "123",
-  //   },
-  //   {
-  //     participants: ["Participant1, Participant2"],
-  //     hostName: "Tsila",
-  //     hostId: "123",
-  //     guestName: "Kal",
-  //     guestId: "456",
-  //     id: "123",
-  //   },
-  //   {
-  //     participants: ["Participant1, Participant2"],
-  //     hostName: "Tsila",
-  //     hostId: "123",
-  //     guestName: "Allaoui",
-  //     guestId: "456",
-  //     id: "123",
-  //   },
-  // ]);
-
   const filterValue = useSelector((state: RootState) => state.filter.filter);
+  
 
+
+  // **************** Firebase hooks ***************
+  
   const convsRef = collection(db, "conversations");
   let q = query(
     convsRef,
     or(where("hostId", "==", id), where("guestId", "==", id))
-  );
+    );
   const [conversationsInFirestore, loading, error] = useCollection(q);
 
+
+
+  // ***************** Hooks ********************
+
+  // For updating conversations list
   useEffect(() => {
     let tmp: any[] = [];
     conversationsInFirestore?.docs.forEach((doc) => {
@@ -88,6 +61,7 @@ function Conversations() {
     }
   }, [conversationsInFirestore, filter]);
 
+  // For toggling pop up
   useEffect(() => {
     if (!popUpState && chosenUser.id != "" && chosenUser.name != "") {
       addNewConversation();
@@ -101,16 +75,21 @@ function Conversations() {
     }
   }, [popUpState]);
 
+
+
+  // *************** Functions *******************
+
+  // Show pop up
   const showPopup = () => {
     dispatch(set(true));
   };
 
+  // Add a new conversation
   const addNewConversation = () => {
     const user: UserInFirebase = chosenUser;
     if (user.id === "" || user.name === "") {
       return;
     }
-
     let pass = false;
     conversationsInFirestore?.docs.forEach((doc) => {
       const data: any = { ...doc.data(), id: doc.data().id };
@@ -154,6 +133,7 @@ function Conversations() {
     }
   };
 
+  // Loading current selected conversations messagse
   const loadMessages = (conversation: Conversation) => {
     const _id =
       conversation.guestId !== id ? conversation.guestId : conversation.hostId;
@@ -173,6 +153,7 @@ function Conversations() {
     );
   };
 
+  // Handle focus when pop up show
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     const filterInput: HTMLInputElement = document.querySelector(
       "#filter-input"
@@ -184,6 +165,7 @@ function Conversations() {
     }
   };
 
+  // Handle filter changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const filterInput: HTMLInputElement = document.querySelector(
       "#filter-input"
@@ -192,12 +174,17 @@ function Conversations() {
     else filterInput.value = "";
   };
 
+  // Toggle the input filter 
   const toggleFilterInput = () => {
     const filterInput: HTMLInputElement = document.querySelector(
       "#filter-input"
     ) as HTMLInputElement;
     filterInput.style.opacity = filterInput.style.opacity === "0" ? "1" : "0";
   };
+
+
+
+  // *************** Rendering *****************
 
   return (
     <div>
@@ -233,10 +220,6 @@ function Conversations() {
                     <div id="image">{getInitiials(guestName)}</div>
                     <p>{guestName}</p>
                   </div>
-                  {/* <MdDelete
-                    className="delete"
-                    onClick={() => deleteConversation(conversation)}
-                  /> */}
                 </li>
               );
             })}

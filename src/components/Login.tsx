@@ -1,25 +1,22 @@
-import {
-  AiOutlineGoogle,
-  AiOutlineMail,
-  AiOutlineFacebook,
-} from "react-icons/ai";
-import {
-  browserSessionPersistence,
-  getAuth,
-  setPersistence,
-  signInWithEmailAndPassword,
-} from "@firebase/auth";
+import { browserSessionPersistence, getAuth, setPersistence, signInWithEmailAndPassword } from "@firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import logo from "../assets/logo.svg";
-import "../styles/Login.scss";
 import app from "../Firebase";
+import "../styles/Login.scss";
 
 function Login() {
+
+  // ************** States **************
+
   // States for the inputs
   const [emailValue, setEmailValue] = useState("ratsilakwel@gmail.com");
   const [passwordValue, setPasswordValue] = useState("123456789");
+
+
+
+  // ************** Hooks ***************
 
   // For navigation
   const [redirect, setRedirect] = useState(false);
@@ -31,10 +28,13 @@ function Login() {
     }
   }, [redirect]);
 
+
+
+  // ************** Functions **************** 
+
   // For login redirection
   const redirectToLogin = () => {
     const auth = getAuth(app);
-
     setPersistence(auth, browserSessionPersistence).then(() =>
       signInWithEmailAndPassword(auth, emailValue, passwordValue)
         .then((userCred) => {
@@ -43,6 +43,10 @@ function Login() {
         .catch((err) => {})
     );
   };
+
+
+  
+  // ****************** Rendering *****************
 
   return (
     <div id="main-login">
@@ -93,9 +97,9 @@ function Login() {
         </div>
         <p>Or login with: </p>
         <div id="social-login">
-          <FcGoogle id="google" />
-          <AiOutlineMail id="mail" />
-          <AiOutlineFacebook id="fb" />
+          <FcGoogle id="google"/>
+          {/* <AiOutlineMail id="mail" />
+          <AiOutlineFacebook id="fb" /> */}
         </div>
       </div>
     </div>

@@ -11,19 +11,19 @@
 }
 
 #filter-input {
-    height: 25px;
-    border-radius: 7px;
-    background-color: transparent;
-    border: solid white 1px;
-    width: 250px;
-    opacity: 0;
-    transition: opacity 250ms;
-    &:focus-visible{
-        box-shadow: 0 0 5px $main-blue;
-        border: solid $main-blue 2px;
-        outline: none;
-        color: white;
-      }
+  height: 25px;
+  border-radius: 7px;
+  background-color: transparent;
+  border: solid white 1px;
+  width: 250px;
+  opacity: 0;
+  transition: opacity 250ms;
+  &:focus-visible {
+    box-shadow: 0 0 5px $main-blue;
+    border: solid $main-blue 2px;
+    outline: none;
+    color: white;
+  }
 }
 
 #conversations-list {

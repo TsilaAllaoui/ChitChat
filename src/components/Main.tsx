@@ -1,30 +1,27 @@
-import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
+import { collection, deleteDoc, getDocs, query, where } from "firebase/firestore";
+import { setCurrentConv } from "../redux/slices/currentConversationSlice";
+import { onAuthStateChanged, signOut } from "@firebase/auth";
+import { AiFillSetting, AiFillHome } from "react-icons/ai";
 import { useSelector, useDispatch } from "react-redux";
+import { IoMdCall, IoMdAttach } from "react-icons/io";
 import { BsFillChatDotsFill } from "react-icons/bs";
 import { update } from "../redux/slices/userSlice";
-import { AiFillSetting, AiFillHome } from "react-icons/ai";
+import messagesSvg from "../assets/messages.svg";
 import { RiShutDownLine } from "react-icons/ri";
 import Conversations from "./Conversations";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { Conversation, Receiver, Sender } from "./Models";
 import { RootState } from "../redux/store";
-import { FaSearch } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
+import { getInitiials } from "./Modules";
 import { auth, db } from "../Firebase";
 import Messages from "./Messages";
 import "../styles/Main.scss";
 import "./Modules";
-import { getInitiials } from "./Modules";
-import { IoMdCall, IoMdAttach } from "react-icons/io";
-import { MdDelete } from "react-icons/md";
-import messagesSvg from "../assets/messages.svg";
-import { setFilter } from "../redux/slices/filterSlice";
-import { collection, deleteDoc, getDoc, getDocs, query, where } from "firebase/firestore";
-import { setCurrentConv } from "../redux/slices/currentConversationSlice";
-import ReactModal from "react-modal";
 
 
 function Main() {
+  
   // ************  States   ************
 
   // State for showing or hiding conversations list
