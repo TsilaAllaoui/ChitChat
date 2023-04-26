@@ -1,146 +1,235 @@
 @import "../styles/Color.scss";
 
-.loginApp {
+@keyframes slide-chitchat {
+  from{
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  to{
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-info {
+  from{
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to{
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes underline {
+  0% {
+    width: 0;
+  }
+  75% {
+    width: 100%;
+    opacity: 50%;
+  }
+  100% {
+    width: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes r-underline {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+    opacity: 0;
+  }
+}
+
+#main-login{
   display: flex;
-  flex-direction: column;
-
-  #logo {
-    height: 185px;
-  }
-
-  #logo img {
-    width: 300px;
-    height: 240px;
-    margin-bottom: 0;
-    transition: 750ms;
-    &:hover {
-      scale: 1.25;
-    }
-  }
-
-  #sign-up-suggestion{
-    z-index: 5;
-  }
-
-  #sign-in {
-    text-decoration: none;
-  }
-  input {
-    height: 45px;
-    width: 350px;
-    margin: 15px auto;
-    border-radius: 10px;
-    border: solid $dark 2px;
-    padding-left: 50px;
-    transform: translateX(-30px);
-  }
-  #email {
-    width: 350px;
+  height: 100vh;
+  overflow: hidden;
+  #splash{
+    width: 50%;
+    background-color: $purple;
+    background-image: url("../assets/login-splash.svg");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-position: 50% 100%;
+    color: white;
+    font-weight: 500;
     display: flex;
     flex-direction: column;
-    margin: 0 auto;
-    align-items: flex-start;
-    span {
-      transform: translate(30px, 25px);
-      background-color: white;
-      width: 50px;
-      font-weight: 700;
-      color: $dark;
-      z-index: 1;
+    justify-content: space-between;
+    #chitchat{
+      align-self: flex-start;
+      margin: 10%;
+      font-size: 30px;
+      animation: slide-chitchat 650ms linear;
+      #hseparator {
+        width: 0;
+        border: solid white 2px;
+        animation: underline 2500ms 650ms both infinite;
+      }
+    }
+    #info{
+      align-self: flex-end;
+      margin: 10%;
+      font-size: 30px;
+      animation: slide-info 650ms linear;
+      #r-hseparator {
+        width: 0;
+        border: solid white 2px;
+        animation: r-underline 2500ms 650ms both infinite;
+      }
     }
   }
-  #password {
-    width: 350px;
+  .login-app {
+    width: 50%;
     display: flex;
     flex-direction: column;
-    margin: 0 auto;
-    align-items: flex-start;
-    span {
-      transform: translate(30px, 25px);
-      background-color: white;
-      color: $dark;
-      width: 80px;
-      font-weight: 700;
-      z-index: 1;
+  
+    #logo {
+      height: 185px;
     }
-  }
-  #agreements {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 15px;
-    font-size: 15px;
-    font-weight: 800;
-    input {
-      margin: 0 15px 0 0;
-      width: 15px;
-      height: 15px;
-    }
-  }
-  #buttons {
-    display: flex;
-    justify-content: center;
-    #forgot-password-button {
-      color: $dark;
-      height: 35px;
-      width: 150px;
-      border-radius: 9px;
-      margin-right: 15px;
-      border: solid $dark 1px;
-      transition: 750ms;
-      &:hover {
-        background-color: $main;
-        color: white;
-        border: solid $main 3px;
-      }
-    }
-    #login-button {
-      height: 35px;
-      width: 150px;
-      border-radius: 9px;
-      background-color: $dark;
-      margin-right: 15px;
-      color: white;
-      border: solid $dark 1px;
-      transition: 750ms;
-      &:hover {
-        background-color: white;
-        border: solid $dark 3px;
-        color: $dark;
-      }
-    }
-    button {
-      font-size: 15px;
-      font-weight: 700;
-      height: 35px;
-      width: 150px;
-      border-radius: 9px;
-    }
-  }
-  #social-login {
-    width: 300px;
-    display: flex;
-    margin: 15px auto;
-    * {
+  
+    #logo img {
+      width: 300px;
+      height: 240px;
+      margin-bottom: 0;
       transition: 750ms;
       &:hover {
         scale: 1.25;
       }
     }
-    #google {
-      width: 100px;
-      height: 40px;
-      color: rgb(3, 119, 48);
+  
+    #sign-up-suggestion{
+      z-index: 5;
     }
-    #mail {
-      width: 90px;
-      height: 40px;
-      color: rgb(184, 5, 5);
+  
+    #sign-in {
+      text-decoration: none;
     }
-    #fb {
-      width: 90px;
-      height: 40px;
-      color: $dark;
+    input {
+      height: 45px;
+      width: 350px;
+      margin: 15px auto;
+      border-radius: 10px;
+      border: solid $dark 2px;
+      padding-left: 50px;
+      transform: translateX(-30px);
     }
-  }
+    #email {
+      width: 350px;
+      display: flex;
+      flex-direction: column;
+      margin: 0 auto;
+      align-items: flex-start;
+      span {
+        transform: translate(30px, 25px);
+        background-color: white;
+        width: 50px;
+        font-weight: 700;
+        color: $dark;
+        z-index: 1;
+      }
+    }
+    #password {
+      width: 350px;
+      display: flex;
+      flex-direction: column;
+      margin: 0 auto;
+      align-items: flex-start;
+      span {
+        transform: translate(30px, 25px);
+        background-color: white;
+        color: $dark;
+        width: 80px;
+        font-weight: 700;
+        z-index: 1;
+      }
+    }
+    #agreements {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      font-size: 15px;
+      font-weight: 800;
+      input {
+        margin: 0 15px 0 0;
+        width: 15px;
+        height: 15px;
+      }
+    }
+    #buttons {
+      display: flex;
+      justify-content: center;
+      #forgot-password-button {
+        color: $dark;
+        height: 35px;
+        width: 150px;
+        border-radius: 9px;
+        margin-right: 15px;
+        border: solid $dark 1px;
+        transition: 750ms;
+        &:hover {
+          background-color: $main;
+          color: white;
+          border: solid $main 3px;
+        }
+      }
+      #login-button {
+        height: 35px;
+        width: 150px;
+        border-radius: 9px;
+        background-color: $dark;
+        margin-right: 15px;
+        color: white;
+        border: solid $dark 1px;
+        transition: 750ms;
+        &:hover {
+          background-color: white;
+          border: solid $dark 3px;
+          color: $dark;
+        }
+      }
+      button {
+        font-size: 15px;
+        font-weight: 700;
+        height: 35px;
+        width: 150px;
+        border-radius: 9px;
+      }
+    }
+    #social-login {
+      width: 300px;
+      display: flex;
+      margin: 15px auto;
+      * {
+        transition: 750ms;
+        &:hover {
+          scale: 1.25;
+        }
+      }
+      #google {
+        width: 100px;
+        height: 40px;
+        color: rgb(3, 119, 48);
+      }
+      #mail {
+        width: 90px;
+        height: 40px;
+        color: rgb(184, 5, 5);
+      }
+      #fb {
+        width: 90px;
+        height: 40px;
+        color: $dark;
+      }
+    }
+  }  
 }
+
+
