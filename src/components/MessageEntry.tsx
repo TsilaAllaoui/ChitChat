@@ -13,6 +13,8 @@ function MessageEntry({
   receiverId: string;
   hostId: string;
 }) {
+
+
   // ************  States   ************
 
   // Characters limit by line
@@ -28,6 +30,8 @@ function MessageEntry({
   const [parts, setParts] = useState<string[]>([]);
 
   const [condition, setCondition] = useState(false);
+
+
 
   // ************ Effects **************
 
@@ -73,8 +77,8 @@ function MessageEntry({
     setCondition(hostId === senderId);
   }, []);
 
-  // ************  Functions   ************
 
+  
   // ************  Rendering   ************
 
   return (

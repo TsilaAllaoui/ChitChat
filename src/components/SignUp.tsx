@@ -1,20 +1,17 @@
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  updateProfile,
-} from "@firebase/auth";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router";
-import "../styles/SignUp.scss";
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "@firebase/auth";
 import { addDoc, collection, getFirestore } from "@firebase/firestore";
-import Splash1 from "../assets/splash1.svg";
-import Splash2 from "../assets/splash2.svg";
-import { BiUser } from "react-icons/bi";
 import { MdOutlineAlternateEmail } from "react-icons/md";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { BiUser } from "react-icons/bi";
 import { FaLock } from "react-icons/fa";
-import { Value } from "sass";
+import { auth } from "../Firebase";
+import "../styles/SignUp.scss";
 
 function SignUp() {
+
+  // ***************** States *******************
+
   // States for user credentials and infos
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,7 +23,11 @@ function SignUp() {
   // To know if we want to redirect to login page
   const [redirect, setRedirect] = useState(false);
 
+  // Pour le style du separateur
   const [style, setStyle] = useState({ width: "" });
+
+
+  // ************* Effects ***************
 
   // For dynamic navigation
   const navigate = useNavigate();
@@ -34,8 +35,13 @@ function SignUp() {
     if (redirect) navigate("/login");
   }, [redirect]);
 
-  // Sign up new user
-  const auth = getAuth();
+  useEffect(() => {
+    setStyle({ width: "100px" });
+  }, []);
+
+
+
+  // ************ Functions ***************
 
   // Adding user to user list collection in firebase
   const addNewUser = (name: string, email: string, uid: string) => {
@@ -73,9 +79,8 @@ function SignUp() {
       });
   };
 
-  useEffect(() => {
-    setStyle({ width: "100px" });
-  }, []);
+
+   // ****************** Rendering ******************
 
   return (
     <div id="signup">

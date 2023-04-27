@@ -11,19 +11,21 @@ import { updateChosenUser } from "../redux/slices/chosenUserSlice";
 
 function Popup() {
 
-  const popUpState = useSelector((state: RootState) => state.popUp.popUpShown);
-  const userId = useSelector((state: RootState) => state.user.id);
-  const dispatch = useDispatch();
-
   //  ************** State **************
   
   const [keyword, setKeyword] = useState("");
   const [users, setUsers] = useState<UserInFirebase[]>([]);
 
+
+
   // *************** Firbase Hooks ****************
 
   const usersRef = collection(db, "users");
   const [userList,loading, error] = useCollection(usersRef);
+  const popUpState = useSelector((state: RootState) => state.popUp.popUpShown);
+  const userId = useSelector((state: RootState) => state.user.id);
+  const dispatch = useDispatch();
+
 
 
   // *************** Effects ****************
@@ -37,12 +39,16 @@ function Popup() {
     setUsers(tmp);
   }, [userList]);
 
+
+
   //  ************** Functions **************
 
   const createConversations = (user: UserInFirebase) => {
     dispatch(updateChosenUser(user));
     dispatch(set(false));
   };
+
+  
 
   //  ************** Rendering **************
 

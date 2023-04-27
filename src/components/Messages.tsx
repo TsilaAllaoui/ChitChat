@@ -30,9 +30,13 @@ function Messages() {
 
   const [lastMessage, setLastMessage] = useState<Message>();
 
+
+
   // ************* References **************
 
   const messagesListRef = useRef<null | HTMLUListElement>(null);
+
+
 
   // ************* Reducers ***************
 
@@ -52,10 +56,6 @@ function Messages() {
 
   
   // ************  Effects   ************
-
-  // useEffect(() => {
-  //   messagesListRef.current?.scroll({top: messagesListRef.current.scrollHeight, behavior: "smooth"});
-  // }, [messagesListRef]);
   
   // When changing curren conversation
   useEffect(() => {
@@ -81,13 +81,7 @@ function Messages() {
       const last = messagesListRef.current?.lastChild as HTMLLIElement;
       last?.scrollIntoView();
     }
-
-    // function isOverflown(element: Element) {
-    //   return element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth;
-    // }
-
     setMessages(tmp);
-
 
   }, [messageList]);
   
@@ -119,6 +113,8 @@ function Messages() {
       
       setInputValue("");
     };
+
+    
 
   // ************  Rendering   ************
 
