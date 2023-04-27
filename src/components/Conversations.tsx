@@ -52,8 +52,8 @@ function Conversations() {
     let tmp: any[] = [];
     conversationsInFirestore?.docs.forEach((doc) => {
       const data: any = { ...doc.data(), id: doc.data().id };
-      const guestName: string = data.guestName;
-      if (guestName.includes(filter)) tmp.push(data);
+      const guestName: string = name !== data.guestName ? data.guestName : data.hostName;
+      if (guestName.toLowerCase().includes(filter.toLowerCase())) tmp.push(data);
     });
     setConversations(tmp);
     if (conversationsInFirestore?.docs.length === 0) {
@@ -217,7 +217,9 @@ function Conversations() {
                   className="conversation"
                 >
                   <div id="profile">
-                    <div id="image">{getInitiials(guestName)}</div>
+                    <div id="image">
+                      <p>{getInitiials(guestName)}</p>
+                    </div>
                     <p>{guestName}</p>
                   </div>
                 </li>

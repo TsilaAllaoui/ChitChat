@@ -1,20 +1,24 @@
-import { browserSessionPersistence, getAuth, setPersistence, signInWithEmailAndPassword } from "@firebase/auth";
+import {
+  GoogleAuthProvider,
+  browserSessionPersistence,
+  getAuth,
+  setPersistence,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from "@firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import logo from "../assets/logo.svg";
-import app from "../Firebase";
+import app, { auth, gauthProvider } from "../Firebase";
 import "../styles/Login.scss";
 
 function Login() {
-
   // ************** States **************
 
   // States for the inputs
   const [emailValue, setEmailValue] = useState("ratsilakwel@gmail.com");
   const [passwordValue, setPasswordValue] = useState("123456789");
-
-
 
   // ************** Hooks ***************
 
@@ -28,9 +32,7 @@ function Login() {
     }
   }, [redirect]);
 
-
-
-  // ************** Functions **************** 
+  // ************** Functions ****************
 
   // For login redirection
   const redirectToLogin = () => {
@@ -44,8 +46,29 @@ function Login() {
     );
   };
 
+  const loginWithGoolge = () => {
+    setPersistence(auth, browserSessionPersistence).then(() => {
+      signInWithPopup(auth, gauthProvider)
+        .then((result) => {
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          const token = credential!.accessToken;
+          const user = result.user;
+          setRedirect(true);
+          console.log(user);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(
+            "Erreur d'authentification",
+            errorCode,
+            " ",
+            errorMessage
+          );
+        });
+    });
+  };
 
-  
   // ****************** Rendering *****************
 
   return (
@@ -53,7 +76,7 @@ function Login() {
       <div id="splash">
         <div id="chitchat">
           ChitChat.
-          <div id="hseparator"></div>  
+          <div id="hseparator"></div>
         </div>
         <div id="info">
           The way to chat.
@@ -73,7 +96,7 @@ function Login() {
             type="email"
             id="email-input"
             onChange={(e) => setEmailValue(e.target.value)}
-            defaultValue="Enter user email..."
+            placeholder="Enter user email..."
           />
         </div>
         <div id="password">
@@ -82,7 +105,7 @@ function Login() {
             id="password-input"
             type="password"
             onChange={(e) => setPasswordValue(e.target.value)}
-            defaultValue="********"
+            placeholder="********"
           />
         </div>
         <div id="agreements">
@@ -97,7 +120,7 @@ function Login() {
         </div>
         <p>Or login with: </p>
         <div id="social-login">
-          <FcGoogle id="google"/>
+          <FcGoogle id="google" onClick={loginWithGoolge} />
           {/* <AiOutlineMail id="mail" />
           <AiOutlineFacebook id="fb" /> */}
         </div>

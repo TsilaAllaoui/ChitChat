@@ -51,11 +51,11 @@
         flex-direction: column;
         justify-content: center;
         font-size: 25px;
-        div {
+        #initials{
           display: flex;
-          align-self: center;
-          justify-self: center;
-          margin-bottom: 10px;
+          align-items: center;
+          justify-content: center;
+          font-size: 20px;
         }
       }
       #shutdown {

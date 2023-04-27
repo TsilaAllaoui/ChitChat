@@ -95,7 +95,9 @@ function Main() {
         </div>
         <div id="others">
           <div id="image-profile">
-            <div>{user.initials}</div>
+            <div id="initials">
+              <p>{user.initials}</p>
+            </div>
           </div>
           <RiShutDownLine id="shutdown" onClick={logOut}/>
         </div>
