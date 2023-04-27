@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react";
-import { ID, User, UserInFirebase } from "./Models";
-import "../styles/Popup.scss";
-import { collection, getDoc, getDocs, onSnapshot, query, where } from "firebase/firestore";
-import { db } from "../Firebase";
+import { updateChosenUser } from "../redux/slices/chosenUserSlice";
+import { collection, or, query, where } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { AiOutlineCloseCircle } from "react-icons/ai";
 import { set } from "../redux/slices/popUpSlice";
-import { updateChosenUser } from "../redux/slices/chosenUserSlice";
+import { useEffect, useState } from "react";
+import { RootState } from "../redux/store";
+import { UserInFirebase } from "./Models";
+import { db } from "../Firebase";
+import "../styles/Popup.scss";
 
 function Popup() {
 
@@ -25,6 +26,8 @@ function Popup() {
   const popUpState = useSelector((state: RootState) => state.popUp.popUpShown);
   const userId = useSelector((state: RootState) => state.user.id);
   const dispatch = useDispatch();
+  const q = query(collection(db, "conversations"), or(where("guestId","==",userId), where("hostId", "==", userId)));
+  const [convList,loadingConv, errorConv] = useCollection(collection(db, "conversations", ));
 
 
 
@@ -33,19 +36,28 @@ function Popup() {
   useEffect(() => {
     let tmp: any = [];
     userList?.docs.forEach((doc) => {
-      if (doc.data().uid !== userId)
-        tmp.push({...doc.data(), id: doc.data().uid});
-    });
+      const data: any = {...doc.data(), id: doc.id}
+      if (data.uid !== userId && data.name.toLowerCase().includes(keyword.toLowerCase()))
+          tmp.push(data);
+      }); 
     setUsers(tmp);
-  }, [userList]);
+  }, [userList, keyword]);
 
 
 
   //  ************** Functions **************
 
   const createConversations = (user: UserInFirebase) => {
-    dispatch(updateChosenUser(user));
-    dispatch(set(false));
+    let found = false;
+    users.forEach((currUser) => {
+      if (currUser.name === user.name ){
+        found = true;
+      }
+    });
+    if (found){
+      dispatch(updateChosenUser(user));
+      dispatch(set(false));
+    }
   };
 
   
@@ -53,10 +65,10 @@ function Popup() {
   //  ************** Rendering **************
 
   return (
-    <div>
-      <div id="modal">
-        <button onClick={() => dispatch(set(false))}>Close</button>
-        <label>Name</label>
+    <div id="modal">
+        <AiOutlineCloseCircle id="close-button" onClick={() => dispatch(set(false))}/>
+        <div id="container">
+        <h1>Choose a person to chat with.</h1>
         <input
           type="text"
           id="search-input"
@@ -72,12 +84,9 @@ function Popup() {
                 <div
                   key={Math.random() + Date.now()}
                   onClick={() => createConversations(user)}
+                  className="user"
                 >
-                  {keyword === "" ? (
-                    <p>{user.name}</p>
-                  ) : user.name.includes(keyword) ? (
-                    <p>{user.name}</p>
-                  ) : null}
+                  <p>{user.name}</p>
                 </div>
               );
             })}
