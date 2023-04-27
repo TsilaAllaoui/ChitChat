@@ -1,12 +1,13 @@
-import { getAuth, createUserWithEmailAndPassword, updateProfile } from "@firebase/auth";
-import { addDoc, collection, getFirestore } from "@firebase/firestore";
+import { getAuth, createUserWithEmailAndPassword, updateProfile, setPersistence, browserSessionPersistence, signInWithPopup, GoogleAuthProvider } from "@firebase/auth";
+import { addDoc, collection, getDocs, getFirestore } from "@firebase/firestore";
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { BiUser } from "react-icons/bi";
 import { FaLock } from "react-icons/fa";
-import { auth } from "../Firebase";
+import { auth, db, gauthProvider } from "../Firebase";
 import "../styles/SignUp.scss";
+import { FcGoogle } from "react-icons/fc";
 
 function SignUp() {
 
@@ -16,6 +17,7 @@ function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
 
   // Error state
   const [error, setError] = useState("");
@@ -79,6 +81,52 @@ function SignUp() {
       });
   };
 
+  // To sign up with google
+  const signUpWithGoogle = () => {
+
+    setPersistence(auth, browserSessionPersistence).then(() => {
+      signInWithPopup(auth, gauthProvider)
+        .then((result) => {
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          const token = credential!.accessToken;
+          const user = result.user;
+
+          // Check if user is already subscribed
+          let found = false;
+          getDocs(collection(db, "users")).then((snap) => {
+            snap.forEach((doc) => {
+              const data:any = {...doc.data(), id: doc.id};
+              if (data.email === user.email && data.uid === user.uid)
+              {
+                found = true;
+                return;
+              }
+            });
+            if (found){
+              setShowPopup(true);
+            }
+
+            else{
+              addNewUser(result.user.displayName!, result.user.email!, result.user.uid);
+              navigate("/main");
+            }
+          });
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          if (error.code === "auth/account-exists-with-different-credential")
+            setShowPopup(true);
+          console.log(
+            "Erreur d'authentification",
+            errorCode,
+            " ",
+            errorMessage
+          );
+        });
+    });
+  };
+
 
    // ****************** Rendering ******************
 
@@ -113,6 +161,8 @@ function SignUp() {
           <button type="submit">Sign up</button>
         </div>
         {error === "" ? null : <div className="error">{error}</div>}
+        <p>Or sign up with:</p>
+        <FcGoogle id="google" onClick={signUpWithGoogle}/>
         <p>Already have an account? <a onClick={() => navigate("/login")}>Login</a></p>
       </form>
       <div id="splashes">
@@ -132,6 +182,17 @@ function SignUp() {
           </p>
         </div>
       </div>
+      {
+        !showPopup ? null :
+        <div id="popup">
+          <p>Account already exist. Please login to continue or signup with another credentials.</p>
+          <p>Go to login page?</p>
+          <div id="buttons">
+            <button id="yes" onClick={() => {navigate("/login"); setShowPopup(false);}}>Yes</button>
+            <button id="no" onClick={() => setShowPopup(false)}>No</button>
+          </div>
+        </div>
+      }
     </div>
   );
 }
