@@ -114,6 +114,10 @@ function Messages() {
       setInputValue("");
     };
 
+    // For uploading files
+    const uploadFile = () => {
+
+    };
     
 
   // ************  Rendering   ************
