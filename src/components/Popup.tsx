@@ -62,7 +62,11 @@ function Popup() {
       }
     });
     if (found){
-      dispatch(updateChosenUser(user));
+      dispatch(updateChosenUser({
+        name: user.name,
+        id: user.id,
+        email: user.email
+      }));
       dispatch(set(false));
     }
   };
