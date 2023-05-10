@@ -9,6 +9,7 @@ import { RootState } from "../redux/store";
 import { UserInFirebase } from "./Models";
 import { db } from "../Firebase";
 import "../styles/Popup.scss";
+import { current } from "@reduxjs/toolkit";
 
 function Popup() {
 
@@ -36,8 +37,12 @@ function Popup() {
   useEffect(() => {
     let tmp: any = [];
     userList?.docs.forEach((doc) => {
-      const data: any = {...doc.data(), id: doc.id}
-      if (data.uid !== userId && data.name.toLowerCase().includes(keyword.toLowerCase()))
+      const data: any = {
+        name: doc.data().name,
+        email: doc.data().email,
+        id: doc.data().uid,
+      };
+      if (data.id !== userId)
           tmp.push(data);
       }); 
     setUsers(tmp);
@@ -49,9 +54,11 @@ function Popup() {
 
   const createConversations = (user: UserInFirebase) => {
     let found = false;
+    let id = "";
     users.forEach((currUser) => {
       if (currUser.name === user.name ){
         found = true;
+        id = currUser.id;
       }
     });
     if (found){

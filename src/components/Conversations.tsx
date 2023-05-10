@@ -52,6 +52,7 @@ function Conversations() {
     let tmp: any[] = [];
     conversationsInFirestore?.docs.forEach((doc) => {
       const data: any = { ...doc.data(), id: doc.data().id };
+      console.log(data)
       const guestName: string = name !== data.guestName ? data.guestName : data.hostName;
       if (guestName.toLowerCase().includes(filter.toLowerCase())) tmp.push(data);
     });
@@ -93,7 +94,7 @@ function Conversations() {
     let pass = false;
     conversationsInFirestore?.docs.forEach((doc) => {
       const data: any = { ...doc.data(), id: doc.data().id };
-      if (data.guestId === user.id) pass = true;
+      if (data.guestId === user.id || data.hostId === user.id) pass = true;
     });
 
     let newConvId: string = "";
