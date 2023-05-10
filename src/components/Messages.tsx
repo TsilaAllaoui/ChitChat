@@ -128,13 +128,24 @@ function Messages() {
             messages.map((message: Message) => {
 
               return (
-                <MessageEntry
+                <div style={
+                  {
+                    alignSelf: currentConvHostId === message.senderId ? "flex-end" : "flex-start"
+                    ,display: "flex"
+                  }
+                  }>
+                  <MessageEntry
                   key={message.id + message.message}
                   content={message.message}
                   senderId={message.senderId}
                   receiverId={message.receiverId}
                   hostId={currentConvHostId}
                 />
+                {
+                  message.senderId === user.id ? <button>TEST</button> :
+                  null
+                }
+                </div>
               );
             })}
         </ul>
