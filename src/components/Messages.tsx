@@ -148,15 +148,6 @@ function Messages() {
           {messages &&
             messages.map((message: Message) => {
               return (
-                <div
-                  className="message-row"
-                  style={{
-                    alignSelf:
-                      currentConvHostId === message.senderId
-                        ? "flex-end"
-                        : "flex-start",
-                  }}
-                >
                   <MessageEntry
                     key={message.id + message.message}
                     content={message.message}
@@ -164,7 +155,6 @@ function Messages() {
                     receiverId={message.receiverId}
                     hostId={currentConvHostId}
                   />
-                </div>
               );
             })}
         </ul>

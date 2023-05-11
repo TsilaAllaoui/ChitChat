@@ -1,6 +1,7 @@
 import "../styles/MessageEntry.scss";
 import { useEffect, useState } from "react";
 import { serverTimestamp } from "firebase/firestore";
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 function MessageEntry({
   content,
@@ -13,8 +14,6 @@ function MessageEntry({
   receiverId: string;
   hostId: string;
 }) {
-
-
   // ************  States   ************
 
   // Characters limit by line
@@ -31,7 +30,7 @@ function MessageEntry({
 
   const [condition, setCondition] = useState(false);
 
-
+  const [opacity, setOpacity] = useState("0");
 
   // ************ Effects **************
 
@@ -77,29 +76,39 @@ function MessageEntry({
     setCondition(hostId === senderId);
   }, []);
 
-
-  
   // ************  Rendering   ************
 
   return (
-    <li
-      className="message"
-      style={{
-        width: width === 12 ? width + 10 : width,
-        height: height,
-        alignSelf: condition ? "flex-end" : "flex-start",
-        backgroundColor: condition ? "rgb(81, 95, 111)" : "rgb(20,147,251)",
-        borderRadius: condition ? "10px 10px 0 10px" : "10px 10px 10px 0",
-        justifyContent: parts.length === 1 ? "center" : "",
-      }}
-    >
-      {parts.map((part, index) => (
-        <p key={content + index} 
-          style={{
-            marginTop: parts.length === 1 ? "15px" : "0"
-          }}
-        >{part}</p>
-      ))}
+    <li className="message">
+      <div
+        style={{
+          width: width === 12 ? width + 10 : width,
+          height: height,
+          alignSelf: condition ? "flex-end" : "flex-start",
+          backgroundColor: condition ? "rgb(81, 95, 111)" : "rgb(20,147,251)",
+          borderRadius: condition ? "10px 10px 0 10px" : "10px 10px 10px 0",
+          alignItems: parts.length === 1 ? "center" : "",
+        }}
+        onMouseEnter={() => setOpacity("100%")}
+        onMouseLeave={() => setOpacity("0")}
+      >
+        {parts.map((part, index) => (
+          <p
+            key={content + index}
+            style={{
+              marginTop: parts.length === 1 ? "5px" : "0",
+            }}
+          >
+            {part}
+          </p>
+        ))}
+      </div>
+      <BsThreeDotsVertical
+        className="dots"
+        style={{ opacity: opacity }}
+        onMouseEnter={() => setOpacity("100%")}
+        onMouseLeave={() => setOpacity("0")}
+      />
     </li>
   );
 }
