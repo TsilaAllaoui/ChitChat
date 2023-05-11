@@ -1,9 +1,11 @@
 import "../styles/MessageEntry.scss";
 import { useEffect, useRef, useState } from "react";
-import { serverTimestamp } from "firebase/firestore";
+import { collection, deleteDoc, getDocs, doc } from "firebase/firestore";
 import { BsReplyFill, BsThreeDotsVertical } from "react-icons/bs";
-import { IconType } from "react-icons/lib";
 import { AiFillDelete } from "react-icons/ai";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { db } from "../Firebase";
 
 function MessageEntry({
   content,
@@ -19,6 +21,12 @@ function MessageEntry({
   // ************ Refs ***************
 
   const menu = useRef<HTMLDivElement>(null);
+
+  // ************ Redux ***************
+
+  const currentConvId = useSelector(
+    (state: RootState) => state.currentConvId.id
+  );
 
   // ************  States   ************
 
@@ -87,6 +95,7 @@ function MessageEntry({
     setCondition(hostId === senderId);
   }, []);
 
+  // Effectfor when toggling actions menu
   useEffect(() => {
     if (toggleMenu) {
       const element = menu.current as HTMLElement;
@@ -101,9 +110,25 @@ function MessageEntry({
   }, [toggleMenu])
 
 
+
+  // **************** Functions ********************
+
+
+  // Toggle actions menu
   const toggle = (e: React.MouseEvent<HTMLDivElement>) => {
     console.log("TOGGLE: ", toggleMenu);
     setToggleMenu(!toggleMenu);
+  };
+
+  // To delete message entry
+  const deleteMessageEntry = () => {
+    getDocs(collection(db, "conversations", currentConvId, "mess")).then((snap) => {
+      snap.forEach((doc) => {
+        const data = {...doc.data()};
+        if (data.message === content && data.senderId === senderId && data.receiverId === receiverId)
+          deleteDoc(doc.ref);
+      });
+    });
   };
 
   // ************  Rendering   ************
@@ -146,7 +171,7 @@ function MessageEntry({
       <div className="actions" ref={menu}
         onMouseLeave={() => setToggleMenu(false)}
       >
-        <button>
+        <button onClick={deleteMessageEntry}>
           <AiFillDelete />
           Delete
         </button>

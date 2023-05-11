@@ -148,31 +148,29 @@ function Messages() {
           {messages &&
             messages.map((message: Message) => {
               return (
-                  <MessageEntry
-                    key={message.id + message.message}
-                    content={message.message}
-                    senderId={message.senderId}
-                    receiverId={message.receiverId}
-                    hostId={currentConvHostId}
-                  />
+                <MessageEntry
+                  key={message.id + message.message}
+                  content={message.message}
+                  senderId={message.senderId}
+                  receiverId={message.receiverId}
+                  hostId={currentConvHostId}
+                />
               );
             })}
         </ul>
       </div>
       <div>
-        {messages.length === 0 ? null : (
-          <div id="input">
-            <form onSubmit={(e) => sendToFirebase(e)}>
-              <input
-                type="text"
-                name="texts"
-                id="text-input"
-                onChange={(e) => handleChange(e)}
-              />
-              <IoSend id="send-button" onClick={(e) => sendToFirebase(e)} />
-            </form>
-          </div>
-        )}
+        <div id="input">
+          <form onSubmit={(e) => sendToFirebase(e)}>
+            <input
+              type="text"
+              name="texts"
+              id="text-input"
+              onChange={(e) => handleChange(e)}
+            />
+            <IoSend id="send-button" onClick={(e) => sendToFirebase(e)} />
+          </form>
+        </div>
       </div>
     </div>
   );
