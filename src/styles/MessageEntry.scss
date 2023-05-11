@@ -27,6 +27,7 @@
     width: 100px;
     padding: 0;
     transition: opacity 750ms;
+    // opacity: 0;
     button {
         display: flex;
         justify-content: center;
@@ -36,22 +37,23 @@
         transition: background-color 750ms;
         &:hover {
             background-color: grey;
+            // opacity: 100%;
         }
     }
-    // height: 0;
-    // overflow: visible;
-    // position: absolute;
-    // height: 0;
-    // opacity: 0;
-    // button {
-    //     opacity: 0;
-    // }
-    // &:hover {
-    //   opacity: 100%;
-    //   height: 100%;
-    //   button {
-    //     opacity: 100%;
-    //   }
-    // }
+    height: 0;
+    overflow: visible;
+    position: absolute;
+    height: 0;
+    opacity: 0;
+    button {
+        opacity: 0;
+    }
+    &:hover {
+      opacity: 100%;
+      height: 100%;
+      button {
+        opacity: 100%;
+      }
+    }
   }
 }

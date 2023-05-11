@@ -106,6 +106,8 @@ function MessageEntry({
       menu.current!.style.opacity = "75%";
       menu.current!.style.left = parseInt((x + 25).toString()) + "px";
       menu.current!.style.top = parseInt(y.toString()) + "px";
+      console.log(menu.current!.style.top);
+      console.log(menu.current!.style.left);
     } else menu.current!.style.opacity = "0";
   }, [toggleMenu])
 
@@ -134,12 +136,11 @@ function MessageEntry({
   // ************  Rendering   ************
 
   return (
-    <li className="message">
+    <li className="message" style={{ alignSelf: condition ? "flex-end" : "flex-start",}}>
       <div
         style={{
           width: width === 12 ? width + 10 : width,
           height: height,
-          alignSelf: condition ? "flex-end" : "flex-start",
           backgroundColor: condition ? "rgb(81, 95, 111)" : "rgb(20,147,251)",
           borderRadius: condition ? "10px 10px 0 10px" : "10px 10px 10px 0",
           alignItems: parts.length === 1 ? "center" : "",
@@ -169,7 +170,7 @@ function MessageEntry({
         <BsThreeDotsVertical />
       </div>
       <div className="actions" ref={menu}
-        onMouseLeave={() => setToggleMenu(false)}
+        // onMouseLeave={() => setToggleMenu(false)}
       >
         <button onClick={deleteMessageEntry}>
           <AiFillDelete />
