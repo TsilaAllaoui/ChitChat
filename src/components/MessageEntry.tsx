@@ -90,10 +90,15 @@ function MessageEntry({
         alignSelf: condition ? "flex-end" : "flex-start",
         backgroundColor: condition ? "rgb(81, 95, 111)" : "rgb(20,147,251)",
         borderRadius: condition ? "10px 10px 0 10px" : "10px 10px 10px 0",
+        justifyContent: parts.length === 1 ? "center" : "",
       }}
     >
       {parts.map((part, index) => (
-        <p key={content + index}>{part}</p>
+        <p key={content + index} 
+          style={{
+            marginTop: parts.length === 1 ? "15px" : "0"
+          }}
+        >{part}</p>
       ))}
     </li>
   );

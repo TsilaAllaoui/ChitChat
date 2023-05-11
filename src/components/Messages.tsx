@@ -1,7 +1,31 @@
-import { addDoc, collection, doc, Firestore, getDocs, getFirestore, onSnapshot, orderBy, query, serverTimestamp, setDoc, Timestamp, where } from "firebase/firestore";
-import React, { useState, useEffect, SetStateAction, ReactNode, useRef } from "react";
+import {
+  addDoc,
+  collection,
+  doc,
+  Firestore,
+  getDocs,
+  getFirestore,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc,
+  Timestamp,
+  where,
+} from "firebase/firestore";
+import React, {
+  useState,
+  useEffect,
+  SetStateAction,
+  ReactNode,
+  useRef,
+} from "react";
 import { setCurrentConv } from "../redux/slices/currentConversationSlice";
-import { BsFillEmojiSmileFill, BsFillSendFill } from "react-icons/bs";
+import {
+  BsFillEmojiSmileFill,
+  BsFillSendFill,
+  BsThreeDotsVertical,
+} from "react-icons/bs";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +40,6 @@ import { Message } from "./Models";
 import "../styles/Messages.scss";
 
 function Messages() {
-
   // ************* States ***************
 
   // State for the messages
@@ -30,23 +53,23 @@ function Messages() {
 
   const [lastMessage, setLastMessage] = useState<Message>();
 
-
-
   // ************* References **************
 
   const messagesListRef = useRef<null | HTMLUListElement>(null);
 
-
-
   // ************* Reducers ***************
 
   const user = useSelector((state: RootState) => state.user);
-  const guestId = useSelector((state: RootState) => state.chosenUser.chosenUser.id);
+  const guestId = useSelector(
+    (state: RootState) => state.chosenUser.chosenUser.id
+  );
   const id = useSelector((state: RootState) => state.user.id);
-  const currentConvId = useSelector((state: RootState) => state.currentConvId.id);
-  const currentConvHostId = useSelector((state: RootState) => state.currentConvId.hostId);
-
-
+  const currentConvId = useSelector(
+    (state: RootState) => state.currentConvId.id
+  );
+  const currentConvHostId = useSelector(
+    (state: RootState) => state.currentConvId.hostId
+  );
 
   // ************  Firebase Hooks   ************
 
@@ -54,9 +77,8 @@ function Messages() {
   const q = query(messRefs, orderBy("sentTime"));
   const [messageList, loading, error] = useCollection(q);
 
-  
   // ************  Effects   ************
-  
+
   // When changing curren conversation
   useEffect(() => {
     let tmp: any[] = [];
@@ -65,7 +87,7 @@ function Messages() {
     });
     setMessages(tmp);
   }, [currentConvId]);
-  
+
   // When messages list is updated
   useEffect(() => {
     let tmp: any[] = [];
@@ -73,48 +95,47 @@ function Messages() {
       tmp.push({ ...doc.data(), id: doc.data().id });
     });
     console.log("last message: ", messages[messages.length - 1]);
-    
+
     const element = messagesListRef.current;
-    if (element?.scrollHeight! > element?.clientHeight! || element?.scrollWidth! > element?.clientWidth!)
-    {
-      console.log("overflow")
+    if (
+      element?.scrollHeight! > element?.clientHeight! ||
+      element?.scrollWidth! > element?.clientWidth!
+    ) {
+      console.log("overflow");
       const last = messagesListRef.current?.lastChild as HTMLLIElement;
       last?.scrollIntoView();
     }
     setMessages(tmp);
-
   }, [messageList]);
-  
-
 
   // ************ Functions **************
-  
+
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
-  
+
   // Send new message
   const sendToFirebase = (
     e:
-    | React.MouseEvent<SVGElement, MouseEvent>
-    | React.FormEvent<HTMLFormElement>
-    ) => {
-      e.preventDefault();
-      
-      const messRef = collection(db, "conversations", currentConvId, "mess");
-      addDoc(messRef, {
-        message: inputValue,
-        senderId: id,
-        receiverId: guestId,
-        hostId: currentConvHostId,
-        sentTime: serverTimestamp(),
-      });
-      
-      setInputValue("");
-    };
+      | React.MouseEvent<SVGElement, MouseEvent>
+      | React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
 
-    
+    const messRef = collection(db, "conversations", currentConvId, "mess");
+    addDoc(messRef, {
+      message: inputValue,
+      senderId: id,
+      receiverId: guestId,
+      hostId: currentConvHostId,
+      sentTime: serverTimestamp(),
+    });
+
+    setInputValue("");
+  };
+
+  const deleteMessageEntry = () => {};
 
   // ************  Rendering   ************
 
@@ -126,25 +147,23 @@ function Messages() {
           {loading && <p>Loading messages...</p>}
           {messages &&
             messages.map((message: Message) => {
-
               return (
-                <div style={
-                  {
-                    alignSelf: currentConvHostId === message.senderId ? "flex-end" : "flex-start"
-                    ,display: "flex"
-                  }
-                  }>
+                <div
+                  className="message-row"
+                  style={{
+                    alignSelf:
+                      currentConvHostId === message.senderId
+                        ? "flex-end"
+                        : "flex-start",
+                  }}
+                >
                   <MessageEntry
-                  key={message.id + message.message}
-                  content={message.message}
-                  senderId={message.senderId}
-                  receiverId={message.receiverId}
-                  hostId={currentConvHostId}
-                />
-                {
-                  message.senderId === user.id ? <button>TEST</button> :
-                  null
-                }
+                    key={message.id + message.message}
+                    content={message.message}
+                    senderId={message.senderId}
+                    receiverId={message.receiverId}
+                    hostId={currentConvHostId}
+                  />
                 </div>
               );
             })}
