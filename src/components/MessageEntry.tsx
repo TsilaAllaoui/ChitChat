@@ -1,7 +1,9 @@
 import "../styles/MessageEntry.scss";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { serverTimestamp } from "firebase/firestore";
-import { BsThreeDotsVertical } from "react-icons/bs";
+import { BsReplyFill, BsThreeDotsVertical } from "react-icons/bs";
+import { IconType } from "react-icons/lib";
+import { AiFillDelete } from "react-icons/ai";
 
 function MessageEntry({
   content,
@@ -14,6 +16,10 @@ function MessageEntry({
   receiverId: string;
   hostId: string;
 }) {
+  // ************ Refs ***************
+
+  const menu = useRef<HTMLDivElement>(null);
+
   // ************  States   ************
 
   // Characters limit by line
@@ -28,9 +34,14 @@ function MessageEntry({
   // State for message parts
   const [parts, setParts] = useState<string[]>([]);
 
+  // State for condition to align message
   const [condition, setCondition] = useState(false);
 
+  // State to show/hide dots button
   const [opacity, setOpacity] = useState("0");
+
+  // State to toggle dots menu actions
+  const [toggleMenu, setToggleMenu] = useState(false);
 
   // ************ Effects **************
 
@@ -76,6 +87,25 @@ function MessageEntry({
     setCondition(hostId === senderId);
   }, []);
 
+  useEffect(() => {
+    if (toggleMenu) {
+      const element = menu.current as HTMLElement;
+      const [x, y] = [
+        element!.getBoundingClientRect().x,
+        element!.getBoundingClientRect().y,
+      ];
+      menu.current!.style.opacity = "75%";
+      menu.current!.style.left = parseInt((x + 25).toString()) + "px";
+      menu.current!.style.top = parseInt(y.toString()) + "px";
+    } else menu.current!.style.opacity = "0";
+  }, [toggleMenu])
+
+
+  const toggle = (e: React.MouseEvent<HTMLDivElement>) => {
+    console.log("TOGGLE: ", toggleMenu);
+    setToggleMenu(!toggleMenu);
+  };
+
   // ************  Rendering   ************
 
   return (
@@ -89,7 +119,7 @@ function MessageEntry({
           borderRadius: condition ? "10px 10px 0 10px" : "10px 10px 10px 0",
           alignItems: parts.length === 1 ? "center" : "",
         }}
-        onMouseEnter={() => setOpacity("100%")}
+        onMouseEnter={() => setOpacity("75%")}
         onMouseLeave={() => setOpacity("0")}
       >
         {parts.map((part, index) => (
@@ -103,12 +133,28 @@ function MessageEntry({
           </p>
         ))}
       </div>
-      <BsThreeDotsVertical
+      <div
         className="dots"
         style={{ opacity: opacity }}
-        onMouseEnter={() => setOpacity("100%")}
+        onMouseEnter={() => setOpacity("75%")}
         onMouseLeave={() => setOpacity("0")}
-      />
+        onClick={toggle}
+        id={content}
+      >
+        <BsThreeDotsVertical />
+      </div>
+      <div className="actions" ref={menu}
+        onMouseLeave={() => setToggleMenu(false)}
+      >
+        <button>
+          <AiFillDelete />
+          Delete
+        </button>
+        <button>
+          <BsReplyFill/>
+          Reply
+        </button>
+      </div>
     </li>
   );
 }
