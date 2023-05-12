@@ -3,6 +3,7 @@
 .message {
   display: flex;
   align-items: center;
+  position: relative;
   div {
     border-radius: 10px 10px 0 10px;
     background-color: $light;
@@ -17,43 +18,56 @@
     width: 25px;
     transition: opacity 750ms;
   }
-  position: relative;
-  .actions {
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-    border: solid black 1px;
-    border-radius: 5px;
-    width: 100px;
-    padding: 0;
-    transition: opacity 750ms;
-    // opacity: 0;
-    button {
-        display: flex;
-        justify-content: center;
-        background-color: transparent;
-        border: none;
-        font-weight: 600;
-        transition: background-color 750ms;
-        &:hover {
-            background-color: grey;
-            // opacity: 100%;
-        }
-    }
-    height: 0;
-    overflow: visible;
+  .dropdown {
     position: absolute;
-    height: 0;
-    opacity: 0;
-    button {
-        opacity: 0;
-    }
-    &:hover {
-      opacity: 100%;
-      height: 100%;
-      button {
-        opacity: 100%;
-      }
-    }
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    top: 0;
   }
+
+
+
+  // .actions {
+  //   position: absolute;
+  //   height: 100px;
+  //   width: 100px;
+  //   opacity: 100%;
+  //   background-color: red;
+  //   background-color: white;
+  //   display: flex;
+  //   flex-direction: column;
+  //   border: solid black 1px;
+  //   border-radius: 5px;
+  //   width: 100px;
+  //   padding: 0;
+  //   transition: opacity 750ms;
+  //    opacity: 0;
+  //   button {
+  //       display: flex;
+  //       justify-content: center;
+  //       background-color: transparent;
+  //       border: none;
+  //       font-weight: 600;
+  //       transition: background-color 750ms;
+  //       &:hover {
+  //           background-color: grey;
+  //           // opacity: 100%;
+  //       }
+  //   }
+  //   height: 0;
+  //   overflow: visible;
+  //   // height: 0;
+  //   // opacity: 0;
+  //   button {
+  //       opacity: 0;
+  //   }
+  //   &:hover {
+  //     opacity: 100%;
+  //     height: 100%;
+  //     button {
+  //       opacity: 100%;
+  //     }
+  //   }
+  // }
 }

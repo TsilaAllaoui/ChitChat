@@ -19,7 +19,7 @@
       -ms-overflow-style: none;  /* IE and Edge */
       scrollbar-width: none;  /* Firefox */
       height: 80vh;
-      overflow: auto;
+      // overflow: auto;
       padding: 0;
     }
   }
@@ -65,3 +65,8 @@
     }
   }
 }
+
+// .dropdown {
+//   float: right;
+//   height: 0;
+// }

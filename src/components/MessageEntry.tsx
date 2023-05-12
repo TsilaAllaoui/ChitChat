@@ -96,20 +96,20 @@ function MessageEntry({
   }, []);
 
   // Effectfor when toggling actions menu
-  useEffect(() => {
-    if (toggleMenu) {
-      const element = menu.current as HTMLElement;
-      const [x, y] = [
-        element!.getBoundingClientRect().x,
-        element!.getBoundingClientRect().y,
-      ];
-      menu.current!.style.opacity = "75%";
-      menu.current!.style.left = parseInt((x + 25).toString()) + "px";
-      menu.current!.style.top = parseInt(y.toString()) + "px";
-      console.log(menu.current!.style.top);
-      console.log(menu.current!.style.left);
-    } else menu.current!.style.opacity = "0";
-  }, [toggleMenu])
+  // useEffect(() => {
+  //   if (toggleMenu) {
+  //     const element = menu.current as HTMLElement;
+  //     const [x, y] = [
+  //       element!.getBoundingClientRect().x,
+  //       element!.getBoundingClientRect().y,
+  //     ];
+  //     menu.current!.style.opacity = "75%";
+  //     menu.current!.style.left = parseInt((x + 25).toString()) + "px";
+  //     menu.current!.style.top = parseInt(y.toString()) + "px";
+  //     console.log(menu.current!.style.top);
+  //     console.log(menu.current!.style.left);
+  //   } else menu.current!.style.opacity = "0";
+  // }, [toggleMenu])
 
 
 
@@ -118,9 +118,19 @@ function MessageEntry({
 
   // Toggle actions menu
   const toggle = (e: React.MouseEvent<HTMLDivElement>) => {
-    console.log("TOGGLE: ", toggleMenu);
+    const dots = e.currentTarget as HTMLDivElement;
+    const popUp = dots.nextSibling as HTMLDivElement;
+    console.log("Before: ", popUp.style.opacity);
+    popUp.style.opacity = popUp.style.opacity === "1" ? "0" : "1";
+    const [x, y] = [dots.getBoundingClientRect().x, dots.getBoundingClientRect().y];
+    popUp.style.bottom = parseInt(y.toString()).toString() + "px";
+    popUp.style.left = parseInt((width + 50).toString()).toString() + "px";
+    console.log("top: ",popUp.style.top)
+    console.log("left: ",popUp.style.left)
     setToggleMenu(!toggleMenu);
+    // popUp.style.left = parseInt((width).toString()).toString() + "px";
   };
+  
 
   // To delete message entry
   const deleteMessageEntry = () => {
@@ -162,17 +172,14 @@ function MessageEntry({
       <div
         className="dots"
         style={{ opacity: opacity }}
-        onMouseEnter={() => setOpacity("75%")}
+        onMouseEnter={() => setOpacity("100%")}
         onMouseLeave={() => setOpacity("0")}
         onClick={toggle}
-        id={content}
       >
         <BsThreeDotsVertical />
       </div>
-      <div className="actions" ref={menu}
-        // onMouseLeave={() => setToggleMenu(false)}
-      >
-        <button onClick={deleteMessageEntry}>
+      <div className="dropdown">
+      <button>
           <AiFillDelete />
           Delete
         </button>
