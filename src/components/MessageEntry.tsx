@@ -93,6 +93,16 @@ function MessageEntry({
 
     // Condition to know if message entry was sent by who
     setCondition(hostId === senderId);
+
+    const dropdowns = document.querySelectorAll(".dropdown");
+    if (dropdowns)
+    {
+      dropdowns.forEach((dropdown) => {
+        const e = dropdown as HTMLDivElement;
+        e.style.opacity = "0";
+      })
+    }
+
   }, []);
 
   // Effectfor when toggling actions menu
