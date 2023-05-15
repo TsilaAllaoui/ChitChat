@@ -97,20 +97,15 @@ function MessageEntry({
     setCondition(hostId === senderId);
 
     const dropdowns = document.querySelectorAll(".dropdown");
-    if (dropdowns)
-    {
+    if (dropdowns) {
       dropdowns.forEach((dropdown) => {
         const e = dropdown as HTMLDivElement;
         e.style.opacity = "0";
-      })
+      });
     }
-
   }, []);
 
-
-
   // **************** Functions ********************
-
 
   // Toggle actions menu
   const toggle = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -118,42 +113,36 @@ function MessageEntry({
     const popUp = dots.nextSibling as HTMLDivElement;
     console.log("Before: ", popUp.style.opacity);
     popUp.style.opacity = popUp.style.opacity === "1" ? "0" : "1";
-    const [x, y] = [dots.getBoundingClientRect().x, dots.getBoundingClientRect().y];
+    const [x, y] = [
+      dots.getBoundingClientRect().x,
+      dots.getBoundingClientRect().y,
+    ];
     popUp.style.bottom = parseInt(y.toString()).toString() + "px";
     popUp.style.left = parseInt((width + 50).toString()).toString() + "px";
-    console.log("top: ",popUp.style.top)
-    console.log("left: ",popUp.style.left)
+    console.log("top: ", popUp.style.top);
+    console.log("left: ", popUp.style.left);
     setToggleMenu(!toggleMenu);
     // popUp.style.left = parseInt((width).toString()).toString() + "px";
-  };
-  
-
-  // To delete message entry
-  const deleteMessageEntry = () => {
-    getDocs(collection(db, "conversations", currentConvId, "mess")).then((snap) => {
-      snap.forEach((doc) => {
-        const data = {...doc.data()};
-        if (data.message === content && data.senderId === senderId && data.receiverId === receiverId)
-          deleteDoc(doc.ref);
-      });
-    });
   };
 
   const actions: ActionLabel[] = [
     {
       icon: AiFillDelete,
-      label: "Delete"
+      label: "Delete",
     },
     {
       icon: BsReplyFill,
-      label: "Reply"
-    }
-  ]; 
+      label: "Reply",
+    },
+  ];
 
   // ************  Rendering   ************
 
   return (
-    <li className="message" style={{ alignSelf: condition ? "flex-end" : "flex-start",}}>
+    <li
+      className="message"
+      style={{ alignSelf: condition ? "flex-end" : "flex-start" }}
+    >
       <div
         style={{
           width: width === 12 ? width + 10 : width,
@@ -186,7 +175,14 @@ function MessageEntry({
       >
         <BsThreeDotsVertical />
       </div>
-      <Action actions={actions} />
+      <Action
+        actions={actions}
+        infos={{
+          content: content,
+          senderId: senderId,
+          receiverId: receiverId,
+        }}
+      />
     </li>
   );
 }
