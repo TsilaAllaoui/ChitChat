@@ -6,7 +6,7 @@ import { AiOutlineCloseCircle } from "react-icons/ai";
 import { set } from "../redux/slices/popUpSlice";
 import { useEffect, useState } from "react";
 import { RootState } from "../redux/store";
-import { UserInFirebase } from "./Models";
+import { UserInFirebase } from "./Model/Models";
 import { db } from "../Firebase";
 import "../styles/Popup.scss";
 import { current } from "@reduxjs/toolkit";

@@ -6,6 +6,8 @@ import { AiFillDelete } from "react-icons/ai";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { db } from "../Firebase";
+import Action from "./Action";
+import { ActionLabel } from "./Model/ActionModel";
 
 function MessageEntry({
   content,
@@ -105,22 +107,6 @@ function MessageEntry({
 
   }, []);
 
-  // Effectfor when toggling actions menu
-  // useEffect(() => {
-  //   if (toggleMenu) {
-  //     const element = menu.current as HTMLElement;
-  //     const [x, y] = [
-  //       element!.getBoundingClientRect().x,
-  //       element!.getBoundingClientRect().y,
-  //     ];
-  //     menu.current!.style.opacity = "75%";
-  //     menu.current!.style.left = parseInt((x + 25).toString()) + "px";
-  //     menu.current!.style.top = parseInt(y.toString()) + "px";
-  //     console.log(menu.current!.style.top);
-  //     console.log(menu.current!.style.left);
-  //   } else menu.current!.style.opacity = "0";
-  // }, [toggleMenu])
-
 
 
   // **************** Functions ********************
@@ -153,6 +139,17 @@ function MessageEntry({
     });
   };
 
+  const actions: ActionLabel[] = [
+    {
+      icon: AiFillDelete,
+      label: "Delete"
+    },
+    {
+      icon: BsReplyFill,
+      label: "Reply"
+    }
+  ]; 
+
   // ************  Rendering   ************
 
   return (
@@ -167,6 +164,7 @@ function MessageEntry({
         }}
         onMouseEnter={() => setOpacity("75%")}
         onMouseLeave={() => setOpacity("0")}
+        className="message-container"
       >
         {parts.map((part, index) => (
           <p
@@ -188,16 +186,7 @@ function MessageEntry({
       >
         <BsThreeDotsVertical />
       </div>
-      <div className="dropdown">
-      <button>
-          <AiFillDelete />
-          Delete
-        </button>
-        <button>
-          <BsReplyFill/>
-          Reply
-        </button>
-      </div>
+      <Action actions={actions} />
     </li>
   );
 }

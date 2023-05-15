@@ -36,7 +36,7 @@ import { IoSend } from "react-icons/io5";
 import { RootState } from "../redux/store";
 import MessageEntry from "./MessageEntry";
 import { auth, db } from "../Firebase";
-import { Message } from "./Models";
+import { Message } from "./Model/Models";
 import "../styles/Messages.scss";
 
 function Messages() {

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { UserInFirebase } from '../../components/Models';
+import { UserInFirebase } from '../../components/Model/Models';
 
 const initialState = {
     chosenUser: {

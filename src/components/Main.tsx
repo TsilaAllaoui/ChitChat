@@ -13,11 +13,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { RootState } from "../redux/store";
 import { MdDelete } from "react-icons/md";
-import { getInitiials } from "./Modules";
+import { getInitiials } from "./Model/Modules";
 import { auth, db } from "../Firebase";
 import Messages from "./Messages";
 import "../styles/Main.scss";
-import "./Modules";
+import "./Model/Modules";
 
 
 function Main() {
