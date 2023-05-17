@@ -113,7 +113,7 @@ function MessageEntry({
     const popUp = dots.nextSibling as HTMLDivElement;
     console.log("Before: ", popUp.style.opacity);
     popUp.style.opacity = popUp.style.opacity === "1" ? "0" : "1";
-    const [x, y] = [e.clientX, e.clientY]
+    const [x, y] = [e.clientX, e.clientY];
     popUp.style.top = parseInt((height / 2 - 10).toString()).toString() + "px";
     popUp.style.left = parseInt((width + 50).toString()).toString() + "px";
     setToggleMenu(!toggleMenu);
@@ -123,13 +123,16 @@ function MessageEntry({
     {
       icon: AiFillDelete,
       label: "Delete",
-    }
+    },
   ];
 
   // ************  Rendering   ************
 
   return (
-    <li
+    <>
+    {
+      content.includes("data:image") ? null :
+      <li
       className="message"
       style={{ alignSelf: condition ? "flex-end" : "flex-start" }}
     >
@@ -174,6 +177,8 @@ function MessageEntry({
         }}
       />
     </li>
+    }
+    </>
   );
 }
 
