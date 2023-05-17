@@ -70,6 +70,9 @@ function Messages() {
   const currentConvHostId = useSelector(
     (state: RootState) => state.currentConvId.hostId
   );
+  const currentReply = useSelector(
+    (state: RootState) => state.reply.replyMessage
+  );
 
   // ************  Firebase Hooks   ************
 

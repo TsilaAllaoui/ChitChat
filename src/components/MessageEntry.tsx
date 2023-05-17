@@ -33,7 +33,7 @@ function MessageEntry({
   // ************  States   ************
 
   // Characters limit by line
-  const [limit, setLimit] = useState(42);
+  const [limit, setLimit] = useState(45);
 
   // State for the width of the message body
   const [width, setWidth] = useState(0);
@@ -113,27 +113,17 @@ function MessageEntry({
     const popUp = dots.nextSibling as HTMLDivElement;
     console.log("Before: ", popUp.style.opacity);
     popUp.style.opacity = popUp.style.opacity === "1" ? "0" : "1";
-    const [x, y] = [
-      dots.getBoundingClientRect().x,
-      dots.getBoundingClientRect().y,
-    ];
-    popUp.style.bottom = parseInt(y.toString()).toString() + "px";
+    const [x, y] = [e.clientX, e.clientY]
+    popUp.style.top = parseInt((height / 2 - 10).toString()).toString() + "px";
     popUp.style.left = parseInt((width + 50).toString()).toString() + "px";
-    console.log("top: ", popUp.style.top);
-    console.log("left: ", popUp.style.left);
     setToggleMenu(!toggleMenu);
-    // popUp.style.left = parseInt((width).toString()).toString() + "px";
   };
 
   const actions: ActionLabel[] = [
     {
       icon: AiFillDelete,
       label: "Delete",
-    },
-    {
-      icon: BsReplyFill,
-      label: "Reply",
-    },
+    }
   ];
 
   // ************  Rendering   ************

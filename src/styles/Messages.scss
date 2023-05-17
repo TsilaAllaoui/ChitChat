@@ -4,8 +4,16 @@
   background-color: rgb(61, 63, 75);
   border-radius: 10px;
   margin-top: 15px;
+
   #messages-list {
     width: 100%;
+    overflow: auto;
+
+    &::-webkit-scrollbar {
+      display: none;
+      list-style: none;
+    }
+
     ul {
       list-style: none;
       width: 65%;
@@ -16,20 +24,22 @@
         display: none;
         list-style: none;
       }
-      -ms-overflow-style: none;  /* IE and Edge */
-      scrollbar-width: none;  /* Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
       height: 80vh;
-      // overflow: auto;
       padding: 0;
     }
   }
+
   #input {
     padding-bottom: 20px;
-    width: 100%; 
-    form{
+    width: 100%;
+
+    form {
       display: flex;
       justify-content: center;
       align-items: center;
+
       #text-input {
         width: 75%;
         height: 30px;
@@ -41,22 +51,25 @@
         transition: box-shadow 500ms;
         box-shadow: none;
         color: white;
+
         &:hover {
           transition: box-shadow 500ms;
           color: white;
           box-shadow: 0 0 10px $main-blue;
         }
-        &:focus-visible{
+
+        &:focus-visible {
           box-shadow: 0 0 10px $main-blue;
           outline: none;
           color: white;
         }
       }
-      #send-button{
+      #send-button {
         height: 30px;
         width: 30px;
         transition: transform 750ms, color 750ms;
-        &:hover{
+
+        &:hover {
           color: $main-blue;
           transform: scale(1.25);
           transition: transform 750ms, color 750ms;
@@ -67,5 +80,8 @@
   .dropdown {
     background-color: grey;
     border-radius: 5px;
+  }
+  #reply-preview {
+    width: 85%;
   }
 }

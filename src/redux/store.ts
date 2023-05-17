@@ -4,6 +4,7 @@ import popUpReducer from "./slices/popUpSlice";
 import chosenUserReducer from "./slices/chosenUserSlice";
 import currentConversationReducer from './slices/currentConversationSlice';
 import filterReducer from './slices/filterSlice';
+import replyMessageReducer from "./slices/replyMessageSlice";
 
 export const store = configureStore({
   reducer: {
@@ -11,7 +12,8 @@ export const store = configureStore({
     popUp: popUpReducer,
     chosenUser: chosenUserReducer,
     currentConvId: currentConversationReducer,
-    filter: filterReducer
+    filter: filterReducer,
+    reply: replyMessageReducer
   }
 })
 
