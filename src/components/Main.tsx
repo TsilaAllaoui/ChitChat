@@ -9,7 +9,7 @@ import { update } from "../redux/slices/userSlice";
 import messagesSvg from "../assets/messages.svg";
 import { RiShutDownLine } from "react-icons/ri";
 import Conversations from "./Conversations";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { RootState } from "../redux/store";
 import { MdDelete } from "react-icons/md";
@@ -27,12 +27,17 @@ function Main() {
   // State for showing or hiding conversations list
   const [show, setShow] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   // ************ Redux Selector and Dispatches ************
 
   const user = useSelector((state: RootState) => state.user);
   const currentConv = useSelector((state: RootState) => state.currentConvId);
   const dispatch = useDispatch();
+
+  // ************ Ref *************
+
+  const fileChooser = useRef<HTMLInputElement>(null);
 
   // ************  Effects   ************
 
@@ -52,6 +57,12 @@ function Main() {
       }
     });
   }, []);
+
+  // When a file is selected
+  useEffect(() => {
+    console.log(selectedFile);
+    addAttachment();
+  }, [selectedFile]);
 
 
   // ************* Functions **************
@@ -82,6 +93,30 @@ function Main() {
     });
     setShowConfirmation(false);
   };
+
+  const addAttachment = () => {
+    const file = selectedFile;
+    console.log(file);
+    if (!file) {
+      console.log("File empty");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    let base64: string | ArrayBuffer = "";
+    reader.onloadend = () => {
+      base64 = reader.result!;
+      let [height, width] = ["",""];
+      let img = new Image();
+      img.src = base64.toString();
+      console.log(img.src);
+      img.onload = () => {
+        height = img.height.toString();
+        width = img.width.toString();
+      };
+    }
+  }
 
   // ************  Rendering   ************
 
@@ -123,7 +158,15 @@ function Main() {
                 <div id="name">{currentConv.guestName}</div>
               </div>
               <div id="actions-profile">
-                <IoMdAttach id="attachment" />
+                <div>
+                  <input type="file" 
+                         style={{ display: "none"}}
+                         ref={fileChooser}
+                         onChange={(e) => setSelectedFile(e.target.files![0])}
+                         accept=".jpg, .png, .jpeg, .gif, .bmp, .tif"
+                  />
+                  <IoMdAttach id="attachment" onClick={() => fileChooser.current!.click()}/>
+                </div>
                 <IoMdCall id="call" />
                 <MdDelete id="delete" onClick={() => setShowConfirmation(true)} />
               </div>
@@ -145,7 +188,7 @@ function Main() {
       </div>
       }
     </div>
-  );
-}
+    );
+  }
 
 export default Main;
