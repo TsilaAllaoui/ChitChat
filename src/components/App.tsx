@@ -1,6 +1,4 @@
-import { BrowserRouter, Route, Routes, Link, useParams, useLocation } from "react-router-dom";
-import Conversations from "./ConversationsBackup";
-import Messages from './Messages'
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import SignUp from "./SignUp";
 import Login from './Login'
 import '../styles/App.scss'
@@ -26,7 +24,7 @@ function App() {
     <div>
       <BrowserRouter>
           <Routes>
-            <Route path='/' element={<Main />} />
+            <Route path='/' element={<Login />} />
             <Route path='/main' element={<Main/>} />
             <Route path='/login' element={<Login />} />
             <Route path='/signup' element={<SignUp />} />
