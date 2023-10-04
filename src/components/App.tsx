@@ -1,19 +1,17 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import SignUp from "./SignUp";
-import Login from './Login'
-import '../styles/App.scss'
+import Login from "./Login";
+import "../styles/App.scss";
 import Main from "./Main";
 
 // Sender and Receiver types
 type Receiver = {
-  name: string,
-  id: string
+  name: string;
+  id: string;
 };
 type Sender = Receiver;
 
-
 function App() {
-
   // Hardcoded value for debugging
   const receiverName: string = "Tsila";
   const receiverId: string = "cKRWwlRPOfPaWdtv58SB";
@@ -21,17 +19,15 @@ function App() {
   const senderId = "NeLZhBOa04SkiEVcAEPf";
 
   return (
-    <div>
-      <BrowserRouter>
-          <Routes>
-            <Route path='/' element={<Login />} />
-            <Route path='/main' element={<Main/>} />
-            <Route path='/login' element={<Login />} />
-            <Route path='/signup' element={<SignUp />} />
-          </Routes>
-      </BrowserRouter>
-    </div>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/main" element={<Main />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

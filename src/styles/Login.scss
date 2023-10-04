@@ -46,10 +46,51 @@
   }
 }
 
+@keyframes shake {
+  0% {
+    transform: translateX(-5px);
+  }
+  25% {
+    transform: translateX(5px);
+  }
+  50% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+  100% {
+    transform: translateX(-5px);
+  }
+}
+
 #main-login {
   display: flex;
-  height: 100vh;
+  justify-content: center;
   overflow: hidden;
+  height: 100vh;
+  border-radius: 1rem;
+  width: 70%;
+  height: 95vh;
+  box-shadow: 0 0 50px 5px grey;
+  background-color: white;
+
+  #particles {
+    z-index: -1;
+  }
+
+  * {
+    user-select: none;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
   #splash {
     width: 50%;
     background-color: $purple;
@@ -157,15 +198,24 @@
       padding: 15px;
       font-size: 15px;
       font-weight: 800;
+      cursor: pointer;
+
       input {
-        margin: 0 15px 0 0;
+        margin: 0;
         width: 15px;
         height: 15px;
+        cursor: pointer;
+      }
+
+      p {
+        transition: all 500ms;
       }
     }
     #buttons {
       display: flex;
       justify-content: center;
+      margin: 15px 0;
+
       #forgot-password-button {
         color: $dark;
         height: 35px;
@@ -208,26 +258,17 @@
       display: flex;
       justify-content: center;
       margin: 15px auto;
-      * {
-        transition: transform 750ms;
-        &:hover {
-          transform: scale(1.25);
-        }
-      }
+
       #google {
         width: 100px;
         height: 40px;
         color: rgb(3, 119, 48);
-      }
-      #mail {
-        width: 90px;
-        height: 40px;
-        color: rgb(184, 5, 5);
-      }
-      #fb {
-        width: 90px;
-        height: 40px;
-        color: $dark;
+        cursor: pointer;
+        transition: transform 750ms;
+
+        &:hover {
+          transform: scale(1.25);
+        }
       }
     }
   }

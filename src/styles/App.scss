@@ -1,18 +1,62 @@
+@-webkit-keyframes AnimationName {
+  0% {
+    background-position: 84% 0%;
+  }
+  50% {
+    background-position: 17% 100%;
+  }
+  100% {
+    background-position: 84% 0%;
+  }
+}
+@-moz-keyframes AnimationName {
+  0% {
+    background-position: 84% 0%;
+  }
+  50% {
+    background-position: 17% 100%;
+  }
+  100% {
+    background-position: 84% 0%;
+  }
+}
+@keyframes AnimationName {
+  0% {
+    background-position: 84% 0%;
+  }
+  50% {
+    background-position: 17% 100%;
+  }
+  100% {
+    background-position: 84% 0%;
+  }
+}
 #root {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(129deg, #0023d3, #0260a9, #00ffdd, #00ff9a);
+  background-size: 800% 800%;
+
+  -webkit-animation: AnimationName 3s ease infinite;
+  -moz-animation: AnimationName 3s ease infinite;
+  animation: AnimationName 3s ease infinite;
 }
 
-.App{
+.App {
   display: flex;
   flex-direction: column;
 
-  #logo img{
+  #logo img {
     width: 300px;
     height: 300px;
     margin-bottom: 0;
   }
 
-  input{
+  input {
     margin: 15px auto;
   }
 }
