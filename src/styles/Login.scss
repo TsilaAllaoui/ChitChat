@@ -26,10 +26,7 @@
   0% {
     width: 0;
   }
-  75% {
-    width: 100%;
-    opacity: 50%;
-  }
+
   100% {
     width: 100%;
     opacity: 0;
@@ -64,6 +61,17 @@
   }
 }
 
+@keyframes fade-out-in {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 #main-login {
   display: flex;
   justify-content: center;
@@ -94,7 +102,6 @@
   #splash {
     width: 50%;
     background-color: $purple;
-    background-image: url("../assets/login-splash.svg");
     background-repeat: no-repeat;
     background-size: 100%;
     background-position: 50% 100%;
@@ -103,29 +110,132 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    margin: 15px;
+    border-radius: 15px;
+    position: relative;
+
     #chitchat {
       align-self: flex-start;
       margin: 10%;
       font-size: 30px;
       animation: slide-chitchat 650ms linear;
+
       #hseparator {
         width: 0;
         border: solid white 2px;
         animation: underline 2500ms 650ms both infinite;
       }
     }
+
     #info {
       align-self: flex-end;
       margin: 10%;
       font-size: 30px;
       animation: slide-info 650ms linear;
+
       #r-hseparator {
         width: 0;
         border: solid white 2px;
         animation: r-underline 2500ms 650ms both infinite;
       }
     }
+
+    #chat-friend {
+      font-size: 1.5rem;
+      text-align: start;
+      margin: 1rem;
+
+      span {
+        color: rgb(251, 255, 0);
+      }
+
+      #hseparator {
+        width: 0;
+        max-width: 175px;
+        border: solid white 2px;
+        animation: underline 2500ms 650ms both infinite;
+      }
+    }
+
+    #chat-family {
+      font-size: 1.5rem;
+      text-align: start;
+      margin: 1rem;
+      position: absolute;
+      top: 15%;
+      left: 25%;
+
+      span {
+        color: rgb(46, 213, 46);
+      }
+
+      #r-hseparator {
+        width: 0;
+        border: solid white 2px;
+        animation: r-underline 2500ms 650ms both infinite;
+      }
+    }
+
+    #way {
+      font-size: 1.5rem;
+      text-align: start;
+      margin: 1rem;
+      position: absolute;
+      top: 30%;
+      right: 0;
+
+      span {
+        color: rgb(238, 70, 70);
+      }
+
+      #hseparator {
+        width: 0;
+        max-width: 175px;
+        border: solid white 2px;
+        animation: underline 2500ms 650ms both infinite;
+      }
+    }
+
+    #express {
+      font-size: 1.5rem;
+      text-align: start;
+      margin: 1rem;
+      position: absolute;
+      top: 20%;
+      right: 50%;
+
+      span {
+        color: rgb(238, 70, 199);
+      }
+
+      #hseparator {
+        width: 0;
+        max-width: 175px;
+        border: solid white 2px;
+        animation: underline 2500ms 650ms both infinite;
+      }
+    }
+
+    #share {
+      font-size: 1.5rem;
+      text-align: start;
+      margin: 1rem;
+      position: absolute;
+      left: 40%;
+
+      span {
+        color: rgb(0, 106, 255);
+      }
+
+      #r-hseparator {
+        width: 0;
+        max-width: 175px;
+        border: solid white 2px;
+        animation: underline 2500ms 650ms both infinite;
+      }
+    }
   }
+
   .login-app {
     width: 50%;
     display: flex;
@@ -140,8 +250,9 @@
       height: 240px;
       margin-bottom: 0;
       transition: 750ms;
+
       &:hover {
-        scale: 1.25;
+        scale: 1.1;
       }
     }
 

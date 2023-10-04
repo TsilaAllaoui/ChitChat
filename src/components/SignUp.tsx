@@ -1,4 +1,12 @@
-import { getAuth, createUserWithEmailAndPassword, updateProfile, setPersistence, browserSessionPersistence, signInWithPopup, GoogleAuthProvider } from "@firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  setPersistence,
+  browserSessionPersistence,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "@firebase/auth";
 import { addDoc, collection, getDocs, getFirestore } from "@firebase/firestore";
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import { useEffect, useState } from "react";
@@ -10,7 +18,6 @@ import "../styles/SignUp.scss";
 import { FcGoogle } from "react-icons/fc";
 
 function SignUp() {
-
   // ***************** States *******************
 
   // States for user credentials and infos
@@ -28,7 +35,6 @@ function SignUp() {
   // Pour le style du separateur
   const [style, setStyle] = useState({ width: "" });
 
-
   // ************* Effects ***************
 
   // For dynamic navigation
@@ -40,8 +46,6 @@ function SignUp() {
   useEffect(() => {
     setStyle({ width: "100px" });
   }, []);
-
-
 
   // ************ Functions ***************
 
@@ -83,7 +87,6 @@ function SignUp() {
 
   // To sign up with google
   const signUpWithGoogle = () => {
-
     setPersistence(auth, browserSessionPersistence).then(() => {
       signInWithPopup(auth, gauthProvider)
         .then((result) => {
@@ -95,19 +98,20 @@ function SignUp() {
           let found = false;
           getDocs(collection(db, "users")).then((snap) => {
             snap.forEach((doc) => {
-              const data:any = {...doc.data(), id: doc.id};
-              if (data.email === user.email && data.uid === user.uid)
-              {
+              const data: any = { ...doc.data(), id: doc.id };
+              if (data.email === user.email && data.uid === user.uid) {
                 found = true;
                 return;
               }
             });
-            if (found){
+            if (found) {
               setShowPopup(true);
-            }
-
-            else{
-              addNewUser(result.user.displayName!, result.user.email!, result.user.uid);
+            } else {
+              addNewUser(
+                result.user.displayName!,
+                result.user.email!,
+                result.user.uid
+              );
               navigate("/main");
             }
           });
@@ -127,8 +131,7 @@ function SignUp() {
     });
   };
 
-
-   // ****************** Rendering ******************
+  // ****************** Rendering ******************
 
   return (
     <div id="signup">
@@ -144,31 +147,38 @@ function SignUp() {
             </div>
           </div>
           <div className="input-line">
-          <p style={{width: "50px"}}>Email</p>
-          <div className="in">
-            <MdOutlineAlternateEmail className="icon"/>
-            <input type="email" onChange={(e) => setEmail(e.target.value)} value={""}/>
-          </div>
+            <p style={{ width: "50px" }}>Email</p>
+            <div className="in">
+              <MdOutlineAlternateEmail className="icon" />
+              <input type="email" onChange={(e) => setEmail(e.target.value)} />
+            </div>
           </div>
           <div className="input-line">
             <p>Password</p>
             <div className="in">
-                <FaLock className="icon"/>
-                <input type="password" onChange={(e) => setPassword(e.target.value)} value={""}
-                />
+              <FaLock className="icon" />
+              <input
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
           </div>
           <button type="submit">Sign up</button>
         </div>
         {error === "" ? null : <div className="error">{error}</div>}
         <p>Or sign up with:</p>
-        <FcGoogle id="google" onClick={signUpWithGoogle}/>
-        <p>Already have an account? <a onClick={() => navigate("/login")}>Login</a></p>
+        <FcGoogle id="google" onClick={signUpWithGoogle} />
+        <p>
+          Already have an account?{" "}
+          <a onClick={() => navigate("/login")}>Login</a>
+        </p>
       </form>
       <div id="splashes">
         <div id="welcome-container">
-            <p id="welcome">Hello! Welcome to ChitChat.</p>
-            <div id="welcome-line"></div>
+          <p id="welcome">
+            Hello!<br></br> Welcome to ChitChat.
+          </p>
+          <div id="welcome-line"></div>
         </div>
         <div id="info">
           <p id="friends">
@@ -182,17 +192,29 @@ function SignUp() {
           </p>
         </div>
       </div>
-      {
-        !showPopup ? null :
+      {!showPopup ? null : (
         <div id="popup">
-          <p>Account already exist. Please login to continue or signup with another credentials.</p>
+          <p>
+            Account already exist. Please login to continue or signup with
+            another credentials.
+          </p>
           <p>Go to login page?</p>
           <div id="buttons">
-            <button id="yes" onClick={() => {navigate("/login"); setShowPopup(false);}}>Yes</button>
-            <button id="no" onClick={() => setShowPopup(false)}>No</button>
+            <button
+              id="yes"
+              onClick={() => {
+                navigate("/login");
+                setShowPopup(false);
+              }}
+            >
+              Yes
+            </button>
+            <button id="no" onClick={() => setShowPopup(false)}>
+              No
+            </button>
           </div>
         </div>
-      }
+      )}
     </div>
   );
 }
