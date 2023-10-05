@@ -72,6 +72,17 @@
   }
 }
 
+@keyframes reverse-fade-out-in {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 #main-login {
   display: flex;
   justify-content: center;
@@ -232,154 +243,6 @@
         max-width: 175px;
         border: solid white 2px;
         animation: underline 2500ms 650ms both infinite;
-      }
-    }
-  }
-
-  .login-app {
-    width: 50%;
-    display: flex;
-    flex-direction: column;
-
-    #logo {
-      height: 185px;
-    }
-
-    #logo img {
-      width: 300px;
-      height: 240px;
-      margin-bottom: 0;
-      transition: 750ms;
-
-      &:hover {
-        scale: 1.1;
-      }
-    }
-
-    #sign-up-suggestion {
-      z-index: 5;
-    }
-
-    #sign-in {
-      text-decoration: none;
-    }
-    input {
-      height: 45px;
-      width: 350px;
-      margin: 15px auto;
-      border-radius: 10px;
-      border: solid $dark 2px;
-      padding-left: 50px;
-      transform: translateX(-30px);
-    }
-    #email {
-      width: 350px;
-      display: flex;
-      flex-direction: column;
-      margin: 0 auto;
-      align-items: flex-start;
-      span {
-        transform: translate(30px, 25px);
-        background-color: white;
-        width: 50px;
-        font-weight: 700;
-        color: $dark;
-        z-index: 1;
-      }
-    }
-    #password {
-      width: 350px;
-      display: flex;
-      flex-direction: column;
-      margin: 0 auto;
-      align-items: flex-start;
-      span {
-        transform: translate(30px, 25px);
-        background-color: white;
-        color: $dark;
-        width: 80px;
-        font-weight: 700;
-        z-index: 1;
-      }
-    }
-    #agreements {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 15px;
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-
-      input {
-        margin: 0;
-        width: 15px;
-        height: 15px;
-        cursor: pointer;
-      }
-
-      p {
-        transition: all 500ms;
-      }
-    }
-    #buttons {
-      display: flex;
-      justify-content: center;
-      margin: 15px 0;
-
-      #forgot-password-button {
-        color: $dark;
-        height: 35px;
-        width: 150px;
-        border-radius: 9px;
-        margin-right: 15px;
-        border: solid $dark 1px;
-        transition: 750ms;
-        &:hover {
-          background-color: $main;
-          color: white;
-          border: solid $main 3px;
-        }
-      }
-      #login-button {
-        height: 35px;
-        width: 150px;
-        border-radius: 9px;
-        background-color: $dark;
-        margin-right: 15px;
-        color: white;
-        border: solid $dark 1px;
-        transition: 750ms;
-        &:hover {
-          background-color: white;
-          border: solid $dark 3px;
-          color: $dark;
-        }
-      }
-      button {
-        font-size: 15px;
-        font-weight: 700;
-        height: 35px;
-        width: 150px;
-        border-radius: 9px;
-      }
-    }
-    #social-login {
-      width: 300px;
-      display: flex;
-      justify-content: center;
-      margin: 15px auto;
-
-      #google {
-        width: 100px;
-        height: 40px;
-        color: rgb(3, 119, 48);
-        cursor: pointer;
-        transition: transform 750ms;
-
-        &:hover {
-          transform: scale(1.25);
-        }
       }
     }
   }

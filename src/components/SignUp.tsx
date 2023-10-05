@@ -8,23 +8,24 @@ import {
   GoogleAuthProvider,
 } from "@firebase/auth";
 import { addDoc, collection, getDocs, getFirestore } from "@firebase/firestore";
-import { MdOutlineAlternateEmail } from "react-icons/md";
-import { useEffect, useState } from "react";
+import { MdErrorOutline, MdOutlineAlternateEmail } from "react-icons/md";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { BiUser } from "react-icons/bi";
 import { FaLock } from "react-icons/fa";
 import { auth, db, gauthProvider } from "../Firebase";
-import "../styles/SignUp.scss";
+import "../styles/SignUpForm.scss";
 import { FcGoogle } from "react-icons/fc";
+import { createPortal } from "react-dom";
 
-function SignUp() {
+function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
   // ***************** States *******************
 
   // States for user credentials and infos
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [showPopup, setShowPopup] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   // Error state
   const [error, setError] = useState("");
@@ -46,6 +47,19 @@ function SignUp() {
   useEffect(() => {
     setStyle({ width: "100px" });
   }, []);
+
+  useEffect(() => {
+    if (error != "") {
+      errorRef.current!.style.opacity = "1";
+    }
+    setTimeout(() => {
+      errorRef.current!.style.opacity = "0";
+    }, 1000);
+  }, [error]);
+
+  // ************ Refs ***************
+
+  const errorRef = useRef<HTMLDivElement>(null);
 
   // ************ Functions ***************
 
@@ -81,7 +95,11 @@ function SignUp() {
 
       // Catching possible error
       .catch((err) => {
-        setError(err.message);
+        let e: string = err.message
+          .replace("Firebase: Error (", "")
+          .replace(")", "")
+          .replace("-", " ");
+        setError(e[0].toUpperCase() + e.slice(1));
       });
   };
 
@@ -105,7 +123,7 @@ function SignUp() {
               }
             });
             if (found) {
-              setShowPopup(true);
+              setShowError(true);
             } else {
               addNewUser(
                 result.user.displayName!,
@@ -119,8 +137,9 @@ function SignUp() {
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
+          setError(errorMessage);
           if (error.code === "auth/account-exists-with-different-credential")
-            setShowPopup(true);
+            setShowError(true);
           console.log(
             "Erreur d'authentification",
             errorCode,
@@ -165,58 +184,18 @@ function SignUp() {
           </div>
           <button type="submit">Sign up</button>
         </div>
-        {error === "" ? null : <div className="error">{error}</div>}
+        <div className="error" ref={errorRef}>
+          <MdErrorOutline id="icon" />
+          <p>{error}</p>
+        </div>
         <p>Or sign up with:</p>
         <FcGoogle id="google" onClick={signUpWithGoogle} />
         <p>
-          Already have an account?{" "}
-          <a onClick={() => navigate("/login")}>Login</a>
+          Already have an account? <a onClick={() => setIsLogin()}>Login</a>
         </p>
       </form>
-      <div id="splashes">
-        <div id="welcome-container">
-          <p id="welcome">
-            Hello!<br></br> Welcome to ChitChat.
-          </p>
-          <div id="welcome-line"></div>
-        </div>
-        <div id="info">
-          <p id="friends">
-            Chat with <span style={{ color: "orange" }}>friends</span>
-          </p>
-          <p id="people">
-            Chat with <span style={{ color: "green" }}>people</span>
-          </p>
-          <p id="family">
-            Chat with <span style={{ color: "grey" }}>family</span>
-          </p>
-        </div>
-      </div>
-      {!showPopup ? null : (
-        <div id="popup">
-          <p>
-            Account already exist. Please login to continue or signup with
-            another credentials.
-          </p>
-          <p>Go to login page?</p>
-          <div id="buttons">
-            <button
-              id="yes"
-              onClick={() => {
-                navigate("/login");
-                setShowPopup(false);
-              }}
-            >
-              Yes
-            </button>
-            <button id="no" onClick={() => setShowPopup(false)}>
-              No
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
 
-export default SignUp;
+export default SignUpForm;
