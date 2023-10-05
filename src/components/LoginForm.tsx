@@ -1,7 +1,3 @@
-import { useEffect, useState } from "react";
-import logo from "../assets/logo.svg";
-import { FcGoogle } from "react-icons/fc";
-import { useNavigate } from "react-router-dom";
 import {
   GoogleAuthProvider,
   browserSessionPersistence,
@@ -10,7 +6,11 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
+import { useEffect, useState } from "react";
+import { FcGoogle } from "react-icons/fc";
+import { useNavigate } from "react-router-dom";
 import app, { auth, gauthProvider } from "../Firebase";
+import logo from "../assets/logo.svg";
 import "../styles/LoginForm.scss";
 
 function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
@@ -19,6 +19,14 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
   // For navigation
   const [redirect, setRedirect] = useState(false);
   const navigate = useNavigate();
+
+  // States for the inputs
+  const [emailValue, setEmailValue] = useState("ratsilakwel@gmail.com");
+  const [passwordValue, setPasswordValue] = useState("123456789");
+  const [agreementsChecked, setAgreementsChecked] = useState(false);
+
+  // ************** Effects ****************
+
   useEffect(() => {
     if (redirect) {
       alert("Login success... Redirecting to conversations...");
@@ -26,10 +34,10 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
     }
   }, [redirect]);
 
-  // States for the inputs
-  const [emailValue, setEmailValue] = useState("ratsilakwel@gmail.com");
-  const [passwordValue, setPasswordValue] = useState("123456789");
-  const [agreementsChecked, setAgreementsChecked] = useState(false);
+  useEffect(() => {
+    const loginApp = document.querySelector(".login-app") as HTMLElement;
+    loginApp.style.animation = "fade-in 500ms ease-in-out forwards";
+  }, []);
 
   // ************** Functions ****************
 

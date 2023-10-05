@@ -1,15 +1,4 @@
-import {
-  GoogleAuthProvider,
-  browserSessionPersistence,
-  getAuth,
-  setPersistence,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-} from "@firebase/auth";
 import { useEffect, useState } from "react";
-import { FcGoogle } from "react-icons/fc";
-import { Link, useNavigate } from "react-router-dom";
-import app, { auth, gauthProvider } from "../Firebase";
 
 import "../styles/Login.scss";
 import LoginForm from "./LoginForm";
@@ -24,23 +13,21 @@ function Login() {
 
   const [currentSplash, setCurrentSplash] = useState(1);
 
-  useEffect(() => {
-    let handle = setInterval(() => {
-      const splash = document.querySelector("#splash") as HTMLElement;
-      splash.style.animation = "fade-out-in 1500ms";
-      setTimeout(() => {
-        splash.style.animation = "";
-      }, 1500);
-      setCurrentSplash((currentSplash) => {
-        if (currentSplash == 1) return 2;
-        else if (currentSplash == 2) return 3;
-        else if (currentSplash == 3) return 1;
-        else return currentSplash;
-      });
-    }, 5000);
-  }, [isLogin]);
-
-  // useEffect(() => {}, [timeOut]);
+  // useEffect(() => {
+  //   let handle = setInterval(() => {
+  //     const splash = document.querySelector("#splash") as HTMLElement;
+  //     splash.style.animation = "fade-out-in 1500ms";
+  //     setTimeout(() => {
+  //       splash.style.animation = "";
+  //     }, 1500);
+  //     setCurrentSplash((currentSplash) => {
+  //       if (currentSplash == 1) return 2;
+  //       else if (currentSplash == 2) return 3;
+  //       else if (currentSplash == 3) return 1;
+  //       else return currentSplash;
+  //     });
+  //   }, 5000);
+  // }, [isLogin]);
 
   // ****************** Rendering *****************
 

@@ -1,22 +1,20 @@
 import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  updateProfile,
-  setPersistence,
-  browserSessionPersistence,
-  signInWithPopup,
   GoogleAuthProvider,
+  browserSessionPersistence,
+  createUserWithEmailAndPassword,
+  setPersistence,
+  signInWithPopup,
+  updateProfile,
 } from "@firebase/auth";
 import { addDoc, collection, getDocs, getFirestore } from "@firebase/firestore";
-import { MdErrorOutline, MdOutlineAlternateEmail } from "react-icons/md";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router";
 import { BiUser } from "react-icons/bi";
 import { FaLock } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import { MdErrorOutline, MdOutlineAlternateEmail } from "react-icons/md";
+import { useNavigate } from "react-router";
 import { auth, db, gauthProvider } from "../Firebase";
 import "../styles/SignUpForm.scss";
-import { FcGoogle } from "react-icons/fc";
-import { createPortal } from "react-dom";
 
 function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
   // ***************** States *******************
@@ -46,6 +44,8 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
 
   useEffect(() => {
     setStyle({ width: "100px" });
+    const loginApp = document.querySelector("#signup") as HTMLElement;
+    loginApp.style.animation = "fade-in 500ms ease-in-out forwards";
   }, []);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
     }
     setTimeout(() => {
       errorRef.current!.style.opacity = "0";
-    }, 1000);
+    }, 2000);
   }, [error]);
 
   // ************ Refs ***************
