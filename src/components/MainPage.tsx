@@ -48,9 +48,6 @@ export const MainPage = () => {
     }
   });
 
-  // useEffect(() => {
-  //   console.table(user);
-  // }, [user]);
   // ************* Functions **************
 
   // To log out
@@ -77,12 +74,14 @@ export const MainPage = () => {
           <AiFillSetting className="actions" />
         </div>
         <div id="others">
-          <div id="image-profile">
-            <div id="initials">
-              <BiUser />
-            </div>
-            <p>{user?.email![0].toUpperCase()}</p>
-          </div>
+          <p>
+            {user!.displayName
+              ? user?.displayName![0].toUpperCase() +
+                user?.displayName!.slice(1)!
+              : user?.email![0].toUpperCase() +
+                user?.email!.slice(1, user?.email?.indexOf("@"))!}
+          </p>
+          <BiUser id="image-profile" />
           <RiShutDownLine id="shutdown" onClick={logOut} />
         </div>
       </div>
