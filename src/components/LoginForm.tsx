@@ -16,8 +16,9 @@ import logo from "../assets/logo.svg";
 import "../styles/LoginForm.scss";
 import Terms from "./Model/Terms";
 import { UserContext } from "../Contexts/UserContext";
+import { IsLoginContext } from "../Contexts/IsLoginContext";
 
-function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
+function LoginForm() {
   // ************** States **************
 
   // For navigation
@@ -27,6 +28,7 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
   const [error, setError] = useState("");
 
   const { user, setUser } = useContext(UserContext);
+  const setIsLogin = useContext(IsLoginContext).setIsLogin;
 
   // States for the inputs
   const [emailValue, setEmailValue] = useState("ratsilakwel@gmail.com");
@@ -133,7 +135,7 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
   };
 
   const goToSignUp = (e: React.MouseEvent<HTMLSpanElement>) => {
-    unsetIsLogin();
+    setIsLogin(false);
   };
 
   // ************** Rendering ****************

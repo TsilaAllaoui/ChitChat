@@ -6,11 +6,12 @@ import SignUp from "./SignUpForm";
 import { createPortal } from "react-dom";
 import Popup from "./Popup";
 import { RedirectPopupContext } from "../Contexts/RedirectPopupContext";
+import { IsLoginContext } from "../Contexts/IsLoginContext";
 
 function Login() {
   // ************** States ***************
 
-  const [isLogin, setIsLogin] = useState(true);
+  const { isLogin, setIsLogin } = useContext(IsLoginContext);
   const { redirect, setRedirect } = useContext(RedirectPopupContext);
 
   // ************** Hooks ***************
@@ -89,11 +90,7 @@ function Login() {
           </>
         )}
       </div>
-      {isLogin ? (
-        <LoginForm unsetIsLogin={() => setIsLogin(false)} />
-      ) : (
-        <SignUp setIsLogin={() => setIsLogin(true)} />
-      )}
+      {isLogin ? <LoginForm /> : <SignUp />}
     </div>
   );
 }

@@ -7,7 +7,7 @@ import {
   updateProfile,
 } from "@firebase/auth";
 import { addDoc, collection, getDocs, getFirestore } from "@firebase/firestore";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { BiUser } from "react-icons/bi";
 import { FaLock } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
@@ -17,8 +17,9 @@ import { auth, db, gauthProvider } from "../Firebase";
 import "../styles/SignUpForm.scss";
 import Terms from "./Model/Terms";
 import Popup from "./Popup";
+import { IsLoginContext } from "../Contexts/IsLoginContext";
 
-function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
+function SignUpForm() {
   // ***************** States *******************
 
   // States for user credentials and infos
@@ -39,6 +40,8 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
   const [showAgreements, setShowAgreements] = useState(false);
   const [agreementsChecked, setAgreementsChecked] = useState(false);
   const [redirectToLogin, setRedirectToLogin] = useState(false);
+
+  const setIsLogin = useContext(IsLoginContext).setIsLogin;
 
   // ************* Effects ***************
 
@@ -107,7 +110,7 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
         }).then(() => {
           setRedirectToLogin(true);
           setTimeout(() => {
-            navigate("/login");
+            setIsLogin(true);
           }, 2000);
         });
       })
@@ -154,7 +157,10 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
                 result.user.email!,
                 result.user.uid
               );
-              navigate("/main");
+              setRedirectToLogin(true);
+              setTimeout(() => {
+                setIsLogin(true);
+              }, 2000);
             }
           });
         })
@@ -242,7 +248,7 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
         <p>Or sign up with:</p>
         <FcGoogle id="google" onClick={signUpWithGoogle} />
         <p>
-          Already have an account? <a onClick={() => setIsLogin()}>Login</a>
+          Already have an account? <a onClick={() => setIsLogin(true)}>Login</a>
         </p>
         <p id="show-agreements" onClick={() => setShowAgreements(true)}>
           Show terms and agreements
