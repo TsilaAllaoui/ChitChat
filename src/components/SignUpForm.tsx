@@ -15,6 +15,7 @@ import { MdErrorOutline, MdOutlineAlternateEmail } from "react-icons/md";
 import { useNavigate } from "react-router";
 import { auth, db, gauthProvider } from "../Firebase";
 import "../styles/SignUpForm.scss";
+import Terms from "./Model/Terms";
 
 function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
   // ***************** States *******************
@@ -34,6 +35,9 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
   // Pour le style du separateur
   const [style, setStyle] = useState({ width: "" });
 
+  const [showAgreements, setShowAgreements] = useState(false);
+  const [agreementsChecked, setAgreementsChecked] = useState(false);
+
   // ************* Effects ***************
 
   // For dynamic navigation
@@ -50,10 +54,16 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
 
   useEffect(() => {
     if (error != "") {
+      console.log("HERE");
+
       errorRef.current!.style.opacity = "1";
     }
+
     setTimeout(() => {
       errorRef.current!.style.opacity = "0";
+      setTimeout(() => {
+        setError("");
+      }, 500);
     }, 2000);
   }, [error]);
 
@@ -80,6 +90,10 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
 
     // Safeguard
     if (email === "" || password === "") return;
+    if (!agreementsChecked) {
+      setAgreementsError();
+      return;
+    }
 
     // Create user into firebase
     createUserWithEmailAndPassword(auth, email, password)
@@ -95,6 +109,8 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
 
       // Catching possible error
       .catch((err) => {
+        console.log(err.message);
+
         let e: string = err.message
           .replace("Firebase: Error (", "")
           .replace(")", "")
@@ -140,14 +156,33 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
           setError(errorMessage);
           if (error.code === "auth/account-exists-with-different-credential")
             setShowError(true);
-          console.log(
-            "Erreur d'authentification",
-            errorCode,
-            " ",
-            errorMessage
-          );
+          let e: string = error.message
+            .replace("Firebase: Error (", "")
+            .replace(")", "")
+            .replace("-", " ");
+          setError(e[0].toUpperCase() + e.slice(1));
         });
     });
+  };
+
+  const clickAgreements = (e: React.MouseEvent<HTMLElement>) => {
+    const checkBox = document.querySelector(
+      "#agreements > input"
+    ) as HTMLInputElement;
+    checkBox.checked = agreementsChecked ? false : true;
+    setAgreementsChecked(checkBox.checked);
+  };
+
+  const setAgreementsError = () => {
+    const agreements = document.querySelector(
+      "#agreements > p"
+    ) as HTMLPreElement;
+    agreements.style.color = "red";
+    agreements.style.animation = "shake 500ms ease-in-out";
+    setTimeout(() => {
+      agreements.style.color = "black";
+      agreements.style.animation = "";
+    }, 500);
   };
 
   // ****************** Rendering ******************
@@ -182,6 +217,14 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
               />
             </div>
           </div>
+          <div id="agreements">
+            <input
+              type="checkbox"
+              checked={agreementsChecked}
+              onChange={(e) => setAgreementsChecked(e.currentTarget.checked)}
+            />
+            <p onClick={clickAgreements}>Accept all agreements</p>
+          </div>
           <button type="submit">Sign up</button>
         </div>
         <div className="error" ref={errorRef}>
@@ -193,6 +236,13 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
         <p>
           Already have an account? <a onClick={() => setIsLogin()}>Login</a>
         </p>
+        <p id="show-agreements" onClick={() => setShowAgreements(true)}>
+          Show terms and agreements
+        </p>
+        <Terms
+          showAgreements={showAgreements}
+          hideAgreements={() => setShowAgreements(false)}
+        />
       </form>
     </div>
   );

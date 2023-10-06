@@ -33,6 +33,7 @@
     background-position: 84% 0%;
   }
 }
+
 #root {
   text-align: center;
   display: flex;
@@ -46,6 +47,54 @@
   -webkit-animation: AnimationName 3s ease infinite;
   -moz-animation: AnimationName 3s ease infinite;
   animation: AnimationName 3s ease infinite;
+}
+
+body {
+  #portal {
+    #terms-container {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      backdrop-filter: blur(5px);
+
+      #terms {
+        width: 50%;
+        background-color: white;
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-shadow: 0 0 15px 2px rgba(128, 128, 128, 0.513);
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%) translateY(50%);
+
+        #icon {
+          cursor: pointer;
+          position: absolute;
+          right: 1rem;
+          top: 1rem;
+          font-size: 1.5rem;
+          transition: color 100ms;
+
+          &:hover {
+            color: red;
+          }
+        }
+
+        h1 {
+          font-size: 20px;
+        }
+
+        p {
+          font-size: 15px;
+          padding: 1rem;
+        }
+      }
+    }
+  }
 }
 
 .App {

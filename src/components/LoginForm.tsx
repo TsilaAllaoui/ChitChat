@@ -6,12 +6,16 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import app, { auth, gauthProvider } from "../Firebase";
 import logo from "../assets/logo.svg";
 import "../styles/LoginForm.scss";
+import { createPortal } from "react-dom";
+import { AiOutlineCloseCircle } from "react-icons/ai";
+import Terms from "./Model/Terms";
+import { MdErrorOutline, MdOutlineAlternateEmail } from "react-icons/md";
 
 function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
   // ************** States **************
@@ -20,10 +24,15 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
   const [redirect, setRedirect] = useState(false);
   const navigate = useNavigate();
 
+  const [error, setError] = useState("");
+
   // States for the inputs
   const [emailValue, setEmailValue] = useState("ratsilakwel@gmail.com");
   const [passwordValue, setPasswordValue] = useState("123456789");
   const [agreementsChecked, setAgreementsChecked] = useState(false);
+  const [showAgreements, setShowAgreements] = useState(false);
+
+  const errorRef = useRef<HTMLDivElement>(null);
 
   // ************** Effects ****************
 
@@ -38,6 +47,19 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
     const loginApp = document.querySelector(".login-app") as HTMLElement;
     loginApp.style.animation = "fade-in 500ms ease-in-out forwards";
   }, []);
+
+  useEffect(() => {
+    if (error != "") {
+      errorRef.current!.style.opacity = "1";
+    }
+
+    setTimeout(() => {
+      errorRef.current!.style.opacity = "0";
+      setTimeout(() => {
+        setError("");
+      }, 500);
+    }, 2000);
+  }, [error]);
 
   // ************** Functions ****************
 
@@ -65,7 +87,13 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
         .then((userCred) => {
           setRedirect(true);
         })
-        .catch((err) => {})
+        .catch((err) => {
+          let e: string = err.message
+            .replace("Firebase: Error (", "")
+            .replace(")", "")
+            .replace("-", " ");
+          setError(e[0].toUpperCase() + e.slice(1));
+        })
     );
   };
 
@@ -148,10 +176,19 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
           Login
         </button>
       </div>
+      <div className="error" ref={errorRef}>
+        <MdErrorOutline id="icon" />
+        <p>{error}</p>
+      </div>
       <p>Or login with: </p>
       <div id="social-login">
         <FcGoogle id="google" onClick={loginWithGoolge} />
+        <p onClick={() => setShowAgreements(true)}>Show terms and agreements</p>
       </div>
+      <Terms
+        showAgreements={showAgreements}
+        hideAgreements={() => setShowAgreements(false)}
+      />
     </div>
   );
 }

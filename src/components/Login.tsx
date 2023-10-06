@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import "../styles/Login.scss";
 import LoginForm from "./LoginForm";
-import SignUp from "./SignUp";
+import SignUp from "./SignUpForm";
 
 function Login() {
   // ************** States ***************
