@@ -22,10 +22,6 @@ function App() {
 
   const { redirect, setRedirect } = useContext(RedirectPopupContext);
 
-  useEffect(() => {
-    console.log("HERE");
-  }, [redirect]);
-
   return (
     <BrowserRouter>
       <Routes>

@@ -1,12 +1,12 @@
-import { UserCredential } from "firebase/auth";
+import { User, UserCredential } from "firebase/auth";
 import { createContext } from "react";
 
 export interface IUserCredentials {
-  user: UserCredential | null;
-  setUser: (u: UserCredential) => void;
+  user: User | null;
+  setUser: (u: User) => void;
 }
 
 export const UserContext = createContext<IUserCredentials>({
   user: null,
-  setUser: (_u: UserCredential) => {},
+  setUser: (_u: User) => {},
 });

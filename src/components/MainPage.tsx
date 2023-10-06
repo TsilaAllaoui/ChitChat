@@ -26,10 +26,11 @@ import "../styles/MainPage.scss";
 import "./Model/Modules";
 import { UserContext } from "../Contexts/UserContext";
 import Popup from "./Popup";
+import { BiUser } from "react-icons/bi";
 
 export const MainPage = () => {
   // ************  States   ************
-  const user = useContext(UserContext).user!.user;
+  const { user, setUser } = useContext(UserContext);
   const [redirectToLogin, setRedirectToLogin] = useState(false);
 
   // ************  Effects   ************
@@ -39,6 +40,17 @@ export const MainPage = () => {
     root.style.background = "#19376d";
   }, []);
 
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      setUser(user);
+    } else {
+      navigate("/login");
+    }
+  });
+
+  // useEffect(() => {
+  //   console.table(user);
+  // }, [user]);
   // ************* Functions **************
 
   // To log out
@@ -67,8 +79,9 @@ export const MainPage = () => {
         <div id="others">
           <div id="image-profile">
             <div id="initials">
-              <p>{user.displayName![0].toUpperCase()}</p>
+              <BiUser />
             </div>
+            <p>{user?.email![0].toUpperCase()}</p>
           </div>
           <RiShutDownLine id="shutdown" onClick={logOut} />
         </div>

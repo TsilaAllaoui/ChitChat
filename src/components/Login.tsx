@@ -34,6 +34,10 @@ function Login() {
         else return currentSplash;
       });
     }, 5000);
+
+    return () => {
+      clearInterval(handle);
+    };
   }, [isLogin]);
 
   // ****************** Rendering *****************

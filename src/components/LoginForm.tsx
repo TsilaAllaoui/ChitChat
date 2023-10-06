@@ -1,5 +1,6 @@
 import {
   GoogleAuthProvider,
+  browserLocalPersistence,
   browserSessionPersistence,
   getAuth,
   setPersistence,
@@ -58,6 +59,10 @@ function LoginForm() {
     }, 2000);
   }, [error]);
 
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
+
   // ************** Functions ****************
 
   const setAgreementsError = () => {
@@ -86,7 +91,7 @@ function LoginForm() {
     setPersistence(auth, browserSessionPersistence).then(() => {
       signInWithEmailAndPassword(auth, emailValue, passwordValue)
         .then((userCred) => {
-          setUser(userCred);
+          setUser(userCred.user);
           setRedirect(true);
           setTimeout(() => navigate("/main"), 2000);
         })
@@ -109,7 +114,7 @@ function LoginForm() {
     setPersistence(auth, browserSessionPersistence).then(() => {
       signInWithPopup(auth, gauthProvider)
         .then((userCred) => {
-          setUser(userCred);
+          setUser(userCred.user);
           setRedirect(true);
           setTimeout(() => navigate("/main"), 2000);
         })
