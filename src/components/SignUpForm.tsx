@@ -54,8 +54,6 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
 
   useEffect(() => {
     if (error != "") {
-      console.log("HERE");
-
       errorRef.current!.style.opacity = "1";
     }
 
@@ -109,8 +107,6 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
 
       // Catching possible error
       .catch((err) => {
-        console.log(err.message);
-
         let e: string = err.message
           .replace("Firebase: Error (", "")
           .replace(")", "")

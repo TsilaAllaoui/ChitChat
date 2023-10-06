@@ -6,22 +6,21 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
+import { MdErrorOutline } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { RedirectPopupContext } from "../Contexts/RedirectPopupContext";
 import app, { auth, gauthProvider } from "../Firebase";
 import logo from "../assets/logo.svg";
 import "../styles/LoginForm.scss";
-import { createPortal } from "react-dom";
-import { AiOutlineCloseCircle } from "react-icons/ai";
 import Terms from "./Model/Terms";
-import { MdErrorOutline, MdOutlineAlternateEmail } from "react-icons/md";
 
 function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
   // ************** States **************
 
   // For navigation
-  const [redirect, setRedirect] = useState(false);
+  const { redirect, setRedirect } = useContext(RedirectPopupContext);
   const navigate = useNavigate();
 
   const [error, setError] = useState("");
@@ -35,13 +34,6 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
   const errorRef = useRef<HTMLDivElement>(null);
 
   // ************** Effects ****************
-
-  useEffect(() => {
-    if (redirect) {
-      alert("Login success... Redirecting to conversations...");
-      navigate("/main");
-    }
-  }, [redirect]);
 
   useEffect(() => {
     const loginApp = document.querySelector(".login-app") as HTMLElement;
@@ -82,19 +74,21 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
       return;
     }
     const auth = getAuth(app);
-    setPersistence(auth, browserSessionPersistence).then(() =>
+    setPersistence(auth, browserSessionPersistence).then(() => {
       signInWithEmailAndPassword(auth, emailValue, passwordValue)
         .then((userCred) => {
           setRedirect(true);
+          setTimeout(() => navigate("/main"), 2000);
         })
         .catch((err) => {
+          setRedirect(false);
           let e: string = err.message
             .replace("Firebase: Error (", "")
             .replace(")", "")
             .replace("-", " ");
           setError(e[0].toUpperCase() + e.slice(1));
-        })
-    );
+        });
+    });
   };
 
   const loginWithGoolge = () => {
@@ -109,7 +103,6 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
           const token = credential!.accessToken;
           const user = result.user;
           setRedirect(true);
-          console.log(user);
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -135,6 +128,8 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
   const goToSignUp = (e: React.MouseEvent<HTMLSpanElement>) => {
     unsetIsLogin();
   };
+
+  // ************** Rendering ****************
 
   return (
     <div className="login-app">

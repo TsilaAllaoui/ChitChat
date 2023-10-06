@@ -1,8 +1,10 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import SignUp from "./SignUpForm";
-import Login from "./Login";
 import "../styles/App.scss";
-import Main from "./Main";
+import Login from "./Login";
+import { useContext, useEffect } from "react";
+import { RedirectPopupContext } from "../Contexts/RedirectPopupContext";
+import Popup from "./Popup";
+import { MainPage } from "./MainPage";
 
 // Sender and Receiver types
 type Receiver = {
@@ -18,13 +20,25 @@ function App() {
   const senderName: string = "Ariane";
   const senderId = "NeLZhBOa04SkiEVcAEPf";
 
+  const { redirect, setRedirect } = useContext(RedirectPopupContext);
+
+  useEffect(() => {
+    console.log("HERE");
+  }, [redirect]);
+
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/main" element={<Main />} />
+        <Route path="/main" element={<MainPage />} />
         <Route path="/login" element={<Login />} />
       </Routes>
+      {redirect ? (
+        <Popup
+          content="Login successful... Redirection in progess..."
+          hidePopup={() => setRedirect(false)}
+        />
+      ) : null}
     </BrowserRouter>
   );
 }

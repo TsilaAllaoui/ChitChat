@@ -1,91 +1,5 @@
 @import "../styles/Color.scss";
-
-@keyframes slide-chitchat {
-  from {
-    opacity: 0;
-    transform: translateX(-100px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slide-info {
-  from {
-    opacity: 0;
-    transform: translateX(100px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes underline {
-  0% {
-    width: 0;
-    opacity: 0;
-  }
-  75% {
-    width: 75%;
-    opacity: 1;
-  }
-  100% {
-    width: 100%;
-    opacity: 0;
-  }
-}
-
-@keyframes r-underline {
-  0% {
-    width: 0;
-  }
-  100% {
-    width: 100%;
-    opacity: 0;
-  }
-}
-
-@keyframes shake {
-  0% {
-    transform: translateX(-5px);
-  }
-  25% {
-    transform: translateX(5px);
-  }
-  50% {
-    transform: translateX(-5px);
-  }
-  75% {
-    transform: translateX(5px);
-  }
-  100% {
-    transform: translateX(-5px);
-  }
-}
-
-@keyframes fade-out-in {
-  from {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes reverse-fade-out-in {
-  from {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
+@import "../styles/Keyframes.scss";
 
 #main-login {
   display: flex;
@@ -135,11 +49,11 @@
       font-size: 30px;
       animation: slide-chitchat 650ms linear;
 
-      #hseparator {
+      #r-hseparator {
         width: 0;
-        max-width: 120px;
+        max-width: 175px;
         border: solid white 2px;
-        animation: underline 2500ms 650ms forwards;
+        animation: r-underline 2000ms 1000ms both infinite;
       }
     }
 
@@ -165,11 +79,11 @@
         color: rgb(251, 255, 0);
       }
 
-      #hseparator {
+      #r-hseparator {
         width: 0;
         max-width: 175px;
         border: solid white 2px;
-        animation: underline 2500ms 650ms both infinite;
+        animation: r-underline 2000ms both infinite;
       }
     }
 
@@ -188,7 +102,7 @@
       #r-hseparator {
         width: 0;
         border: solid white 2px;
-        animation: r-underline 2500ms 650ms both infinite;
+        animation: r-underline 2000ms 500ms both infinite;
       }
     }
 
@@ -204,11 +118,11 @@
         color: rgb(238, 70, 70);
       }
 
-      #hseparator {
+      #r-hseparator {
         width: 0;
         max-width: 175px;
         border: solid white 2px;
-        animation: underline 2500ms 650ms both infinite;
+        animation: r-underline 2000ms 1000ms both infinite;
       }
     }
 
@@ -224,11 +138,11 @@
         color: rgb(238, 70, 199);
       }
 
-      #hseparator {
+      #r-hseparator {
         width: 0;
         max-width: 175px;
         border: solid white 2px;
-        animation: underline 2500ms 650ms both infinite;
+        animation: r-underline 2000ms both infinite;
       }
     }
 
@@ -247,7 +161,7 @@
         width: 0;
         max-width: 175px;
         border: solid white 2px;
-        animation: underline 2500ms 650ms both infinite;
+        animation: r-underline 2000ms 500ms both infinite;
       }
     }
   }

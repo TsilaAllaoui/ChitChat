@@ -1,38 +1,5 @@
 @import "./Color.scss";
-
-@-webkit-keyframes AnimationName {
-  0% {
-    background-position: 84% 0%;
-  }
-  50% {
-    background-position: 17% 100%;
-  }
-  100% {
-    background-position: 84% 0%;
-  }
-}
-@-moz-keyframes AnimationName {
-  0% {
-    background-position: 84% 0%;
-  }
-  50% {
-    background-position: 17% 100%;
-  }
-  100% {
-    background-position: 84% 0%;
-  }
-}
-@keyframes AnimationName {
-  0% {
-    background-position: 84% 0%;
-  }
-  50% {
-    background-position: 17% 100%;
-  }
-  100% {
-    background-position: 84% 0%;
-  }
-}
+@import "../styles/Keyframes.scss";
 
 #root {
   text-align: center;
@@ -41,12 +8,18 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(129deg, $dark-purple, $purple, $main-blue);
-  background-size: 800% 800%;
-
-  -webkit-animation: AnimationName 3s ease infinite;
-  -moz-animation: AnimationName 3s ease infinite;
-  animation: AnimationName 3s ease infinite;
+  background: linear-gradient(
+    257deg,
+    deepskyblue,
+    blue,
+    #0e8eff,
+    #3c37ff,
+    #1b91fb,
+    #576cbc,
+    #19376d
+  );
+  background-size: 420% 420%;
+  animation: gradient-animation 14s ease infinite;
 }
 
 body {

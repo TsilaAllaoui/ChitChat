@@ -1,57 +1,5 @@
 @import "../styles/Color.scss";
-
-@keyframes slide {
-  from {
-    transform: translateX(-200px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes underline {
-  from {
-    width: 0;
-  }
-  to {
-    width: 300px;
-  }
-}
-
-@keyframes slide-friends {
-  from {
-    transform: translateX(50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(-100px);
-    opacity: 1;
-  }
-}
-
-@keyframes slide-people {
-  from {
-    transform: translateX(50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(-75px);
-    opacity: 1;
-  }
-}
-
-@keyframes slide-family {
-  from {
-    transform: translateX(50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(-50px);
-    opacity: 1;
-  }
-}
+@import "../styles/Keyframes.scss";
 
 #signup {
   width: 50%;
@@ -78,7 +26,7 @@
     }
 
     p {
-      margin: 1rem 0;
+      margin: 0;
       font-size: 0.75rem;
       font-weight: 500;
     }
@@ -89,6 +37,7 @@
       margin-top: 1rem;
 
       button {
+        margin: 1rem;
         cursor: pointer;
         border-radius: 5px;
         border: none;
@@ -164,6 +113,7 @@
         cursor: pointer;
         padding: 0;
         gap: 0.5rem;
+        margin: 1rem;
 
         input {
           margin: 0;
@@ -186,6 +136,7 @@
       height: 50px;
       opacity: 0;
       transition: opacity 250ms;
+      margin-bottom: 0.25rem;
 
       p {
         font-weight: 700;
@@ -202,6 +153,19 @@
     #show-agreements {
       cursor: pointer;
       font-weight: bold;
+      margin: 1rem;
+    }
+  }
+
+  #google {
+    height: 40px;
+    width: 40px;
+    transition: transform 750ms;
+    cursor: pointer;
+    margin: 10px;
+
+    &:hover {
+      transform: scale(1.2) rotate(360deg);
     }
   }
 
@@ -211,64 +175,6 @@
 
     &:hover {
       cursor: pointer;
-    }
-  }
-
-  #google {
-    height: 40px;
-    width: 40px;
-    transition: transform 750ms;
-    cursor: pointer;
-
-    &:hover {
-      transform: scale(1.2) rotate(360deg);
-    }
-  }
-
-  #popup {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 100vw;
-    backdrop-filter: blur(15px);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-size: 20px;
-    font-weight: 500;
-
-    #buttons {
-      display: flex;
-      gap: 20px;
-      button {
-        height: 50px;
-        width: 100px;
-        border-radius: 10px;
-        color: white;
-        border: none;
-        font-size: 20px;
-        font-weight: 600;
-      }
-      #yes {
-        background-color: $main-blue;
-        transition: background-color 750ms;
-        &:hover {
-          background-color: white;
-          color: $main-blue;
-          border: solid $main-blue 5px;
-        }
-      }
-      #no {
-        background-color: red;
-        transition: background-color 750ms;
-        &:hover {
-          background-color: white;
-          color: red;
-          border: solid red 5px;
-        }
-      }
     }
   }
 }

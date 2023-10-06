@@ -11,15 +11,11 @@ function Terms({
 }) {
   return (
     <>
-      {" "}
       {showAgreements
         ? createPortal(
-            <div id="terms-container">
+            <div id="terms-container" onClick={hideAgreements}>
               <div id="terms">
-                <AiOutlineCloseCircle
-                  onClick={() => hideAgreements()}
-                  id="icon"
-                />
+                <AiOutlineCloseCircle onClick={hideAgreements} id="icon" />
                 <h1>Copyright 2023 - MIT OpenSource License</h1>
                 <p>
                   Permission is hereby granted, free of charge, to any person
