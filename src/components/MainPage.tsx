@@ -15,7 +15,7 @@ import { update } from "../redux/slices/userSlice";
 import messagesSvg from "../assets/messages.svg";
 import { RiShutDownLine } from "react-icons/ri";
 // import Conversations from "./Conversations";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { RootState } from "../redux/store";
 import { MdDelete } from "react-icons/md";
@@ -24,9 +24,125 @@ import { auth, db } from "../Firebase";
 import Messages from "./Messages";
 import "../styles/MainPage.scss";
 import "./Model/Modules";
+import { UserContext } from "../Contexts/UserContext";
+import Popup from "./Popup";
 
 export const MainPage = () => {
-  return <>TEST</>;
+  // ************  States   ************
+  const user = useContext(UserContext).user!.user;
+  const [redirectToLogin, setRedirectToLogin] = useState(false);
+
+  // ************  Effects   ************
+
+  useEffect(() => {
+    const root = document.getElementById("root") as HTMLElement;
+    root.style.background = "#19376d";
+  }, []);
+
+  // ************* Functions **************
+
+  // To log out
+  const navigate = useNavigate();
+  const logOut = () => {
+    signOut(auth).then(() => {
+      setRedirectToLogin(true);
+      navigate("/login");
+    });
+  };
+
+  return (
+    <div id="main">
+      {redirectToLogin ? (
+        <Popup
+          content="Logging out... Redirection in progess..."
+          hidePopup={() => setRedirectToLogin(false)}
+        />
+      ) : null}
+      <div id="menu-section">
+        <div id="menus">
+          <AiFillHome className="actions" />
+          <BsFillChatDotsFill className="actions" />
+          <AiFillSetting className="actions" />
+        </div>
+        <div id="others">
+          <div id="image-profile">
+            <div id="initials">
+              <p>{user.displayName![0].toUpperCase()}</p>
+            </div>
+          </div>
+          <RiShutDownLine id="shutdown" onClick={logOut} />
+        </div>
+      </div>
+      <div id="separator"></div>
+      <div id="convsersations-section">{/* <Conversations /> */}</div>
+      <div id="separator"></div>
+      <div id="messages-section">
+        {/* {currentConv.id === "" ? (
+            <div id="messages-placeholder">
+              <p>Click on conversation to see messages...</p>
+              <div>
+                <img src={messagesSvg} />
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div id="actions">
+                <div id="profile">
+                  <div id="image">{getInitiials(currentConv.guestName)}</div>
+                  <div id="name">{currentConv.guestName}</div>
+                </div>
+                <div id="actions-profile">
+                  <div>
+                    <input
+                      type="file"
+                      style={{ display: "none" }}
+                      ref={fileChooser}
+                      onChange={(e) => setSelectedFile(e.target.files![0])}
+                      accept=".jpg, .png, .jpeg, .gif, .bmp, .tif"
+                    />
+                    <IoMdAttach
+                      id="attachment"
+                      onClick={() => fileChooser.current!.click()}
+                    />
+                  </div>
+                  <IoMdCall id="call" />
+                  <MdDelete
+                    id="delete"
+                    onClick={() => setShowConfirmation(true)}
+                  />
+                </div>
+              </div>
+              <div id="messages-list">
+                {currentConv.id === "" ? null : <Messages />}
+              </div>
+            </div>
+          )} */}
+      </div>
+      {/* {!showConfirmation ? null : (
+        <div id="confirmation">
+          <p>Delete conversation?</p>
+          <div id="buttons">
+            <button
+              id="yes"
+              onClick={() => {
+                // deleteConversation(currentConv.id);
+              }}
+            >
+              Yes
+            </button>
+            <button
+              id="no"
+              onClick={() => {
+                setShowConfirmation(false);
+              }}
+            >
+              No
+            </button>
+          </div>
+        </div>
+      )} */}
+    </div>
+  );
 };
 
 //   // ************  States   ************

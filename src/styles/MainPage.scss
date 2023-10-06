@@ -5,29 +5,36 @@
   background-color: lighten($color: rgb(41, 43, 55), $amount: 5%);
   height: 100vh;
   width: 100vw;
-  color: white;
+  overflow: hidden;
+
   #separator {
     height: 90vh;
     border: solid #3d3f4b 2px;
     margin: auto 15px;
   }
+
   #menu-section {
     display: flex;
     flex-direction: column;
     height: 100vh;
     width: 10%;
+    color: white;
+
     #menus {
       height: 60%;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
       align-items: center;
+
       .actions {
+        cursor: pointer;
         margin-left: 15px;
         padding: 15px;
         height: 35px;
         width: 35px;
         transition: color 500ms, transform 500ms;
+
         &:hover {
           transition: color 500ms, transform 500ms;
           transform: scale(1.25);
@@ -35,13 +42,17 @@
         }
       }
     }
+
     #others {
       height: 40%;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
       align-items: center;
+      margin-bottom: 1rem;
+
       #image-profile {
+        cursor: pointer;
         height: 50px;
         width: 50px;
         border-radius: 25px;
@@ -51,19 +62,23 @@
         flex-direction: column;
         justify-content: center;
         font-size: 25px;
-        #initials{
+
+        #initials {
           display: flex;
           align-items: center;
           justify-content: center;
           font-size: 20px;
         }
       }
+
       #shutdown {
+        cursor: pointer;
         height: 30px;
         width: 30px;
         margin: 15px;
         transform: rotate(90deg);
         transition: transform 400ms;
+
         &:hover {
           transition: transform 400ms;
           transform: rotate(0);
@@ -72,8 +87,10 @@
       }
     }
   }
+
   #convsersations-section {
     width: 25%;
+
     #headers {
       display: flex;
       justify-content: space-around;

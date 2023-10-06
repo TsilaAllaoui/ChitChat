@@ -16,6 +16,7 @@ import { useNavigate } from "react-router";
 import { auth, db, gauthProvider } from "../Firebase";
 import "../styles/SignUpForm.scss";
 import Terms from "./Model/Terms";
+import Popup from "./Popup";
 
 function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
   // ***************** States *******************
@@ -37,6 +38,7 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
 
   const [showAgreements, setShowAgreements] = useState(false);
   const [agreementsChecked, setAgreementsChecked] = useState(false);
+  const [redirectToLogin, setRedirectToLogin] = useState(false);
 
   // ************* Effects ***************
 
@@ -87,7 +89,10 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
     e.preventDefault();
 
     // Safeguard
-    if (email === "" || password === "") return;
+    if (email === "" || password === "") {
+      setError("Please fill all required fields");
+      return;
+    }
     if (!agreementsChecked) {
       setAgreementsError();
       return;
@@ -100,18 +105,26 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
         updateProfile(userCreds.user, {
           displayName: name,
         }).then(() => {
-          alert("Account successfully created. Redirecting to login page...");
-          setRedirect(true);
+          setRedirectToLogin(true);
+          setTimeout(() => {
+            navigate("/login");
+          }, 2000);
         });
       })
 
       // Catching possible error
       .catch((err) => {
-        let e: string = err.message
-          .replace("Firebase: Error (", "")
+        let msg: string = err.message;
+        console.log(msg);
+        msg = msg
+          .replace("Firebase: ", "")
+          .replace("Error (", "")
           .replace(")", "")
+          .replace("auth/weak", "")
+          .replace("(", "")
           .replace("-", " ");
-        setError(e[0].toUpperCase() + e.slice(1));
+        console.log(msg);
+        setError(msg[0].toUpperCase() + msg.slice(1));
       });
   };
 
@@ -121,7 +134,6 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
       signInWithPopup(auth, gauthProvider)
         .then((result) => {
           const credential = GoogleAuthProvider.credentialFromResult(result);
-          const token = credential!.accessToken;
           const user = result.user;
 
           // Check if user is already subscribed
@@ -197,14 +209,14 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
             </div>
           </div>
           <div className="input-line">
-            <p style={{ width: "50px" }}>Email</p>
+            <p style={{ width: "50px" }}>Email *</p>
             <div className="in">
               <MdOutlineAlternateEmail className="icon" />
               <input type="email" onChange={(e) => setEmail(e.target.value)} />
             </div>
           </div>
           <div className="input-line">
-            <p>Password</p>
+            <p>Password *</p>
             <div className="in">
               <FaLock className="icon" />
               <input
@@ -240,6 +252,12 @@ function SignUpForm({ setIsLogin }: { setIsLogin: () => void }) {
           hideAgreements={() => setShowAgreements(false)}
         />
       </form>
+      {redirectToLogin ? (
+        <Popup
+          content="Account created successfully... Redirection to login..."
+          hidePopup={() => setRedirectToLogin(false)}
+        />
+      ) : null}
     </div>
   );
 }

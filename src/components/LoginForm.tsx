@@ -15,6 +15,7 @@ import app, { auth, gauthProvider } from "../Firebase";
 import logo from "../assets/logo.svg";
 import "../styles/LoginForm.scss";
 import Terms from "./Model/Terms";
+import { UserContext } from "../Contexts/UserContext";
 
 function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
   // ************** States **************
@@ -24,6 +25,8 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
   const navigate = useNavigate();
 
   const [error, setError] = useState("");
+
+  const { user, setUser } = useContext(UserContext);
 
   // States for the inputs
   const [emailValue, setEmailValue] = useState("ratsilakwel@gmail.com");
@@ -68,7 +71,11 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
   };
 
   // For login redirection
-  const redirectToLogin = () => {
+  const loginWithEmailAndPassword = (
+    e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
+  ) => {
+    e.preventDefault();
+
     if (!agreementsChecked) {
       setAgreementsError();
       return;
@@ -77,6 +84,7 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
     setPersistence(auth, browserSessionPersistence).then(() => {
       signInWithEmailAndPassword(auth, emailValue, passwordValue)
         .then((userCred) => {
+          setUser(userCred);
           setRedirect(true);
           setTimeout(() => navigate("/main"), 2000);
         })
@@ -98,11 +106,10 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
     }
     setPersistence(auth, browserSessionPersistence).then(() => {
       signInWithPopup(auth, gauthProvider)
-        .then((result) => {
-          const credential = GoogleAuthProvider.credentialFromResult(result);
-          const token = credential!.accessToken;
-          const user = result.user;
+        .then((userCred) => {
+          setUser(userCred);
           setRedirect(true);
+          setTimeout(() => navigate("/main"), 2000);
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -132,7 +139,7 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
   // ************** Rendering ****************
 
   return (
-    <div className="login-app">
+    <form className="login-app" onSubmit={loginWithEmailAndPassword}>
       <div id="logo">
         <img src={logo} alt="" />
       </div>
@@ -167,7 +174,7 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
       </div>
       <div id="buttons">
         <button id="forgot-password-button">Forgot password</button>
-        <button id="login-button" onClick={redirectToLogin}>
+        <button id="login-button" onClick={loginWithEmailAndPassword}>
           Login
         </button>
       </div>
@@ -184,7 +191,7 @@ function LoginForm({ unsetIsLogin }: { unsetIsLogin: () => void }) {
         showAgreements={showAgreements}
         hideAgreements={() => setShowAgreements(false)}
       />
-    </div>
+    </form>
   );
 }
 
