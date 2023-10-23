@@ -19,6 +19,7 @@ import React, {
   SetStateAction,
   ReactNode,
   useRef,
+  useContext,
 } from "react";
 import { setCurrentConv } from "../redux/slices/currentConversationSlice";
 import {
@@ -26,9 +27,8 @@ import {
   BsFillSendFill,
   BsThreeDotsVertical,
 } from "react-icons/bs";
-import { useCollection } from "react-firebase-hooks/firestore";
+import { useCollection, useDocument } from "react-firebase-hooks/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { useDispatch, useSelector } from "react-redux";
 import { AiOutlineFileGif } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { IoIosAttach } from "react-icons/io";
@@ -38,8 +38,10 @@ import MessageEntry from "./MessageEntry";
 import { auth, db } from "../Firebase";
 import { Message } from "./Model/Models";
 import "../styles/Messages.scss";
+import { IConversation } from "./MainPage";
+import { UserContext } from "../Contexts/UserContext";
 
-function Messages() {
+function Messages({ conversation }: { conversation: IConversation }) {
   // ************* States ***************
 
   // State for the messages
@@ -57,59 +59,51 @@ function Messages() {
 
   const messagesListRef = useRef<null | HTMLUListElement>(null);
 
-  // ************* Reducers ***************
+  // ************* Contexts ***************
 
-  const user = useSelector((state: RootState) => state.user);
-  const guestId = useSelector(
-    (state: RootState) => state.chosenUser.chosenUser.id
-  );
-  const id = useSelector((state: RootState) => state.user.id);
-  const currentConvId = useSelector(
-    (state: RootState) => state.currentConvId.id
-  );
-  const currentConvHostId = useSelector(
-    (state: RootState) => state.currentConvId.hostId
-  );
-  const currentReply = useSelector(
-    (state: RootState) => state.reply.replyMessage
-  );
+  const { user, setUser } = useContext(UserContext);
 
   // ************  Firebase Hooks   ************
 
-  const messRefs = collection(db, "conversations", currentConvId, "mess");
-  const q = query(messRefs, orderBy("sentTime"));
-  const [messageList, loading, error] = useCollection(q);
+  // const messRefs = collection(db, "conversations", conversation.id, "mess");
+  // const [messageList, loading, error] = useCollection(
+  //   query(messRefs) //, orderBy("sentTime"))
+  // );
 
   // ************  Effects   ************
 
-  // When changing curren conversation
-  useEffect(() => {
-    let tmp: any[] = [];
-    messageList?.docs.forEach((doc) => {
-      tmp.push({ ...doc.data(), id: doc.data().id });
-    });
-    setMessages(tmp);
-  }, [currentConvId]);
+  // useEffect(() => {
+  //   console.log("In Message error:" + error?.message);
+  // }, [error]);
+
+  // // When changing curren conversation
+  // useEffect(() => {
+  //   let tmp: any[] = [];
+  //   messageList?.docs.forEach((doc: any) => {
+  //     tmp.push({ ...doc.data(), id: doc.data().id });
+  //   });
+  //   setMessages(tmp);
+  // }, [loading]);
 
   // When messages list is updated
-  useEffect(() => {
-    let tmp: any[] = [];
-    messageList?.docs.forEach((doc) => {
-      tmp.push({ ...doc.data(), id: doc.data().id });
-    });
-    console.log("last message: ", messages[messages.length - 1]);
+  // useEffect(() => {
+  //   let tmp: any[] = [];
+  //   messageList?.docs.forEach((doc) => {
+  //     tmp.push({ ...doc.data(), id: doc.data().id });
+  //   });
+  //   console.log("last message: ", messages[messages.length - 1]);
 
-    const element = messagesListRef.current;
-    if (
-      element?.scrollHeight! > element?.clientHeight! ||
-      element?.scrollWidth! > element?.clientWidth!
-    ) {
-      console.log("overflow");
-      const last = messagesListRef.current?.lastChild as HTMLLIElement;
-      last?.scrollIntoView();
-    }
-    setMessages(tmp);
-  }, [messageList]);
+  //   const element = messagesListRef.current;
+  //   if (
+  //     element?.scrollHeight! > element?.clientHeight! ||
+  //     element?.scrollWidth! > element?.clientWidth!
+  //   ) {
+  //     console.log("overflow");
+  //     const last = messagesListRef.current?.lastChild as HTMLLIElement;
+  //     last?.scrollIntoView();
+  //   }
+  //   setMessages(tmp);
+  // }, [messageList]);
 
   // ************ Functions **************
 
@@ -126,12 +120,11 @@ function Messages() {
   ) => {
     e.preventDefault();
 
-    const messRef = collection(db, "conversations", currentConvId, "mess");
+    const messRef = collection(db, "conversations", conversation.id, "mess");
     addDoc(messRef, {
       message: inputValue,
-      senderId: id,
-      receiverId: guestId,
-      hostId: currentConvHostId,
+      senderId: user!.uid,
+      hostId: user!.uid,
       sentTime: serverTimestamp(),
     });
 
@@ -144,7 +137,8 @@ function Messages() {
 
   return (
     <div id="root-message">
-      <div id="messages-list">
+      <h1>TEST</h1>
+      {/* <div id="messages-list">
         <ul ref={messagesListRef}>
           {error && <p>{JSON.stringify(error)}</p>}
           {loading && <p>Loading messages...</p>}
@@ -156,7 +150,8 @@ function Messages() {
                   content={message.message}
                   senderId={message.senderId}
                   receiverId={message.receiverId}
-                  hostId={currentConvHostId}
+                  hostId={conversation.hostId}
+                  currentConversationId={conversation.id}
                 />
               );
             })}
@@ -174,7 +169,7 @@ function Messages() {
             <IoSend id="send-button" onClick={(e) => sendToFirebase(e)} />
           </form>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

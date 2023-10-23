@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import { collection, deleteDoc, getDocs, doc } from "firebase/firestore";
 import { BsReplyFill, BsThreeDotsVertical } from "react-icons/bs";
 import { AiFillDelete } from "react-icons/ai";
-import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { db } from "../Firebase";
 import Action from "./Action";
@@ -14,21 +13,17 @@ function MessageEntry({
   senderId,
   receiverId,
   hostId,
+  currentConversationId,
 }: {
   content: string;
   senderId: string;
   receiverId: string;
   hostId: string;
+  currentConversationId: string;
 }) {
   // ************ Refs ***************
 
   const menu = useRef<HTMLDivElement>(null);
-
-  // ************ Redux ***************
-
-  const currentConvId = useSelector(
-    (state: RootState) => state.currentConvId.id
-  );
 
   // ************  States   ************
 
@@ -130,54 +125,55 @@ function MessageEntry({
 
   return (
     <>
-    {
-      content.includes("data:image") ? null :
-      <li
-      className="message"
-      style={{ alignSelf: condition ? "flex-end" : "flex-start" }}
-    >
-      <div
-        style={{
-          width: width === 12 ? width + 10 : width,
-          height: height,
-          backgroundColor: condition ? "rgb(81, 95, 111)" : "rgb(20,147,251)",
-          borderRadius: condition ? "10px 10px 0 10px" : "10px 10px 10px 0",
-          alignItems: parts.length === 1 ? "center" : "",
-        }}
-        onMouseEnter={() => setOpacity("75%")}
-        onMouseLeave={() => setOpacity("0")}
-        className="message-container"
-      >
-        {parts.map((part, index) => (
-          <p
-            key={content + index}
+      {content.includes("data:image") ? null : (
+        <li
+          className="message"
+          style={{ alignSelf: condition ? "flex-end" : "flex-start" }}
+        >
+          <div
             style={{
-              marginTop: parts.length === 1 ? "5px" : "0",
+              width: width === 12 ? width + 10 : width,
+              height: height,
+              backgroundColor: condition
+                ? "rgb(81, 95, 111)"
+                : "rgb(20,147,251)",
+              borderRadius: condition ? "10px 10px 0 10px" : "10px 10px 10px 0",
+              alignItems: parts.length === 1 ? "center" : "",
             }}
+            onMouseEnter={() => setOpacity("75%")}
+            onMouseLeave={() => setOpacity("0")}
+            className="message-container"
           >
-            {part}
-          </p>
-        ))}
-      </div>
-      <div
-        className="dots"
-        style={{ opacity: opacity }}
-        onMouseEnter={() => setOpacity("100%")}
-        onMouseLeave={() => setOpacity("0")}
-        onClick={toggle}
-      >
-        <BsThreeDotsVertical />
-      </div>
-      <Action
-        actions={actions}
-        infos={{
-          content: content,
-          senderId: senderId,
-          receiverId: receiverId,
-        }}
-      />
-    </li>
-    }
+            {parts.map((part, index) => (
+              <p
+                key={content + index}
+                style={{
+                  marginTop: parts.length === 1 ? "5px" : "0",
+                }}
+              >
+                {part}
+              </p>
+            ))}
+          </div>
+          <div
+            className="dots"
+            style={{ opacity: opacity }}
+            onMouseEnter={() => setOpacity("100%")}
+            onMouseLeave={() => setOpacity("0")}
+            onClick={toggle}
+          >
+            <BsThreeDotsVertical />
+          </div>
+          {/* <Action
+            actions={actions}
+            infos={{
+              content: content,
+              senderId: senderId,
+              receiverId: receiverId,
+            }}
+          /> */}
+        </li>
+      )}
     </>
   );
 }

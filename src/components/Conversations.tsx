@@ -13,7 +13,6 @@ import { updateChosenUser } from "../redux/slices/chosenUserSlice";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { setFilter } from "../redux/slices/filterSlice";
 import { Conversation, UserInFirebase } from "./Model/Models";
-import { useSelector, useDispatch } from "react-redux";
 import { BiMessageSquareAdd } from "react-icons/bi";
 import { set } from "../redux/slices/popUpSlice";
 import { useEffect, useState } from "react";
