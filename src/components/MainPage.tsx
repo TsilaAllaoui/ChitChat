@@ -142,17 +142,15 @@ export const MainPage = () => {
           ></RotateLoader>
         ) : (
           userConversations.map((conversation) => (
-            <>
-              <div
-                className="conversation"
-                key={conversation.id}
-                onClick={(e) => setCurrentConversation(conversation)}
-              >
-                {user!.uid == conversation.hostId
-                  ? conversation.guestName
-                  : conversation.hostName}
-              </div>
-            </>
+            <div
+              className="conversation"
+              key={conversation.id}
+              onClick={(e) => setCurrentConversation(conversation)}
+            >
+              {user!.uid == conversation.hostId
+                ? conversation.guestName
+                : conversation.hostName}
+            </div>
           ))
         )}
       </div>

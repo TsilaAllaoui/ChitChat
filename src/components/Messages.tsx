@@ -2,22 +2,19 @@ import { addDoc, collection, query, serverTimestamp } from "firebase/firestore";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { IoSend } from "react-icons/io5";
+import { MoonLoader } from "react-spinners";
 import { UserContext } from "../Contexts/UserContext";
 import { db } from "../Firebase";
 import "../styles/Messages.scss";
 import { IConversation } from "./MainPage";
 import MessageEntry from "./MessageEntry";
 import { Message } from "./Model/Models";
-import { MoonLoader } from "react-spinners";
 
 const Messages = ({ conversation }: { conversation: IConversation }) => {
   // ************* States ***************
 
   // State for the messages
   const [messages, setMessages] = useState<Message[]>([]);
-
-  // Debug
-  const [count, setCount] = useState(0);
 
   // For the input value
   const [inputValue, setInputValue] = useState("");
@@ -41,13 +38,18 @@ const Messages = ({ conversation }: { conversation: IConversation }) => {
 
   // ************  Effects   ************
 
+  useEffect(() => {
+    console.log(conversation);
+  }, [conversation]);
+
   // When changing curren conversation
   useEffect(() => {
     let tmp: any[] = [];
     messageList?.docs.forEach((doc: any) => {
       tmp.push({ ...doc.data(), id: doc.data().id });
     });
-    setMessages(tmp);
+    console.log(tmp);
+    // setMessages(tmp);
   }, [loading]);
 
   // When messages list is updated
@@ -115,7 +117,6 @@ const Messages = ({ conversation }: { conversation: IConversation }) => {
                   key={message.id + message.message}
                   content={message.message}
                   senderId={message.senderId}
-                  receiverId={message.receiverId}
                   hostId={conversation.hostId}
                   currentConversationId={conversation.id}
                 />

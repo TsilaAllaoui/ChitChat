@@ -1,23 +1,17 @@
-import "../styles/MessageEntry.scss";
 import { useEffect, useRef, useState } from "react";
-import { collection, deleteDoc, getDocs, doc } from "firebase/firestore";
-import { BsReplyFill, BsThreeDotsVertical } from "react-icons/bs";
 import { AiFillDelete } from "react-icons/ai";
-import { RootState } from "../redux/store";
-import { db } from "../Firebase";
-import Action from "./Action";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import "../styles/MessageEntry.scss";
 import { ActionLabel } from "./Model/ActionModel";
 
 function MessageEntry({
   content,
   senderId,
-  receiverId,
   hostId,
   currentConversationId,
 }: {
   content: string;
   senderId: string;
-  receiverId: string;
   hostId: string;
   currentConversationId: string;
 }) {
@@ -128,14 +122,25 @@ function MessageEntry({
       {content.includes("data:image") ? null : (
         <li
           className="message"
-          style={{ alignSelf: condition ? "flex-end" : "flex-start" }}
+          style={{ alignSelf: condition ? "flex-start" : "flex-end" }}
         >
+          {condition ? (
+            <div
+              className="dots"
+              style={{ opacity: opacity }}
+              onMouseEnter={() => setOpacity("100%")}
+              onMouseLeave={() => setOpacity("0")}
+              onClick={toggle}
+            >
+              <BsThreeDotsVertical />
+            </div>
+          ) : null}
           <div
             style={{
               width: width === 12 ? width + 10 : width,
               height: height,
               backgroundColor: condition
-                ? "rgb(81, 95, 111)"
+                ? "rgb(188, 199, 212)"
                 : "rgb(20,147,251)",
               borderRadius: condition ? "10px 10px 0 10px" : "10px 10px 10px 0",
               alignItems: parts.length === 1 ? "center" : "",
@@ -155,15 +160,17 @@ function MessageEntry({
               </p>
             ))}
           </div>
-          <div
-            className="dots"
-            style={{ opacity: opacity }}
-            onMouseEnter={() => setOpacity("100%")}
-            onMouseLeave={() => setOpacity("0")}
-            onClick={toggle}
-          >
-            <BsThreeDotsVertical />
-          </div>
+          {condition ? null : (
+            <div
+              className="dots"
+              style={{ opacity: opacity }}
+              onMouseEnter={() => setOpacity("100%")}
+              onMouseLeave={() => setOpacity("0")}
+              onClick={toggle}
+            >
+              <BsThreeDotsVertical />
+            </div>
+          )}
           {/* <Action
             actions={actions}
             infos={{
