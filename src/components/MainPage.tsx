@@ -47,10 +47,8 @@ export const MainPage = () => {
   const [userConversations, setUserConversations] = useState<IConversation[]>(
     []
   );
-  // const [currentConversation, setCurrentConversation] =
-  //   useState<IConversation | null>(null);
-
-  const [currentConversation, setCurrentConversation] = useState<string>("");
+  const [currentConversation, setCurrentConversation] =
+    useState<IConversation | null>(null);
 
   const [userPseudo, setUserPseudo] = useState("");
 
@@ -70,18 +68,20 @@ export const MainPage = () => {
   auth.onAuthStateChanged((user) => {
     if (user) {
       setUser(user);
-      setUserPseudo(
-        user && user!.displayName
-          ? user?.displayName![0].toUpperCase() + user?.displayName!.slice(1)!
-          : user?.email![0].toUpperCase() +
-              user?.email!.slice(1, user?.email?.indexOf("@"))!
-      );
     } else {
       navigate("/login");
     }
   });
 
   useEffect(() => {
+    if (user) {
+      setUserPseudo(
+        user!.displayName
+          ? user?.displayName![0].toUpperCase() + user?.displayName!.slice(1)!
+          : user?.email![0].toUpperCase() +
+              user?.email!.slice(1, user?.email?.indexOf("@"))!
+      );
+    }
     const tmp: IConversation[] = [];
     value?.docs.map((doc) => {
       const data = doc.data();
@@ -98,14 +98,6 @@ export const MainPage = () => {
     });
     setUserConversations(tmp);
   }, [user, loading]);
-
-  const showConversation = (
-    // e: React.MouseEvent<HTMLElement>,
-    conversation: IConversation
-  ) => {
-    console.log(conversation);
-    setCurrentConversation(conversation.id);
-  };
 
   // ************* Functions **************
 
@@ -151,24 +143,23 @@ export const MainPage = () => {
         ) : (
           userConversations.map((conversation) => (
             <>
-              <label className="conversation" key={conversation.id}>
+              <div
+                className="conversation"
+                key={conversation.id}
+                onClick={(e) => setCurrentConversation(conversation)}
+              >
                 {user!.uid == conversation.hostId
                   ? conversation.guestName
                   : conversation.hostName}
-              </label>
-              <input
-                type="text"
-                onChange={(e) => showConversation(conversation)}
-              />
+              </div>
             </>
           ))
         )}
       </div>
       <div id="separator"></div>
       <div id="messages-section">
-        {currentConversation != "" ? (
-          // <Messages conversationId={currentConversation.id} />
-          <h1>TEST</h1>
+        {currentConversation ? (
+          <Messages conversation={currentConversation} />
         ) : (
           <>
             <BsChevronLeft id="arrow-icon" />

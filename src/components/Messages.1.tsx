@@ -1,18 +1,15 @@
 import { addDoc, collection, query, serverTimestamp } from "firebase/firestore";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { IoSend } from "react-icons/io5";
-import { UserContext } from "../Contexts/UserContext";
-import { db } from "../Firebase";
-import "../styles/Messages.scss";
-import { IConversation } from "./MainPage";
 import MessageEntry from "./MessageEntry";
+import { db } from "../Firebase";
 import { Message } from "./Model/Models";
-import { MoonLoader } from "react-spinners";
+import { IConversation } from "./MainPage";
+import { UserContext } from "../Contexts/UserContext";
 
-const Messages = ({ conversation }: { conversation: IConversation }) => {
+export function Messages({ conversation }: { conversation: IConversation }) {
   // ************* States ***************
-
   // State for the messages
   const [messages, setMessages] = useState<Message[]>([]);
 
@@ -25,22 +22,18 @@ const Messages = ({ conversation }: { conversation: IConversation }) => {
   const [lastMessage, setLastMessage] = useState<Message>();
 
   // ************* References **************
-
   const messagesListRef = useRef<null | HTMLUListElement>(null);
 
   // ************* Contexts ***************
-
   const { user, setUser } = useContext(UserContext);
 
   // ************  Firebase Hooks   ************
-
   const messRefs = collection(db, "conversations", conversation.id, "mess");
   const [messageList, loading, error] = useCollection(
     query(messRefs) //, orderBy("sentTime"))
   );
 
   // ************  Effects   ************
-
   // When changing curren conversation
   useEffect(() => {
     let tmp: any[] = [];
@@ -71,7 +64,6 @@ const Messages = ({ conversation }: { conversation: IConversation }) => {
   }, [messageList]);
 
   // ************ Functions **************
-
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -99,15 +91,11 @@ const Messages = ({ conversation }: { conversation: IConversation }) => {
   const deleteMessageEntry = () => {};
 
   // ************  Rendering   ************
-
   return (
     <div id="root-message">
       <div id="messages-list">
-        <ul
-          ref={messagesListRef}
-          style={{ justifyContent: loading ? "center" : "flex-start" }}
-        >
-          {loading && <MoonLoader size={20} color="#ffffff" />}
+        <ul ref={messagesListRef}>
+          {loading && <Spinner name="circle" />}
           {messages &&
             messages.map((message: Message) => {
               return (
@@ -138,6 +126,4 @@ const Messages = ({ conversation }: { conversation: IConversation }) => {
       </div>
     </div>
   );
-};
-
-export default Messages;
+}
