@@ -1,31 +1,38 @@
 .dropdown {
-    padding-left: 0 !important;
-    button {
-        height: 20px;
-        width: 100%;
-        background-color: transparent;
-        border: none;
-        font-weight: 600;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        transition: background-color 350ms;
-        &:hover {
-            background-color: lighten($color: grey, $amount: 15%);
-        }
-        &:first-of-type {
-            border-radius: 5px 5px 0 0;
-        }
-        &:last-of-type {
-            border-radius: 0 0 5px 5px;
-        }
+  padding-left: 0 !important;
+  transition: opacity 500ms;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 2;
+
+  button {
+    cursor: pointer;
+    height: 100%;
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 350ms;
+    &:hover {
+      background-color: lighten($color: grey, $amount: 15%);
     }
+    &:first-of-type {
+      border-radius: 5px 5px 0 0;
+    }
+    &:last-of-type {
+      border-radius: 0 0 5px 5px;
+    }
+  }
 }
 
 .main-action {
-    
-    position: relative;
-    .arrow {
+  position: relative;
+  .arrow {
     width: 0;
     height: 0;
     background: red;
@@ -35,5 +42,5 @@
     border-bottom: 10px solid transparent;
     border-right: 10px solid red;
     border-radius: 0;
-    }
+  }
 }

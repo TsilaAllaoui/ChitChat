@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { AiFillDelete } from "react-icons/ai";
-import { BsThreeDotsVertical } from "react-icons/bs";
+import { BsFillReplyFill, BsThreeDotsVertical } from "react-icons/bs";
 import "../styles/MessageEntry.scss";
+import Action from "./Action";
 import { ActionLabel } from "./Model/ActionModel";
 
 function MessageEntry({
@@ -96,24 +97,20 @@ function MessageEntry({
 
   // **************** Functions ********************
 
-  // Toggle actions menu
-  const toggle = (e: React.MouseEvent<HTMLDivElement>) => {
-    const dots = e.currentTarget as HTMLDivElement;
-    const popUp = dots.nextSibling as HTMLDivElement;
-    console.log("Before: ", popUp.style.opacity);
-    popUp.style.opacity = popUp.style.opacity === "1" ? "0" : "1";
-    const [x, y] = [e.clientX, e.clientY];
-    popUp.style.top = parseInt((height / 2 - 10).toString()).toString() + "px";
-    popUp.style.left = parseInt((width + 50).toString()).toString() + "px";
-    setToggleMenu(!toggleMenu);
-  };
-
   const actions: ActionLabel[] = [
     {
       icon: AiFillDelete,
       label: "Delete",
+      color: "rgb(255,0,0)",
+    },
+    {
+      icon: BsFillReplyFill,
+      label: "Reply",
+      color: "rgb(81, 81, 172)",
     },
   ];
+
+  useEffect(() => console.log(toggleMenu), [toggleMenu]);
 
   // ************  Rendering   ************
 
@@ -123,16 +120,18 @@ function MessageEntry({
         <li
           className="message"
           style={{ alignSelf: condition ? "flex-start" : "flex-end" }}
+          onMouseEnter={() => setOpacity("75%")}
+          onMouseLeave={() => setOpacity("0")}
+          onClick={() => setToggleMenu(true)}
         >
           {condition ? (
             <div
               className="dots"
               style={{ opacity: opacity }}
-              onMouseEnter={() => setOpacity("100%")}
+              onMouseEnter={() => setOpacity("1")}
               onMouseLeave={() => setOpacity("0")}
-              onClick={toggle}
             >
-              <BsThreeDotsVertical />
+              <BsThreeDotsVertical id="icon" />
             </div>
           ) : null}
           <div
@@ -145,8 +144,6 @@ function MessageEntry({
               borderRadius: condition ? "10px 10px 0 10px" : "10px 10px 10px 0",
               alignItems: parts.length === 1 ? "center" : "",
             }}
-            onMouseEnter={() => setOpacity("75%")}
-            onMouseLeave={() => setOpacity("0")}
             className="message-container"
           >
             {parts.map((part, index) => (
@@ -166,19 +163,22 @@ function MessageEntry({
               style={{ opacity: opacity }}
               onMouseEnter={() => setOpacity("100%")}
               onMouseLeave={() => setOpacity("0")}
-              onClick={toggle}
+              onClick={() => setToggleMenu(true)}
             >
-              <BsThreeDotsVertical />
+              <BsThreeDotsVertical id="icon" />
             </div>
           )}
-          {/* <Action
-            actions={actions}
-            infos={{
-              content: content,
-              senderId: senderId,
-              receiverId: receiverId,
-            }}
-          /> */}
+          {toggleMenu ? (
+            <Action
+              actions={actions}
+              currentConversationId={currentConversationId}
+              hideAction={() => setToggleMenu(false)}
+              infos={{
+                content: content,
+                senderId: senderId,
+              }}
+            />
+          ) : null}
         </li>
       )}
     </>

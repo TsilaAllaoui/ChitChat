@@ -1,63 +1,42 @@
-import { ActionLabel } from "./Model/ActionModel";
-import "../styles/Action.scss";
 import { collection, deleteDoc, getDocs } from "firebase/firestore";
 import { db } from "../Firebase";
-import { RootState } from "../redux/store";
-import { updateReplyMessage } from "../redux/slices/replyMessageSlice";
+import "../styles/Action.scss";
+import { ActionLabel } from "./Model/ActionModel";
 
 function Action({
   actions,
+  hideAction,
+  currentConversationId,
   infos,
 }: {
   actions: ActionLabel[];
+  hideAction: () => void;
+  currentConversationId: string;
   infos: {
     content: string;
     senderId: string;
-    receiverId: string;
   };
 }) {
   // ************ Variables ************
   let height = actions.length * 20;
 
-  // *********** Redux ***************
-
-  // const currentConvId = useSelector(
-  //   (state: RootState) => state.currentConvId.id
-  // );
-
-  // const currentReply = useSelector(
-  //   (state: RootState) => state.reply.replyMessage
-  // );
-
-  // const dispatch = useDispatch();
-
   // ************* Functions
 
   // To delete message entry
   const deleteMessageEntry = () => {
-    // getDocs(collection(db, "conversations", currentConvId, "mess")).then(
-    //   (snap) => {
-    //     snap.forEach((doc) => {
-    //       const data = { ...doc.data() };
-    //       if (
-    //         data.message === infos.content &&
-    //         data.senderId === infos.senderId &&
-    //         data.receiverId === infos.receiverId
-    //       )
-    //         deleteDoc(doc.ref);
-    //     });
-    //   }
-    // );
+    getDocs(
+      collection(db, "conversations", currentConversationId, "mess")
+    ).then((snap) => {
+      snap.forEach((doc) => {
+        const data = { ...doc.data() };
+        if (data.message === infos.content && data.senderId === infos.senderId)
+          deleteDoc(doc.ref);
+      });
+    });
   };
 
   const replyMessageEntry = () => {
-    // dispatch(
-    //   updateReplyMessage({
-    //     message: infos.content,
-    //     senderName: "",
-    //   })
-    // );
-    // console.log("After update: ", currentReply);
+    /*TODO*/
   };
 
   // **************** Rendering ************************
@@ -66,17 +45,26 @@ function Action({
     <div
       className="dropdown"
       style={{
-        height: height.toString() + "px",
-        transition: "opacity 750ms",
-        opacity: "0",
+        height: (actions.length * 30).toString() + "px",
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.opacity = "0";
+        hideAction();
       }}
     >
       {actions.map((action) => {
         return (
           <button
+            onMouseEnter={(e) => {
+              let a = e.currentTarget.style.backgroundColor
+                .replace("rgb", "rgba")
+                .replace(")", ",0.75)");
+              e.currentTarget.style.backgroundColor = a;
+              console.log(a);
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = action.color;
+            }}
+            style={{ backgroundColor: action.color }}
             id={action.label}
             onClick={() => {
               if (action.label === "Delete") deleteMessageEntry();
