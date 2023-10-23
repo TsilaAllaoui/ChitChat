@@ -1,8 +1,7 @@
 import {
-  GoogleAuthProvider,
-  browserLocalPersistence,
   browserSessionPersistence,
   getAuth,
+  sendPasswordResetEmail,
   setPersistence,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -11,22 +10,25 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { MdErrorOutline } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { ScaleLoader } from "react-spinners";
+import { IsLoginContext } from "../Contexts/IsLoginContext";
 import { RedirectPopupContext } from "../Contexts/RedirectPopupContext";
+import { UserContext } from "../Contexts/UserContext";
 import app, { auth, gauthProvider } from "../Firebase";
 import logo from "../assets/logo.svg";
 import "../styles/LoginForm.scss";
 import Terms from "./Model/Terms";
-import { UserContext } from "../Contexts/UserContext";
-import { IsLoginContext } from "../Contexts/IsLoginContext";
+import Popup from "./Popup";
 
 function LoginForm() {
   // ************** States **************
 
   // For navigation
-  const { redirect, setRedirect } = useContext(RedirectPopupContext);
+  const { setRedirect } = useContext(RedirectPopupContext);
   const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [resetPwdContent, setResetPwdContent] = useState("");
 
   const { user, setUser } = useContext(UserContext);
   const setIsLogin = useContext(IsLoginContext).setIsLogin;
@@ -87,7 +89,14 @@ function LoginForm() {
       setAgreementsError();
       return;
     }
+
+    if (!/\S+@\S+\.\S+/.test(emailValue)) {
+      setError("Invalid Email provided.");
+      return;
+    }
+
     const auth = getAuth(app);
+    setLoading(true);
     setPersistence(auth, browserSessionPersistence).then(() => {
       signInWithEmailAndPassword(auth, emailValue, passwordValue)
         .then((userCred) => {
@@ -102,6 +111,7 @@ function LoginForm() {
             .replace(")", "")
             .replace("-", " ");
           setError(e[0].toUpperCase() + e.slice(1));
+          setLoading(false);
         });
     });
   };
@@ -131,7 +141,7 @@ function LoginForm() {
     });
   };
 
-  const clickAgreements = (e: React.MouseEvent<HTMLElement>) => {
+  const clickAgreements = () => {
     const checkBox = document.querySelector(
       "#agreements > input"
     ) as HTMLInputElement;
@@ -139,8 +149,29 @@ function LoginForm() {
     setAgreementsChecked(checkBox.checked);
   };
 
-  const goToSignUp = (e: React.MouseEvent<HTMLSpanElement>) => {
+  const goToSignUp = () => {
     setIsLogin(false);
+  };
+
+  const sendVerificationEmail = async (
+    e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
+  ) => {
+    e.preventDefault();
+    if (emailValue == "") {
+      setError("No Email adress provided.");
+      return;
+    } else if (!/\S+@\S+\.\S+/.test(emailValue)) {
+      setError("Invalid Email provided.");
+      return;
+    }
+
+    sendPasswordResetEmail(auth, emailValue)
+      .then(() => {
+        setResetPwdContent("Reset Password Email sent!");
+      })
+      .catch(() => {
+        setResetPwdContent("Error sending Reset Password Email!");
+      });
   };
 
   // ************** Rendering ****************
@@ -180,9 +211,22 @@ function LoginForm() {
         <p onClick={clickAgreements}>Accept all agreements</p>
       </div>
       <div id="buttons">
-        <button id="forgot-password-button">Forgot password</button>
+        <button id="forgot-password-button" onClick={sendVerificationEmail}>
+          Forgot password
+        </button>
         <button id="login-button" onClick={loginWithEmailAndPassword}>
-          Login
+          {loading ? (
+            <ScaleLoader
+              color="#FFFFFF"
+              loading={loading}
+              height={10}
+              width={2}
+              radius={15}
+              margin={1}
+            ></ScaleLoader>
+          ) : (
+            <span>Login</span>
+          )}
         </button>
       </div>
       <div className="error" ref={errorRef}>
@@ -198,6 +242,12 @@ function LoginForm() {
         showAgreements={showAgreements}
         hideAgreements={() => setShowAgreements(false)}
       />
+      {resetPwdContent != "" ? (
+        <Popup
+          content={resetPwdContent}
+          hidePopup={() => setResetPwdContent("")}
+        />
+      ) : null}
     </form>
   );
 }

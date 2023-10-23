@@ -9,7 +9,7 @@ const firebaseConfig = {
   projectId: "chichat-firebase",
   storageBucket: "chichat-firebase.appspot.com",
   messagingSenderId: "24466417086",
-  appId: "1:24466417086:web:26f97a6f53656efd3785ef"
+  appId: "1:24466417086:web:26f97a6f53656efd3785ef",
 };
 
 // Initialize Firebase
