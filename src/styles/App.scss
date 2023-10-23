@@ -24,6 +24,61 @@
 
 body {
   #portal {
+    #confirmation {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      backdrop-filter: blur(5px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 3;
+
+      #container {
+        background-color: $light;
+        border-radius: 10px;
+        width: 250px;
+        height: 120px;
+
+        h1 {
+          font-size: 25px;
+          text-align: center;
+        }
+
+        #buttons {
+          display: flex;
+          justify-content: center;
+          margin: 15px 0;
+          gap: 1rem;
+
+          button {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 250ms;
+
+            &:first-of-type {
+              &:hover {
+                background-color: rgb(230, 56, 56);
+                color: white;
+              }
+            }
+
+            &:last-of-type {
+              &:hover {
+                background-color: $main;
+                color: white;
+              }
+            }
+          }
+        }
+      }
+    }
+
     #terms-container {
       width: 100%;
       height: 100%;
