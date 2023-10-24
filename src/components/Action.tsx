@@ -56,6 +56,7 @@ function Action({
     >
       {actions.map((action) => (
         <button
+          key={action.label}
           onMouseEnter={(e) => {
             let a = e.currentTarget.style.backgroundColor
               .replace("rgb", "rgba")

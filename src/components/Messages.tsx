@@ -91,7 +91,7 @@ const Messages = ({ conversation }: { conversation: IConversation }) => {
     addDoc(messRef, {
       message: inputValue,
       senderId: user!.uid,
-      hostId: user!.uid,
+      hostId: conversation.hostId,
       sentTime: serverTimestamp(),
     });
 

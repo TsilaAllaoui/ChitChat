@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AiFillDelete } from "react-icons/ai";
 import { BsFillReplyFill, BsThreeDotsVertical } from "react-icons/bs";
 import "../styles/MessageEntry.scss";
 import Action from "./Action";
 import { ActionLabel } from "./Model/ActionModel";
+import { UserContext } from "../Contexts/UserContext";
 
 function MessageEntry({
   content,
@@ -19,6 +20,10 @@ function MessageEntry({
   // ************ Refs ***************
 
   const menu = useRef<HTMLDivElement>(null);
+
+  // ************ Contexts ************
+
+  const user = useContext(UserContext).user;
 
   // ************  States   ************
 
@@ -84,7 +89,7 @@ function MessageEntry({
     setParts(parts);
 
     // Condition to know if message entry was sent by who
-    setCondition(hostId === senderId);
+    setCondition(user!.uid != senderId);
   }, []);
 
   // **************** Functions ********************
