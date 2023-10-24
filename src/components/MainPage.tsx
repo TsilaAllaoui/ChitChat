@@ -1,31 +1,17 @@
-import {
-  collection,
-  deleteDoc,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
-import { onAuthStateChanged, signOut } from "@firebase/auth";
-import { AiFillSetting, AiFillHome } from "react-icons/ai";
-import { IoMdCall, IoMdAttach } from "react-icons/io";
-import { BsChevronLeft, BsFillChatDotsFill } from "react-icons/bs";
-import messagesSvg from "../assets/messages.svg";
-import { RiShutDownLine } from "react-icons/ri";
-// import Conversations from "./Conversations";
-import { useContext, useEffect, useRef, useState } from "react";
+import { signOut } from "@firebase/auth";
+import { collection, query } from "firebase/firestore";
+import { useContext, useEffect, useState } from "react";
+import { useCollection } from "react-firebase-hooks/firestore";
 import { useNavigate } from "react-router";
-import { MdDelete } from "react-icons/md";
-import { getInitiials } from "./Model/Modules";
+import { UserContext } from "../Contexts/UserContext";
+import { UserConversationsContext } from "../Contexts/UserConversationsContext";
 import { auth, db } from "../Firebase";
 import "../Styles/MainPage.scss";
-import "./Model/Modules";
-import { UserContext } from "../Contexts/UserContext";
-import Popup from "./Popup";
-import { BiMessageRoundedX, BiUser } from "react-icons/bi";
-import { useCollection } from "react-firebase-hooks/firestore";
-import Conversation from "./Conversation";
-import { RotateLoader } from "react-spinners";
+import Conversations from "./Conversations";
+import Menu from "./Menu";
 import Messages from "./Messages";
+import "./Model/Modules";
+import Popup from "./Popup";
 
 export type IConversation = {
   guestId: string;
@@ -41,11 +27,13 @@ export const MainPage = () => {
 
   const { user, setUser } = useContext(UserContext);
   const [redirectToLogin, setRedirectToLogin] = useState(false);
-  const [userConversations, setUserConversations] = useState<IConversation[]>(
-    []
-  );
-  const [currentConversation, setCurrentConversation] =
-    useState<IConversation | null>(null);
+
+  const {
+    userConversations,
+    setUserConversations,
+    currentConversation,
+    setCurrentConversation,
+  } = useContext(UserConversationsContext);
 
   const [userPseudo, setUserPseudo] = useState("");
 
@@ -115,56 +103,11 @@ export const MainPage = () => {
           hidePopup={() => setRedirectToLogin(false)}
         />
       ) : null}
-      <div id="menu-section">
-        <div id="menus">
-          <AiFillHome className="actions" />
-          <BsFillChatDotsFill className="actions" />
-          <AiFillSetting className="actions" />
-        </div>
-        <div id="others">
-          <p>{userPseudo}</p>
-          <BiUser id="image-profile" />
-          <RiShutDownLine id="shutdown" onClick={logOut} />
-        </div>
-      </div>
+      <Menu userPseudo={userPseudo} logOut={logOut} />
       <div id="separator"></div>
-      <div id="convsersations-section">
-        <h1>Conversations</h1>
-        {loading ? (
-          <RotateLoader
-            size={15}
-            color="#ffffff"
-            speedMultiplier={0.5}
-            id="conversations-loading"
-          ></RotateLoader>
-        ) : (
-          userConversations.map((conversation) => (
-            <div
-              className="conversation"
-              key={conversation.id}
-              onClick={(e) => setCurrentConversation(conversation)}
-            >
-              {user!.uid == conversation.hostId
-                ? conversation.guestName
-                : conversation.hostName}
-            </div>
-          ))
-        )}
-      </div>
+      <Conversations loading={loading} />
       <div id="separator"></div>
-      <div id="messages-section">
-        {currentConversation ? (
-          <Messages conversation={currentConversation} />
-        ) : (
-          <>
-            <BsChevronLeft id="arrow-icon" />
-            <div id="no-message-container">
-              <h1>No message selected</h1>
-              <BiMessageRoundedX id="no-message-icon" />
-            </div>
-          </>
-        )}
-      </div>
+      <Messages conversation={currentConversation} />
     </div>
   );
 };

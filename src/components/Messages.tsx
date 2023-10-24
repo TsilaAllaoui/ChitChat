@@ -1,13 +1,17 @@
 import {
   addDoc,
   collection,
-  getDocs,
   orderBy,
   query,
   serverTimestamp,
 } from "firebase/firestore";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useCollection } from "react-firebase-hooks/firestore";
+import { AiOutlineCamera } from "react-icons/ai";
+import { BiMessageRoundedX } from "react-icons/bi";
+import { BsChevronLeft } from "react-icons/bs";
+import { GoSmiley } from "react-icons/go";
+import { ImAttachment } from "react-icons/im";
 import { IoSend } from "react-icons/io5";
 import { MoonLoader } from "react-spinners";
 import { UserContext } from "../Contexts/UserContext";
@@ -16,11 +20,19 @@ import "../Styles/Messages.scss";
 import { IConversation } from "./MainPage";
 import MessageEntry from "./MessageEntry";
 import { Message } from "./Model/Models";
-import { GoSmiley } from "react-icons/go";
-import { AiFillCamera, AiOutlineCamera } from "react-icons/ai";
-import { ImAttachment } from "react-icons/im";
 
-const Messages = ({ conversation }: { conversation: IConversation }) => {
+const Messages = ({ conversation }: { conversation: IConversation | null }) => {
+  if (!conversation)
+    return (
+      <>
+        <BsChevronLeft id="arrow-icon" />
+        <div id="no-message-container">
+          <h1>No message selected</h1>
+          <BiMessageRoundedX id="no-message-icon" />
+        </div>
+      </>
+    );
+
   // ************* States ***************
 
   // State for the messages
@@ -43,16 +55,12 @@ const Messages = ({ conversation }: { conversation: IConversation }) => {
 
   // ************  Firebase Hooks   ************
 
-  const messRefs = collection(db, "conversations", conversation.id, "mess");
+  const messRefs = collection(db, "conversations", conversation!.id, "mess");
   const [messageList, loading, error] = useCollection(
     query(messRefs, orderBy("sentTime", "asc"))
   );
 
   // ************  Effects   ************
-
-  useEffect(() => {
-    console.log(conversation);
-  }, [conversation]);
 
   // When changing curren conversation
   useEffect(() => {
@@ -62,19 +70,25 @@ const Messages = ({ conversation }: { conversation: IConversation }) => {
     });
     console.log(tmp);
     setMessages(tmp);
-  }, [messageList]);
-
-  // When messages list is updated
-  useEffect(() => {
     setRefresh(true);
   }, [messageList]);
+
+  // When messages is first displayed
+  useEffect(() => {
+    setTimeout(() => {
+      const ul = document.querySelector("#messages-list") as HTMLElement;
+      console.log(ul.scrollHeight);
+      ul.scrollTo({ top: ul.scrollHeight, behavior: "smooth" });
+    }, 10);
+  }, [loading]);
 
   useEffect(() => {
     if (refresh) {
       const element = messagesListRef.current;
       if (element) {
-        const last = element!.children[element!.children.length - 1];
-        last.scrollIntoView();
+        const ul = document.querySelector("#messages-list") as HTMLElement;
+        console.log(ul.scrollHeight);
+        ul.scrollTo({ top: ul.scrollHeight, behavior: "smooth" });
       }
       setRefresh(false);
     }
@@ -95,11 +109,11 @@ const Messages = ({ conversation }: { conversation: IConversation }) => {
   ) => {
     e.preventDefault();
 
-    const messRef = collection(db, "conversations", conversation.id, "mess");
+    const messRef = collection(db, "conversations", conversation!.id, "mess");
     addDoc(messRef, {
       message: inputValue,
       senderId: user!.uid,
-      hostId: conversation.hostId,
+      hostId: conversation!.hostId,
       sentTime: serverTimestamp(),
     });
 
@@ -128,46 +142,48 @@ const Messages = ({ conversation }: { conversation: IConversation }) => {
   // ************  Rendering   ************
 
   return (
-    <div id="messages-container">
-      <div id="root-message">
-        <div id="messages-list">
-          <ul
-            ref={messagesListRef}
-            style={{ justifyContent: loading ? "center" : "flex-start" }}
-          >
-            {loading && <MoonLoader size={20} color="#ffffff" />}
-            {messages &&
-              messages.map((message: Message, i) => {
-                return (
-                  <MessageEntry
-                    key={i}
-                    content={message.message}
-                    senderId={message.senderId}
-                    hostId={conversation.hostId}
-                    currentConversationId={conversation.id}
-                  />
-                );
-              })}
-          </ul>
+    <div id="messages-section">
+      <div id="messages-container">
+        <div id="root-message">
+          <div id="messages-list">
+            <ul
+              ref={messagesListRef}
+              style={{ justifyContent: loading ? "center" : "flex-start" }}
+            >
+              {loading && <MoonLoader size={20} color="#ffffff" />}
+              {messages &&
+                messages.map((message: Message, i) => {
+                  return (
+                    <MessageEntry
+                      key={i}
+                      content={message.message}
+                      senderId={message.senderId}
+                      hostId={conversation.hostId}
+                      currentConversationId={conversation.id}
+                    />
+                  );
+                })}
+            </ul>
+          </div>
         </div>
-      </div>
-      <div>
-        <div id="input">
-          <form onSubmit={(e) => sendToFirebase(e)}>
-            <input
-              type="text"
-              name="texts"
-              id="text-input"
-              placeholder="Type message here..."
-              onChange={(e) => handleChange(e)}
-            />
-            <ImAttachment className="icon" />
-            <AiOutlineCamera className="icon" />
-            <GoSmiley className="icon" />
-            <div id="send-container">
-              <IoSend onClick={(e) => sendToFirebase(e)} />
-            </div>
-          </form>
+        <div>
+          <div id="input">
+            <form onSubmit={(e) => sendToFirebase(e)}>
+              <input
+                type="text"
+                name="texts"
+                id="text-input"
+                placeholder="Type message here..."
+                onChange={(e) => handleChange(e)}
+              />
+              <ImAttachment className="icon" />
+              <AiOutlineCamera className="icon" />
+              <GoSmiley className="icon" />
+              <div id="send-container">
+                <IoSend onClick={(e) => sendToFirebase(e)} />
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>

@@ -1,140 +1,174 @@
 @import "./Color.scss";
 
-#messages-container {
-  width: 90%;
+#no-message-container {
+  height: 75%;
+  width: 75%;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: center;
+  color: white;
 
-  #input {
-    margin-top: 1rem;
-    width: 100%;
+  h1 {
+    font-size: 1rem;
+  }
 
-    form {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+  #no-message-icon {
+    color: white;
+    font-size: 8rem;
+  }
+}
 
-      #text-input {
-        width: 75%;
-        height: 40px;
-        background-color: rgba(255, 255, 255, 0.218);
-        border-radius: 10px;
-        border: none;
-        margin-right: 10px;
-        padding-left: 50px;
-        transition: box-shadow 500ms;
-        box-shadow: none;
-        color: rgba(255, 255, 255, 0.5);
+#messages-section {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 75%;
 
-        &::-webkit-input-placeholder {
-          color: rgba(255, 255, 255, 0.5);
-        }
+  #arrow-icon {
+    color: white;
+    font-size: 2rem;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    animation: jiggle 750ms infinite alternate-reverse both;
+  }
 
-        &:-moz-placeholder {
-          color: rgba(255, 255, 255, 0.5);
-        }
+  #messages-container {
+    width: 90%;
 
-        &:hover {
+    #input {
+      margin-top: 1rem;
+      width: 100%;
+
+      form {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        #text-input {
+          width: 75%;
+          height: 40px;
+          background-color: rgba(255, 255, 255, 0.218);
+          border-radius: 10px;
+          border: none;
+          margin-right: 10px;
+          padding-left: 50px;
           transition: box-shadow 500ms;
-          color: white;
+          box-shadow: none;
+          color: rgba(255, 255, 255, 0.5);
+
+          &::-webkit-input-placeholder {
+            color: rgba(255, 255, 255, 0.5);
+          }
+
+          &:-moz-placeholder {
+            color: rgba(255, 255, 255, 0.5);
+          }
+
+          &:hover {
+            transition: box-shadow 500ms;
+            color: white;
+          }
+
+          &:focus-visible {
+            outline: none;
+            color: white;
+          }
         }
 
-        &:focus-visible {
-          outline: none;
+        .icon {
           color: white;
-        }
-      }
-
-      .icon {
-        color: white;
-        cursor: pointer;
-        transition: transform 250ms, color 250ms;
-
-        &:hover {
-          color: $main-blue;
+          cursor: pointer;
           transition: transform 250ms, color 250ms;
+
+          &:hover {
+            color: $main-blue;
+            transition: transform 250ms, color 250ms;
+          }
+
+          &:last-of-type {
+            font-size: 20px;
+          }
         }
 
-        &:last-of-type {
-          font-size: 20px;
-        }
-      }
-
-      #send-container {
-        cursor: pointer;
-        background-color: $main-blue;
-        border-radius: 100%;
-        width: 40px;
-        height: 40px;
-        display: grid;
-        place-items: center;
-
-        svg {
-          color: white;
-          transition: color 250ms;
-          font-size: 23px;
-        }
-
-        &:hover {
-          background-color: white;
+        #send-container {
+          cursor: pointer;
+          background-color: $main-blue;
+          border-radius: 100%;
+          width: 40px;
+          height: 40px;
+          display: grid;
+          place-items: center;
 
           svg {
-            color: $main-blue;
+            color: white;
+            transition: color 250ms;
+            font-size: 23px;
+          }
+
+          &:hover {
+            background-color: white;
+
+            svg {
+              color: $main-blue;
+            }
           }
         }
       }
     }
-  }
 
-  .dropdown {
-    background-color: grey;
-    border-radius: 5px;
-  }
+    .dropdown {
+      background-color: grey;
+      border-radius: 5px;
+    }
 
-  #reply-preview {
-    width: 85%;
-  }
+    #reply-preview {
+      width: 85%;
+    }
 
-  #root-message {
-    background-color: rgb(61, 63, 75);
-    border-radius: 10px;
-    margin-top: 15px;
-    padding-top: 15px;
-    width: 100%;
-
-    #messages-list {
+    #root-message {
+      background-color: rgb(61, 63, 75);
+      border-radius: 10px;
+      margin-top: 15px;
+      padding-top: 15px;
       width: 100%;
-      overflow: auto;
 
-      /* Firefox */
-      * {
-        scrollbar-width: auto;
-        scrollbar-color: #576cbc #ffffff;
-      }
-
-      /* Chrome, Edge, and Safari */
-      &::-webkit-scrollbar {
-        width: 12px;
-      }
-
-      &::-webkit-scrollbar-track {
-        background: transparent;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background-color: #576cbc;
-        border-radius: 5px;
-        border: 3px solid rgb(61, 63, 75);
-      }
-
-      ul {
-        list-style: none;
+      #messages-list {
         width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
-        margin: auto;
-        height: 80vh;
-        padding: 0;
+        overflow: auto;
+
+        /* Firefox */
+        scrollbar-width: thin;
+        scrollbar-color: #576cbc rgb(61, 63, 75);
+
+        /* Chrome, Edge, and Safari */
+        &::-webkit-scrollbar {
+          width: 12px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background-color: #576cbc;
+          border-radius: 5px;
+          border: 3px solid rgb(61, 63, 75);
+        }
+
+        ul {
+          list-style: none;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: space-between;
+          margin: auto;
+          height: 80vh;
+          padding: 0;
+        }
       }
     }
   }
