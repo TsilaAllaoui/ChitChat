@@ -6,6 +6,9 @@
   justify-content: space-around;
   align-items: center;
   z-index: 2;
+  position: absolute;
+  top: -28px;
+  width: 100px;
 
   button {
     cursor: pointer;
@@ -27,20 +30,5 @@
     &:last-of-type {
       border-radius: 0 0 5px 5px;
     }
-  }
-}
-
-.main-action {
-  position: relative;
-  .arrow {
-    width: 0;
-    height: 0;
-    background: red;
-    position: relative;
-    left: -20px;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    border-right: 10px solid red;
-    border-radius: 0;
   }
 }

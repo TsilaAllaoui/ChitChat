@@ -1,9 +1,9 @@
 import { collection, deleteDoc, getDocs } from "firebase/firestore";
+import { useState } from "react";
+import { createPortal } from "react-dom";
 import { db } from "../Firebase";
 import "../styles/Action.scss";
 import { ActionLabel } from "./Model/ActionModel";
-import { useState } from "react";
-import { createPortal } from "react-dom";
 
 function Action({
   actions,
@@ -54,50 +54,55 @@ function Action({
         hideAction();
       }}
     >
-      {actions.map((action) => {
-        return (
-          <button
-            onMouseEnter={(e) => {
-              let a = e.currentTarget.style.backgroundColor
-                .replace("rgb", "rgba")
-                .replace(")", ",0.75)");
-              e.currentTarget.style.backgroundColor = a;
-              console.log(a);
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = action.color;
-            }}
-            style={{ backgroundColor: action.color }}
-            id={action.label}
-            onClick={() => {
-              if (action.label === "Delete") {
-                setShowConfirmation(true);
-              } else if (action.label === "Reply") replyMessageEntry();
-            }}
-          >
-            <action.icon />
-            {action.label}
-          </button>
-        );
-      })}
+      {actions.map((action) => (
+        <button
+          onMouseEnter={(e) => {
+            let a = e.currentTarget.style.backgroundColor
+              .replace("rgb", "rgba")
+              .replace(")", ",0.75)");
+            e.currentTarget.style.backgroundColor = a;
+            console.log(a);
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = action.color;
+          }}
+          style={{ backgroundColor: action.color }}
+          id={action.label}
+          onClick={() => {
+            if (action.label === "Delete") {
+              setShowConfirmation(true);
+            } else if (action.label === "Reply") replyMessageEntry();
+          }}
+        >
+          <action.icon />
+          {action.label}
+        </button>
+      ))}
       {showConfirmation
         ? createPortal(
-            <div id="confirmation" onClick={() => setShowConfirmation(false)}>
-              <div id="container">
-                <h1>Delete message?</h1>
-                <div id="buttons">
-                  <button onClick={() => deleteMessageEntry()}>Yes</button>
-                  <button
-                    onClick={() => {
-                      setShowConfirmation(false);
-                      hideAction();
-                    }}
-                  >
-                    No
-                  </button>
+            <>
+              <div id="confirmation" onClick={() => setShowConfirmation(false)}>
+                <div id="container" onClick={(e) => e.stopPropagation()}>
+                  <h1>Delete message?</h1>
+                  <div id="separator"></div>
+                  <h2>
+                    This action is irreversible. Proceed carrefully before
+                    choosing.
+                  </h2>
+                  <div id="buttons">
+                    <button onClick={() => deleteMessageEntry()}>Yes</button>
+                    <button
+                      onClick={() => {
+                        setShowConfirmation(false);
+                        hideAction();
+                      }}
+                    >
+                      No
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>,
+            </>,
             document.getElementById("portal") as HTMLElement
           )
         : null}

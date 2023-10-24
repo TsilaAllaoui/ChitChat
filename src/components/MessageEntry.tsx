@@ -85,14 +85,6 @@ function MessageEntry({
 
     // Condition to know if message entry was sent by who
     setCondition(hostId === senderId);
-
-    const dropdowns = document.querySelectorAll(".dropdown");
-    if (dropdowns) {
-      dropdowns.forEach((dropdown) => {
-        const e = dropdown as HTMLDivElement;
-        e.style.opacity = "0";
-      });
-    }
   }, []);
 
   // **************** Functions ********************
@@ -110,8 +102,6 @@ function MessageEntry({
     },
   ];
 
-  useEffect(() => console.log(toggleMenu), [toggleMenu]);
-
   // ************  Rendering   ************
 
   return (
@@ -122,17 +112,35 @@ function MessageEntry({
           style={{ alignSelf: condition ? "flex-start" : "flex-end" }}
           onMouseEnter={() => setOpacity("75%")}
           onMouseLeave={() => setOpacity("0")}
-          onClick={() => setToggleMenu(true)}
         >
-          {condition ? (
-            <div
-              className="dots"
-              style={{ opacity: opacity }}
-              onMouseEnter={() => setOpacity("1")}
-              onMouseLeave={() => setOpacity("0")}
-            >
-              <BsThreeDotsVertical id="icon" />
-            </div>
+          {!condition ? (
+            <>
+              {toggleMenu ? (
+                <div id="action-container">
+                  <Action
+                    actions={actions}
+                    currentConversationId={currentConversationId}
+                    hideAction={() => setToggleMenu(false)}
+                    infos={{
+                      content: content,
+                      senderId: senderId,
+                    }}
+                  />
+                </div>
+              ) : null}
+              <div
+                className="dots"
+                style={{ opacity: opacity }}
+                onMouseEnter={() => setOpacity("1")}
+                onMouseLeave={() => {
+                  setOpacity("0");
+                  console.log(document.activeElement);
+                }}
+                onClick={() => setToggleMenu(true)}
+              >
+                <BsThreeDotsVertical id="icon" />
+              </div>
+            </>
           ) : null}
           <div
             style={{
@@ -157,28 +165,32 @@ function MessageEntry({
               </p>
             ))}
           </div>
-          {condition ? null : (
-            <div
-              className="dots"
-              style={{ opacity: opacity }}
-              onMouseEnter={() => setOpacity("100%")}
-              onMouseLeave={() => setOpacity("0")}
-              onClick={() => setToggleMenu(true)}
-            >
-              <BsThreeDotsVertical id="icon" />
-            </div>
+          {!condition ? null : (
+            <>
+              <div
+                className="dots"
+                style={{ opacity: opacity }}
+                onMouseEnter={() => setOpacity("100%")}
+                onMouseLeave={() => setOpacity("0")}
+                onClick={() => setToggleMenu(true)}
+              >
+                <BsThreeDotsVertical id="icon" />
+              </div>
+              {toggleMenu ? (
+                <div id="action-container">
+                  <Action
+                    actions={actions}
+                    currentConversationId={currentConversationId}
+                    hideAction={() => setToggleMenu(false)}
+                    infos={{
+                      content: content,
+                      senderId: senderId,
+                    }}
+                  />
+                </div>
+              ) : null}
+            </>
           )}
-          {toggleMenu ? (
-            <Action
-              actions={actions}
-              currentConversationId={currentConversationId}
-              hideAction={() => setToggleMenu(false)}
-              infos={{
-                content: content,
-                senderId: senderId,
-              }}
-            />
-          ) : null}
         </li>
       )}
     </>

@@ -30,21 +30,45 @@ body {
       height: 100%;
       top: 0;
       left: 0;
-      backdrop-filter: blur(5px);
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 3;
+      backdrop-filter: blur(5px);
 
       #container {
-        background-color: $light;
+        background-color: rgb(106, 108, 123);
         border-radius: 10px;
-        width: 250px;
-        height: 120px;
+        width: 400px;
+        height: 175px;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 3;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        #separator {
+          width: 90%;
+          height: 1px;
+          background-color: grey;
+        }
 
         h1 {
-          font-size: 25px;
+          font-size: 20px;
           text-align: center;
+          color: black;
+          user-select: none;
+        }
+
+        h2 {
+          user-select: none;
+          font-size: 11px;
+          font-weight: 500;
         }
 
         #buttons {
@@ -59,7 +83,7 @@ body {
             border-radius: 5px;
             font-weight: 700;
             cursor: pointer;
-            transition: background-color 250ms;
+            transition: background-color 150ms;
 
             &:first-of-type {
               &:hover {
