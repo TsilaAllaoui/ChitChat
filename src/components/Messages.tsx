@@ -1,6 +1,7 @@
 import {
   addDoc,
   collection,
+  getDocs,
   orderBy,
   query,
   serverTimestamp,
@@ -29,6 +30,8 @@ const Messages = ({ conversation }: { conversation: IConversation }) => {
   const [inputValue, setInputValue] = useState("");
 
   const [lastMessage, setLastMessage] = useState<Message>();
+
+  const [refresh, setRefresh] = useState(false);
 
   // ************* References **************
 
@@ -63,23 +66,19 @@ const Messages = ({ conversation }: { conversation: IConversation }) => {
 
   // When messages list is updated
   useEffect(() => {
-    let tmp: any[] = [];
-    messageList?.docs.forEach((doc) => {
-      tmp.push({ ...doc.data(), id: doc.data().id });
-    });
-    console.log("last message: ", messages[messages.length - 1]);
-
-    const element = messagesListRef.current;
-    if (
-      element?.scrollHeight! > element?.clientHeight! ||
-      element?.scrollWidth! > element?.clientWidth!
-    ) {
-      console.log("overflow");
-      const last = messagesListRef.current?.lastChild as HTMLLIElement;
-      last?.scrollIntoView();
-    }
-    setMessages(tmp);
+    setRefresh(true);
   }, [messageList]);
+
+  useEffect(() => {
+    if (refresh) {
+      const element = messagesListRef.current;
+      if (element) {
+        const last = element!.children[element!.children.length - 1];
+        last.scrollIntoView();
+      }
+      setRefresh(false);
+    }
+  }, [refresh]);
 
   // ************ Functions **************
 
