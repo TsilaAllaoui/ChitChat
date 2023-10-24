@@ -8,10 +8,10 @@ import { UserConversationsContext } from "../Contexts/UserConversationsContext";
 import { auth, db } from "../Firebase";
 import "../Styles/MainPage.scss";
 import Conversations from "./Conversations";
-import Menu from "./Menu";
 import Messages from "./Messages";
 import "./Model/Modules";
 import Popup from "./Popup";
+import Menu from "./Menu";
 
 export type IConversation = {
   guestId: string;

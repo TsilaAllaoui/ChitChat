@@ -79,7 +79,7 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
       const ul = document.querySelector("#messages-list") as HTMLElement;
       console.log(ul.scrollHeight);
       ul.scrollTo({ top: ul.scrollHeight, behavior: "smooth" });
-    }, 10);
+    }, 20);
   }, [loading]);
 
   useEffect(() => {

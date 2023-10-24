@@ -41,9 +41,11 @@
   color: white;
   font-size: 25px;
   transition: background-color 750ms;
+
   #profile {
     display: flex;
     width: 100%;
+
     #image {
       width: 45px;
       height: 45px;
@@ -60,11 +62,13 @@
       overflow: hidden;
     }
   }
+
   .delete {
     width: 15%;
     justify-self: end;
     color: rgb(184, 35, 35);
   }
+
   &:hover {
     background-color: $main-blue;
   }

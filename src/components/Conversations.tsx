@@ -1,15 +1,13 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { RotateLoader } from "react-spinners";
-import { UserConversationsContext } from "../Contexts/UserConversationsContext";
 import { UserContext } from "../Contexts/UserContext";
+import { UserConversationsContext } from "../Contexts/UserConversationsContext";
+import UserList from "./UserList";
 
 const Conversations = ({ loading }: { loading: boolean }) => {
-  const {
-    userConversations,
-    setUserConversations,
-    currentConversation,
-    setCurrentConversation,
-  } = useContext(UserConversationsContext);
+  const { userConversations, setCurrentConversation } = useContext(
+    UserConversationsContext
+  );
   const user = useContext(UserContext).user;
   return (
     <div id="convsersations-section">
@@ -34,6 +32,7 @@ const Conversations = ({ loading }: { loading: boolean }) => {
           </div>
         ))
       )}
+      <UserList />
     </div>
   );
 };
