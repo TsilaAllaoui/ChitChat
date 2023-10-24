@@ -15,8 +15,7 @@ import { IsLoginContext } from "../Contexts/IsLoginContext";
 import { RedirectPopupContext } from "../Contexts/RedirectPopupContext";
 import { UserContext } from "../Contexts/UserContext";
 import app, { auth, gauthProvider } from "../Firebase";
-import logo from "../assets/logo.svg";
-import "../styles/LoginForm.scss";
+import "../Styles/LoginForm.scss";
 import Terms from "./Model/Terms";
 import Popup from "./Popup";
 
@@ -179,7 +178,7 @@ function LoginForm() {
   return (
     <form className="login-app" onSubmit={loginWithEmailAndPassword}>
       <div id="logo">
-        <img src={logo} alt="" />
+        <img src="./logo.svg" alt="" />
       </div>
       <p id="sign-up-suggestion">
         First time here? then <span onClick={goToSignUp}>Sign up!</span>
