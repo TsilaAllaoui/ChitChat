@@ -5,23 +5,19 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { setCurrentConv } from "../redux/slices/currentConversationSlice";
 import { onAuthStateChanged, signOut } from "@firebase/auth";
 import { AiFillSetting, AiFillHome } from "react-icons/ai";
 import { IoMdCall, IoMdAttach } from "react-icons/io";
 import { BsChevronLeft, BsFillChatDotsFill } from "react-icons/bs";
-import { update } from "../redux/slices/userSlice";
 import messagesSvg from "../assets/messages.svg";
 import { RiShutDownLine } from "react-icons/ri";
 // import Conversations from "./Conversations";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import { RootState } from "../redux/store";
 import { MdDelete } from "react-icons/md";
 import { getInitiials } from "./Model/Modules";
 import { auth, db } from "../Firebase";
-import Messages from "./Messages";
-import "../styles/MainPage.scss";
+import "../Styles/MainPage.scss";
 import "./Model/Modules";
 import { UserContext } from "../Contexts/UserContext";
 import Popup from "./Popup";
@@ -29,6 +25,7 @@ import { BiMessageRoundedX, BiUser } from "react-icons/bi";
 import { useCollection } from "react-firebase-hooks/firestore";
 import Conversation from "./Conversation";
 import { RotateLoader } from "react-spinners";
+import Messages from "./Messages";
 
 export type IConversation = {
   guestId: string;

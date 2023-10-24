@@ -1,14 +1,23 @@
-import { addDoc, collection, query, serverTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  orderBy,
+  query,
+  serverTimestamp,
+} from "firebase/firestore";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { IoSend } from "react-icons/io5";
 import { MoonLoader } from "react-spinners";
 import { UserContext } from "../Contexts/UserContext";
 import { db } from "../Firebase";
-import "../styles/Messages.scss";
+import "../Styles/Messages.scss";
 import { IConversation } from "./MainPage";
 import MessageEntry from "./MessageEntry";
 import { Message } from "./Model/Models";
+import { GoSmiley } from "react-icons/go";
+import { AiFillCamera, AiOutlineCamera } from "react-icons/ai";
+import { ImAttachment } from "react-icons/im";
 
 const Messages = ({ conversation }: { conversation: IConversation }) => {
   // ************* States ***************
@@ -33,7 +42,7 @@ const Messages = ({ conversation }: { conversation: IConversation }) => {
 
   const messRefs = collection(db, "conversations", conversation.id, "mess");
   const [messageList, loading, error] = useCollection(
-    query(messRefs) //, orderBy("sentTime"))
+    query(messRefs, orderBy("sentTime", "asc"))
   );
 
   // ************  Effects   ************
@@ -49,8 +58,8 @@ const Messages = ({ conversation }: { conversation: IConversation }) => {
       tmp.push({ ...doc.data(), id: doc.data().id });
     });
     console.log(tmp);
-    // setMessages(tmp);
-  }, [loading]);
+    setMessages(tmp);
+  }, [messageList]);
 
   // When messages list is updated
   useEffect(() => {
@@ -98,31 +107,50 @@ const Messages = ({ conversation }: { conversation: IConversation }) => {
     setInputValue("");
   };
 
-  const deleteMessageEntry = () => {};
+  const scrollToLastMessage = () => {
+    let tmp: any[] = [];
+    messageList?.docs.forEach((doc) => {
+      tmp.push({ ...doc.data(), id: doc.data().id });
+    });
+    console.log("last message: ", messages[messages.length - 1]);
+
+    const element = messagesListRef.current;
+    if (
+      element?.scrollHeight! > element?.clientHeight! ||
+      element?.scrollWidth! > element?.clientWidth!
+    ) {
+      console.log("overflow");
+      const last = messagesListRef.current?.lastChild as HTMLLIElement;
+      last?.scrollIntoView();
+    }
+    setMessages(tmp);
+  };
 
   // ************  Rendering   ************
 
   return (
-    <div id="root-message">
-      <div id="messages-list">
-        <ul
-          ref={messagesListRef}
-          style={{ justifyContent: loading ? "center" : "flex-start" }}
-        >
-          {loading && <MoonLoader size={20} color="#ffffff" />}
-          {messages &&
-            messages.map((message: Message) => {
-              return (
-                <MessageEntry
-                  key={message.id + message.message}
-                  content={message.message}
-                  senderId={message.senderId}
-                  hostId={conversation.hostId}
-                  currentConversationId={conversation.id}
-                />
-              );
-            })}
-        </ul>
+    <div id="messages-container">
+      <div id="root-message">
+        <div id="messages-list">
+          <ul
+            ref={messagesListRef}
+            style={{ justifyContent: loading ? "center" : "flex-start" }}
+          >
+            {loading && <MoonLoader size={20} color="#ffffff" />}
+            {messages &&
+              messages.map((message: Message, i) => {
+                return (
+                  <MessageEntry
+                    key={i}
+                    content={message.message}
+                    senderId={message.senderId}
+                    hostId={conversation.hostId}
+                    currentConversationId={conversation.id}
+                  />
+                );
+              })}
+          </ul>
+        </div>
       </div>
       <div>
         <div id="input">
@@ -131,9 +159,15 @@ const Messages = ({ conversation }: { conversation: IConversation }) => {
               type="text"
               name="texts"
               id="text-input"
+              placeholder="Type message here..."
               onChange={(e) => handleChange(e)}
             />
-            <IoSend id="send-button" onClick={(e) => sendToFirebase(e)} />
+            <ImAttachment className="icon" />
+            <AiOutlineCamera className="icon" />
+            <GoSmiley className="icon" />
+            <div id="send-container">
+              <IoSend onClick={(e) => sendToFirebase(e)} />
+            </div>
           </form>
         </div>
       </div>

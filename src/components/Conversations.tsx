@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 import { RootState } from "../redux/store";
 import { FaSearch } from "react-icons/fa";
 import { getInitiials } from "./Model/Modules";
-import "../styles/Conversations.scss";
+import "../Styles/Conversations.scss";
 import { db } from "../Firebase";
 import Popup from "./Popup";
 

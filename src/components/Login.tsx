@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 
-import "../styles/Login.scss";
+import "../Styles/Login.scss";
 import LoginForm from "./LoginForm";
 import SignUp from "./SignUpForm";
 import { createPortal } from "react-dom";

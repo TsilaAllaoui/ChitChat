@@ -1,91 +1,141 @@
 @import "./Color.scss";
 
-#root-message {
-  background-color: rgb(61, 63, 75);
-  border-radius: 10px;
-  margin-top: 15px;
-  padding-top: 15px;
+#messages-container {
   width: 90%;
 
-  #messages-list {
-    width: 100%;
-    overflow: auto;
-
-    &::-webkit-scrollbar {
-      display: none;
-      list-style: none;
-    }
-
-    ul {
-      list-style: none;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      margin: auto;
-      &::-webkit-scrollbar {
-        display: none;
-        list-style: none;
-      }
-      -ms-overflow-style: none; /* IE and Edge */
-      scrollbar-width: none; /* Firefox */
-      height: 80vh;
-      padding: 0;
-    }
-  }
-
   #input {
-    padding-bottom: 20px;
+    margin-top: 1rem;
     width: 100%;
 
     form {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
 
       #text-input {
         width: 75%;
-        height: 30px;
-        background-color: transparent;
-        border: solid rgb(27, 145, 251) 2px;
+        height: 40px;
+        background-color: rgba(255, 255, 255, 0.218);
         border-radius: 10px;
+        border: none;
         margin-right: 10px;
         padding-left: 50px;
         transition: box-shadow 500ms;
         box-shadow: none;
-        color: white;
+        color: rgba(255, 255, 255, 0.5);
+
+        &::-webkit-input-placeholder {
+          color: rgba(255, 255, 255, 0.5);
+        }
+
+        &:-moz-placeholder {
+          color: rgba(255, 255, 255, 0.5);
+        }
 
         &:hover {
           transition: box-shadow 500ms;
           color: white;
-          box-shadow: 0 0 10px $main-blue;
         }
 
         &:focus-visible {
-          box-shadow: 0 0 10px $main-blue;
           outline: none;
           color: white;
         }
       }
-      #send-button {
-        height: 30px;
-        width: 30px;
-        transition: transform 750ms, color 750ms;
+
+      .icon {
+        color: white;
+        cursor: pointer;
+        transition: transform 250ms, color 250ms;
 
         &:hover {
           color: $main-blue;
-          transform: scale(1.25);
-          transition: transform 750ms, color 750ms;
+          transition: transform 250ms, color 250ms;
+        }
+
+        &:last-of-type {
+          font-size: 20px;
+        }
+      }
+
+      #send-container {
+        cursor: pointer;
+        background-color: $main-blue;
+        border-radius: 100%;
+        width: 40px;
+        height: 40px;
+        display: grid;
+        place-items: center;
+
+        svg {
+          color: white;
+          transition: color 250ms;
+          font-size: 23px;
+        }
+
+        &:hover {
+          background-color: white;
+
+          svg {
+            color: $main-blue;
+          }
         }
       }
     }
   }
+
   .dropdown {
     background-color: grey;
     border-radius: 5px;
   }
+
   #reply-preview {
     width: 85%;
+  }
+
+  #root-message {
+    background-color: rgb(61, 63, 75);
+    border-radius: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    width: 100%;
+
+    #messages-list {
+      width: 100%;
+      overflow: auto;
+
+      /* Firefox */
+      * {
+        scrollbar-width: auto;
+        scrollbar-color: #576cbc #ffffff;
+      }
+
+      /* Chrome, Edge, and Safari */
+      &::-webkit-scrollbar {
+        width: 12px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: #576cbc;
+        border-radius: 5px;
+        border: 3px solid rgb(61, 63, 75);
+      }
+
+      ul {
+        list-style: none;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        margin: auto;
+        height: 80vh;
+        padding: 0;
+      }
+    }
   }
 }

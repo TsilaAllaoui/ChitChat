@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import "../styles/Popup.scss";
+import "../Styles/Popup.scss";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 
 function Popup({

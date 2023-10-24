@@ -6,7 +6,7 @@ const MainProvider = ({ children }: { children: any }) => {
   return (
     <UserProvider>
       <RedirectPopupProvider>
-        <IsLoginProvider>{children}</IsLoginProvider>;
+        <IsLoginProvider>{children}</IsLoginProvider>
       </RedirectPopupProvider>
     </UserProvider>
   );
