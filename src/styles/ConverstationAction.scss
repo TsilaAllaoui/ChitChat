@@ -1,0 +1,35 @@
+@import "./Keyframes.scss";
+
+.dots {
+  cursor: pointer;
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  #action-container {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    align-items: center;
+    position: absolute;
+    top: -5px;
+    left: 25px;
+    background-color: rgb(251, 27, 27);
+    width: 100px;
+    height: 30px;
+    border-radius: 5px;
+    color: black;
+    font-weight: 700;
+    transition: opacity 250ms;
+
+    #arrow {
+      position: absolute;
+      background-color: rgb(251, 27, 27);
+      width: 15px;
+      height: 15px;
+      left: -5px;
+      transform: rotate(45deg);
+    }
+  }
+}

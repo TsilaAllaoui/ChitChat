@@ -8,10 +8,10 @@ import { UserConversationsContext } from "../Contexts/UserConversationsContext";
 import { auth, db } from "../Firebase";
 import "../Styles/MainPage.scss";
 import Conversations from "./Conversations";
+import Menu from "./Menu";
 import Messages from "./Messages";
 import "./Model/Modules";
 import Popup from "./Popup";
-import Menu from "./Menu";
 
 export type IConversation = {
   guestId: string;
@@ -103,7 +103,11 @@ export const MainPage = () => {
           hidePopup={() => setRedirectToLogin(false)}
         />
       ) : null}
-      <Menu userPseudo={userPseudo} logOut={logOut} />
+      <Menu
+        conversationsAreLoading={loading}
+        userPseudo={userPseudo}
+        logOut={logOut}
+      />
       <div id="separator"></div>
       <Conversations loading={loading} />
       <div id="separator"></div>

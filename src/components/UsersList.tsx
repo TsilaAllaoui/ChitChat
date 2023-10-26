@@ -1,20 +1,31 @@
 import { collection, query } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
 import { useCollection } from "react-firebase-hooks/firestore";
-import { db } from "../Firebase";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { BiUser } from "react-icons/bi";
 import { UserConversationsContext } from "../Contexts/UserConversationsContext";
-import { IUser } from "./UsersList";
+import { db } from "../Firebase";
+import "../Styles/UsersList.scss";
+import { MoonLoader } from "react-spinners";
 
-export const UserList = ({ close }: { close: () => void }) => {
+export type IUser = {
+  email: string;
+  name: string;
+  uid: string;
+  picture: string;
+};
+
+const UserList = ({ close }: { close: () => void }) => {
   /**************** States ****************/
+
   const [users, setUsers] = useState<IUser[]>([]);
 
   /**************** Contexts ****************/
+
   const { userConversations } = useContext(UserConversationsContext);
 
   /**************** Functions ****************/
+
   const isUserAlreadyInList = (user: IUser) => {
     return (
       userConversations.find((Conversation) =>
@@ -24,6 +35,7 @@ export const UserList = ({ close }: { close: () => void }) => {
   };
 
   /**************** Firebase Hooks ****************/
+
   const usersRef = collection(db, "users");
   const [usersList, loading, error] = useCollection(query(usersRef));
 
@@ -50,7 +62,9 @@ export const UserList = ({ close }: { close: () => void }) => {
           <AiOutlineCloseCircle id="icon" onClick={close} />
         </div>
         {loading ? (
-          <Spinner name="circle" />
+          <div id="spinner">
+            <MoonLoader size={35} color="white" />
+          </div>
         ) : (
           users.map((user) => {
             if (isUserAlreadyInList(user)) return null;
@@ -73,3 +87,5 @@ export const UserList = ({ close }: { close: () => void }) => {
     </div>
   );
 };
+
+export default UserList;

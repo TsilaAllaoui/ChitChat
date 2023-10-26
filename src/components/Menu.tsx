@@ -1,21 +1,32 @@
+import { useContext, useState } from "react";
 import { createPortal } from "react-dom";
 import { AiFillSetting } from "react-icons/ai";
 import { BiCommentAdd, BiUser } from "react-icons/bi";
-import { BsFillChatDotsFill } from "react-icons/bs";
 import { RiShutDownLine } from "react-icons/ri";
 import { Tooltip } from "react-tooltip";
-import UserList from "./UserList";
+import { UserConversationsContext } from "../Contexts/UserConversationsContext";
+import UsersList from "./UsersList";
 
 function Menu({
   userPseudo,
   logOut,
+  conversationsAreLoading,
 }: {
   userPseudo: string;
   logOut: () => void;
+  conversationsAreLoading: boolean;
 }) {
-  /****************** Functions *******************/
+  /****************** States *******************/
 
-  const newConversation = () => {};
+  const [showUsersList, setShowUsersList] = useState(false);
+
+  /****************** Contexts *****************/
+
+  const { userConversations } = useContext(UserConversationsContext);
+
+  /****************** Effects *******************/
+
+  /****************** Functions *******************/
 
   return (
     <div id="menu-section">
@@ -24,7 +35,9 @@ function Menu({
           data-tooltip-id="new-conversation"
           data-tooltip-content="New Conversation"
           className="actions"
-          onClick={newConversation}
+          onClick={() => {
+            if (!conversationsAreLoading) setShowUsersList(true);
+          }}
         />
         <AiFillSetting
           data-tooltip-id="settings"
@@ -50,10 +63,12 @@ function Menu({
       <Tooltip id="settings" />
       <Tooltip id="user" />
       <Tooltip id="logout" />
-      {/* {createPortal(
-        <UserList />,
-        document.getElementById("portal") as HTMLElement
-      )} */}
+      {showUsersList && !conversationsAreLoading
+        ? createPortal(
+            <UsersList close={() => setShowUsersList(false)} />,
+            document.getElementById("portal") as HTMLElement
+          )
+        : null}
     </div>
   );
 }

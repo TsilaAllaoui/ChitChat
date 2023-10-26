@@ -83,6 +83,10 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
   }, [loading]);
 
   useEffect(() => {
+    console.log(error);
+  }, [error]);
+
+  useEffect(() => {
     if (refresh) {
       const element = messagesListRef.current;
       if (element) {

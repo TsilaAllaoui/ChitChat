@@ -76,34 +76,34 @@
     }
   }
 
-  #convsersations-section {
-    min-width: 25%;
-    max-width: 25%;
-    margin-top: 1rem;
-    color: $light-grey;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+  // #convsersations-section {
+  //   min-width: 25%;
+  //   max-width: 25%;
+  //   margin-top: 1rem;
+  //   color: $light-grey;
+  //   display: flex;
+  //   flex-direction: column;
+  //   align-items: center;
+  //   gap: 1rem;
 
-    .conversation {
-      height: 60px;
-      width: 100%;
-      border: solid 1px white;
-      border-radius: 10px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 250ms;
+  //   .conversation {
+  //     height: 60px;
+  //     width: 100%;
+  //     border: solid 1px white;
+  //     border-radius: 10px;
+  //     display: flex;
+  //     justify-content: center;
+  //     align-items: center;
+  //     font-weight: 600;
+  //     cursor: pointer;
+  //     transition: transform 250ms;
 
-      &:hover {
-        transform: translateY(-2px);
-        border: solid 1px $main-blue;
-        box-shadow: 0 2px 7px $main-blue;
-        color: $main-blue;
-      }
-    }
-  }
+  //     &:hover {
+  //       transform: translateY(-2px);
+  //       border: solid 1px $main-blue;
+  //       box-shadow: 0 2px 7px $main-blue;
+  //       color: $main-blue;
+  //     }
+  //   }
+  // }
 }
