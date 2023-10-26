@@ -5,6 +5,7 @@ import "../Styles/MessageEntry.scss";
 import Action from "./Action";
 import { ActionLabel } from "./Model/ActionModel";
 import { UserContext } from "../Contexts/UserContext";
+import "../Styles/MessageEntry.scss";
 
 function MessageEntry({
   content,
@@ -134,7 +135,7 @@ function MessageEntry({
                 </div>
               ) : null}
               <div
-                className="dots"
+                className="message-dots"
                 style={{ opacity: opacity }}
                 onMouseEnter={() => setOpacity("1")}
                 onMouseLeave={() => {
@@ -173,7 +174,7 @@ function MessageEntry({
           {!condition ? null : (
             <>
               <div
-                className="dots"
+                className="message-dots"
                 style={{ opacity: opacity }}
                 onMouseEnter={() => setOpacity("100%")}
                 onMouseLeave={() => setOpacity("0")}

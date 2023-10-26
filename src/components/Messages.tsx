@@ -20,6 +20,9 @@ import "../Styles/Messages.scss";
 import { IConversation } from "./MainPage";
 import MessageEntry from "./MessageEntry";
 import { Message } from "./Model/Models";
+import EmojiPicker from "emoji-picker-react";
+import { createPortal } from "react-dom";
+import EmojisPicker from "./EmojisPicker";
 
 const Messages = ({ conversation }: { conversation: IConversation | null }) => {
   if (!conversation)
@@ -35,19 +38,16 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
 
   // ************* States ***************
 
-  // State for the messages
   const [messages, setMessages] = useState<Message[]>([]);
-
-  // For the input value
   const [inputValue, setInputValue] = useState("");
-
   const [lastMessage, setLastMessage] = useState<Message>();
-
   const [refresh, setRefresh] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   // ************* References **************
 
   const messagesListRef = useRef<null | HTMLUListElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // ************* Contexts ***************
 
@@ -97,6 +97,10 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
       setRefresh(false);
     }
   }, [refresh]);
+
+  useEffect(() => {
+    inputRef.current!.value = inputValue;
+  }, [inputValue]);
 
   // ************ Functions **************
 
@@ -174,6 +178,7 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
           <div id="input">
             <form onSubmit={(e) => sendToFirebase(e)}>
               <input
+                ref={inputRef}
                 type="text"
                 name="texts"
                 id="text-input"
@@ -182,7 +187,21 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
               />
               <ImAttachment className="icon" />
               <AiOutlineCamera className="icon" />
-              <GoSmiley className="icon" />
+              <GoSmiley
+                className="icon"
+                onClick={() => setShowEmojiPicker(true)}
+              />
+              {showEmojiPicker
+                ? createPortal(
+                    <EmojisPicker
+                      updateMessage={(val: string) =>
+                        setInputValue(inputValue + val)
+                      }
+                      hide={() => setShowEmojiPicker(false)}
+                    />,
+                    document.getElementById("portal") as HTMLElement
+                  )
+                : null}
               <div id="send-container">
                 <IoSend onClick={(e) => sendToFirebase(e)} />
               </div>
