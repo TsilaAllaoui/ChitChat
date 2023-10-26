@@ -6,6 +6,8 @@ export interface IUserConversations {
   setUserConversations: (_c: IConversation[]) => void;
   currentConversation: IConversation | null;
   setCurrentConversation: (_c: IConversation) => void;
+  userConversationsLoading: boolean;
+  currentConversationLoading: boolean;
 }
 
 export const UserConversationsContext = createContext<IUserConversations>({
@@ -13,4 +15,6 @@ export const UserConversationsContext = createContext<IUserConversations>({
   setUserConversations: (_u: IConversation[]) => {},
   currentConversation: null,
   setCurrentConversation: (_c: IConversation) => {},
+  userConversationsLoading: true,
+  currentConversationLoading: true,
 });

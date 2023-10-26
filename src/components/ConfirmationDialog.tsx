@@ -23,7 +23,14 @@ const ConfirmationDialog = ({
                 This action is irreversible. Proceed carrefully before choosing.
               </h2>
               <div id="buttons">
-                <button onClick={action}>Yes</button>
+                <button
+                  onClick={() => {
+                    action();
+                    hide();
+                  }}
+                >
+                  Yes
+                </button>
                 <button onClick={hide}>No</button>
               </div>
             </div>

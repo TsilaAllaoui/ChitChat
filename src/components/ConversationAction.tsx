@@ -1,17 +1,25 @@
-import { useState } from "react";
+import { collection, deleteDoc, getDocs } from "firebase/firestore";
+import { useContext, useState } from "react";
 import { AiFillDelete } from "react-icons/ai";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { UserConversationsContext } from "../Contexts/UserConversationsContext";
+import { db } from "../Firebase";
 import "../Styles/ConverstationAction.scss";
 import ConfirmationDialog from "./ConfirmationDialog";
-import { collection, deleteDoc, getDocs } from "firebase/firestore";
-import { db } from "../Firebase";
 
 const ConversationAction = ({ conversationId }: { conversationId: string }) => {
+  /***************** States *******************/
+
   const [toggleMenu, setToggleMenu] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
+  /***************** Contexts *******************/
+
+  const { setUserConversations } = useContext(UserConversationsContext);
+
+  /***************** Functions *******************/
+
   const deleteConversation = () => {
-    console.log(conversationId);
     getDocs(collection(db, "conversations")).then((snap) => {
       snap.forEach((doc) => {
         const data = { ...doc.data() };

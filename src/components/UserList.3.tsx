@@ -14,29 +14,19 @@ import { MoonLoader } from "react-spinners";
 import { UserContext } from "../Contexts/UserContext";
 import { UserConversationsContext } from "../Contexts/UserConversationsContext";
 import { db } from "../Firebase";
-import "../Styles/UsersList.scss";
+import { IUser } from "./UsersList";
 
-export type IUser = {
-  email: string;
-  name: string;
-  uid: string;
-  picture: string;
-};
-
-const UserList = ({ close }: { close: () => void }) => {
+export const UserList = ({ close }: { close: () => void }) => {
   /**************** States ****************/
-
   const [users, setUsers] = useState<IUser[]>([]);
 
   /**************** Contexts ****************/
-
   const { userConversations, setCurrentConversation } = useContext(
     UserConversationsContext
   );
   const user = useContext(UserContext).user;
 
   /**************** Functions ****************/
-
   const isUserAlreadyInList = (user: IUser) => {
     return (
       userConversations.find((Conversation) =>
@@ -72,27 +62,14 @@ const UserList = ({ close }: { close: () => void }) => {
           senderId: user!.uid,
           sentTime: serverTimestamp(),
         }).then(() => {
-          getDocs(query(collection(db, "conversations"))).then((docs) => {
-            docs.forEach((doc) => {
-              const data = doc.data();
-              if (doc.id == newDoc.id)
-                setCurrentConversation({
-                  guestId: data.guestId,
-                  guestName: data.guestName,
-                  hostId: data.hostId,
-                  hostName: data.guestId,
-                  id: doc.id,
-                  participants: [data.guestId, data.hostId],
-                });
-            });
-          });
+          getDocs(query(db, "conversations"));
+          setCurrentConversation({});
         });
       });
     });
   };
 
   /**************** Firebase Hooks ****************/
-
   const usersRef = collection(db, "users");
   const [usersList, loading, error] = useCollection(query(usersRef));
 
@@ -144,5 +121,3 @@ const UserList = ({ close }: { close: () => void }) => {
     </div>
   );
 };
-
-export default UserList;

@@ -28,20 +28,18 @@ export const MainPage = () => {
   const { user, setUser } = useContext(UserContext);
   const [redirectToLogin, setRedirectToLogin] = useState(false);
 
+  const [userPseudo, setUserPseudo] = useState("");
+
+  // ************  Contexts   ************
+
   const {
     userConversations,
     setUserConversations,
     currentConversation,
     setCurrentConversation,
+    userConversationsLoading,
+    currentConversationLoading,
   } = useContext(UserConversationsContext);
-
-  const [userPseudo, setUserPseudo] = useState("");
-
-  // ************  Firestore hooks   ************
-
-  const [value, loading, error] = useCollection(
-    query(collection(db, "conversations"))
-  );
 
   // ************  Effects   ************
 
@@ -67,22 +65,7 @@ export const MainPage = () => {
               user?.email!.slice(1, user?.email?.indexOf("@"))!
       );
     }
-    const tmp: IConversation[] = [];
-    value?.docs.map((doc) => {
-      const data = doc.data();
-      if (data.guestId == user!.uid || data.hostId == user!.uid) {
-        tmp.push({
-          guestId: data.guestId,
-          guestName: data.guestName,
-          hostId: data.hostId,
-          hostName: data.hostName,
-          id: data.id,
-          participants: data.participants,
-        });
-      }
-    });
-    setUserConversations(tmp);
-  }, [user, loading]);
+  }, [user]);
 
   // ************* Functions **************
 
@@ -104,12 +87,12 @@ export const MainPage = () => {
         />
       ) : null}
       <Menu
-        conversationsAreLoading={loading}
+        conversationsAreLoading={userConversationsLoading}
         userPseudo={userPseudo}
         logOut={logOut}
       />
       <div id="separator"></div>
-      <Conversations loading={loading} />
+      <Conversations loading={userConversationsLoading} />
       <div id="separator"></div>
       <Messages conversation={currentConversation} />
     </div>

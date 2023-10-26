@@ -1,10 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { RotateLoader } from "react-spinners";
 import { UserContext } from "../Contexts/UserContext";
 import { UserConversationsContext } from "../Contexts/UserConversationsContext";
-import { BsThreeDotsVertical } from "react-icons/bs";
-import Action from "./Action";
-import { AiFillDelete } from "react-icons/ai";
 import "../Styles/Conversations.scss";
 import ConversationAction from "./ConversationAction";
 
@@ -22,11 +19,6 @@ const Conversations = ({ loading }: { loading: boolean }) => {
 
   /************ Effects **************/
 
-  useEffect(() => {
-    if (toggleMenu) {
-    }
-  }, [toggleMenu]);
-
   return (
     <div id="convsersations-section">
       <h1>Conversations</h1>
@@ -39,10 +31,9 @@ const Conversations = ({ loading }: { loading: boolean }) => {
         ></RotateLoader>
       ) : (
         userConversations.map((conversation) => (
-          <div id="conversation-container">
+          <div id="conversation-container" key={conversation.id}>
             <div
               className="conversation"
-              key={conversation.id}
               onClick={(e) => setCurrentConversation(conversation)}
             >
               <p>
