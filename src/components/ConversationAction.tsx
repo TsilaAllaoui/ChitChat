@@ -15,7 +15,9 @@ const ConversationAction = ({ conversationId }: { conversationId: string }) => {
 
   /***************** Contexts *******************/
 
-  const { setUserConversations } = useContext(UserConversationsContext);
+  const { setUserConversations, setCurrentConversation } = useContext(
+    UserConversationsContext
+  );
 
   /***************** Functions *******************/
 
@@ -23,7 +25,10 @@ const ConversationAction = ({ conversationId }: { conversationId: string }) => {
     getDocs(collection(db, "conversations")).then((snap) => {
       snap.forEach((doc) => {
         const data = { ...doc.data() };
-        if (data.id === conversationId) deleteDoc(doc.ref);
+        if (data.id === conversationId)
+          deleteDoc(doc.ref).then(() => {
+            setCurrentConversation(null);
+          });
       });
     });
   };

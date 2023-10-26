@@ -1,0 +1,64 @@
+@import "./Color.scss";
+
+#menu-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 10%;
+  color: white;
+
+  #menus {
+    height: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .actions {
+      cursor: pointer;
+      margin-left: 15px;
+      padding: 15px;
+      height: 35px;
+      width: 35px;
+      transition: color 500ms, transform 500ms;
+
+      &:hover {
+        transition: color 500ms, transform 500ms;
+        transform: scale(1.25);
+        color: $main-blue;
+      }
+    }
+  }
+
+  #others {
+    height: 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    #image-profile {
+      cursor: pointer;
+      border-radius: 25px;
+      border: solid black 1px;
+      font-size: 2rem;
+      padding: 0.5rem;
+    }
+
+    #shutdown {
+      cursor: pointer;
+      height: 30px;
+      width: 30px;
+      margin: 15px;
+      transform: rotate(90deg);
+      transition: transform 400ms;
+
+      &:hover {
+        transition: transform 400ms;
+        transform: rotate(0);
+        color: red;
+      }
+    }
+  }
+}

@@ -1,10 +1,10 @@
+import { useContext } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { RedirectPopupContext } from "../Contexts/RedirectPopupContext";
 import "../Styles/App.scss";
 import Login from "./Login";
-import { useContext, useEffect } from "react";
-import { RedirectPopupContext } from "../Contexts/RedirectPopupContext";
-import Popup from "./Popup";
 import { MainPage } from "./MainPage";
+import Popup from "./Popup";
 
 // Sender and Receiver types
 type Receiver = {

@@ -1,10 +1,10 @@
-import { Children, useContext, useEffect, useState } from "react";
-import { IConversation } from "../MainPage";
-import { UserConversationsContext } from "../../Contexts/UserConversationsContext";
-import { useCollection } from "react-firebase-hooks/firestore";
 import { collection, query } from "firebase/firestore";
-import { db } from "../../Firebase";
+import { useContext, useEffect, useState } from "react";
+import { useCollection } from "react-firebase-hooks/firestore";
 import { UserContext } from "../../Contexts/UserContext";
+import { UserConversationsContext } from "../../Contexts/UserConversationsContext";
+import { db } from "../../Firebase";
+import { IConversation } from "../MainPage";
 
 const userConversationsProvider = ({ children }: { children: JSX.Element }) => {
   const [userConversations, setUserConversations] = useState<IConversation[]>(

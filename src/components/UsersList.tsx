@@ -68,7 +68,7 @@ const UserList = ({ close }: { close: () => void }) => {
         );
         addDoc(messagesCollection, {
           hostId: user!.uid,
-          message: "Hello " + userToChatTo.name,
+          message: "Hello " + userToChatTo.name + "👋",
           senderId: user!.uid,
           sentTime: serverTimestamp(),
         }).then(() => {

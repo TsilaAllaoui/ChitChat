@@ -1,12 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 
+import { IsLoginContext } from "../Contexts/IsLoginContext";
+import { RedirectPopupContext } from "../Contexts/RedirectPopupContext";
 import "../Styles/Login.scss";
 import LoginForm from "./LoginForm";
 import SignUp from "./SignUpForm";
-import { createPortal } from "react-dom";
-import Popup from "./Popup";
-import { RedirectPopupContext } from "../Contexts/RedirectPopupContext";
-import { IsLoginContext } from "../Contexts/IsLoginContext";
 
 function Login() {
   // ************** States ***************

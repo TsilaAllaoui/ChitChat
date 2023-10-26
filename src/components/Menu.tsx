@@ -5,6 +5,7 @@ import { BiCommentAdd, BiUser } from "react-icons/bi";
 import { RiShutDownLine } from "react-icons/ri";
 import { Tooltip } from "react-tooltip";
 import { UserConversationsContext } from "../Contexts/UserConversationsContext";
+import "../Styles/Menu.scss";
 import UsersList from "./UsersList";
 
 function Menu({

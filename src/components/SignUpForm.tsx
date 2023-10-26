@@ -13,11 +13,11 @@ import { FaLock } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { MdErrorOutline, MdOutlineAlternateEmail } from "react-icons/md";
 import { useNavigate } from "react-router";
+import { IsLoginContext } from "../Contexts/IsLoginContext";
 import { auth, db, gauthProvider } from "../Firebase";
 import "../Styles/SignUpForm.scss";
 import Terms from "./Model/Terms";
 import Popup from "./Popup";
-import { IsLoginContext } from "../Contexts/IsLoginContext";
 
 function SignUpForm() {
   // ***************** States *******************

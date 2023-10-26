@@ -6,10 +6,10 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import React, { useContext, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { AiOutlineCamera } from "react-icons/ai";
 import { BiMessageRoundedX } from "react-icons/bi";
-import { BsChevronLeft } from "react-icons/bs";
 import { GoSmiley } from "react-icons/go";
 import { ImAttachment } from "react-icons/im";
 import { IoSend } from "react-icons/io5";
@@ -17,18 +17,15 @@ import { MoonLoader } from "react-spinners";
 import { UserContext } from "../Contexts/UserContext";
 import { db } from "../Firebase";
 import "../Styles/Messages.scss";
+import EmojisPicker from "./EmojisPicker";
 import { IConversation } from "./MainPage";
 import MessageEntry from "./MessageEntry";
 import { Message } from "./Model/Models";
-import EmojiPicker from "emoji-picker-react";
-import { createPortal } from "react-dom";
-import EmojisPicker from "./EmojisPicker";
 
 const Messages = ({ conversation }: { conversation: IConversation | null }) => {
   if (!conversation)
     return (
       <>
-        <BsChevronLeft id="arrow-icon" />
         <div id="no-message-container">
           <h1>No message selected</h1>
           <BiMessageRoundedX id="no-message-icon" />

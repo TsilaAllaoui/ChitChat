@@ -1,6 +1,5 @@
 import EmojiPicker from "emoji-picker-react";
 import "../Styles/EmojisPicker.scss";
-import { IoCloseCircleOutline } from "react-icons/io5";
 
 const EmojisPicker = ({
   hide,

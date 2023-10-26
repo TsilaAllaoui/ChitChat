@@ -1,11 +1,9 @@
 import { signOut } from "@firebase/auth";
-import { collection, query } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
-import { useCollection } from "react-firebase-hooks/firestore";
 import { useNavigate } from "react-router";
 import { UserContext } from "../Contexts/UserContext";
 import { UserConversationsContext } from "../Contexts/UserConversationsContext";
-import { auth, db } from "../Firebase";
+import { auth } from "../Firebase";
 import "../Styles/MainPage.scss";
 import Conversations from "./Conversations";
 import Menu from "./Menu";
