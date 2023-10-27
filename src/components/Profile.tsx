@@ -53,6 +53,15 @@ const Profile = ({ condition }: { condition: boolean }) => {
   };
 
   const getProfilePicture = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.currentTarget.files![0];
+    file.arrayBuffer().then((arr) => {
+      const bytes = new Uint8Array(arr);
+      let str = "";
+      for (let byte of bytes) {
+        str += String.fromCharCode(byte);
+      }
+      str += `data:image/jpg};base64,${btoa(str)}`;
+    });
     const URI = URL.createObjectURL(e.currentTarget.files![0]);
     console.log(URI);
     setUserPicture(URI);
