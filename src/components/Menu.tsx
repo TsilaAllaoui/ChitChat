@@ -1,31 +1,31 @@
 import { useContext, useState } from "react";
 import { createPortal } from "react-dom";
-import { AiFillSetting } from "react-icons/ai";
-import { BiCommentAdd, BiUser } from "react-icons/bi";
+import { AiFillHome, AiFillSetting } from "react-icons/ai";
+import { BiCommentAdd, BiEditAlt, BiUser } from "react-icons/bi";
 import { RiShutDownLine } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
-import { UserConversationsContext } from "../Contexts/UserConversationsContext";
+import { UserContext } from "../Contexts/UserContext";
 import "../Styles/Menu.scss";
 import UsersList from "./UsersList";
+import { ShowProfileContext } from "../Contexts/ShowProfileContext";
 
 function Menu({
-  userPseudo,
   logOut,
   conversationsAreLoading,
 }: {
-  userPseudo: string;
   logOut: () => void;
   conversationsAreLoading: boolean;
 }) {
   /****************** States *******************/
 
   const [showUsersList, setShowUsersList] = useState(false);
+  const navigate = useNavigate();
 
   /****************** Contexts *****************/
 
-  const { userConversations } = useContext(UserConversationsContext);
-
-  /****************** Effects *******************/
+  const { userPseudo } = useContext(UserContext);
+  const { setShowProfile } = useContext(ShowProfileContext);
 
   /****************** Functions *******************/
 
@@ -45,14 +45,22 @@ function Menu({
           data-tooltip-content="Settings"
           className="actions"
         />
+        <AiFillHome
+          data-tooltip-id="home"
+          data-tooltip-content="Home"
+          className="actions"
+          onClick={() => navigate("/home")}
+        />
       </div>
       <div id="others">
         <p>{userPseudo}</p>
-        <BiUser
-          data-tooltip-id="user"
-          data-tooltip-content="User Account"
-          id="image-profile"
-        />
+        <div id="edit-container" onClick={() => setShowProfile(true)}>
+          <BiUser
+            data-tooltip-id="user"
+            data-tooltip-content="User Account"
+            id="image-profile"
+          />
+        </div>
         <RiShutDownLine
           data-tooltip-id="logout"
           data-tooltip-content="Log Out"

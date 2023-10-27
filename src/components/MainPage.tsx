@@ -10,6 +10,8 @@ import Menu from "./Menu";
 import Messages from "./Messages";
 import "./Model/Modules";
 import Popup from "./Popup";
+import Profile from "./Profile";
+import { ShowProfileContext } from "../Contexts/ShowProfileContext";
 
 export type IConversation = {
   guestId: string;
@@ -26,18 +28,13 @@ export const MainPage = () => {
   const { user, setUser } = useContext(UserContext);
   const [redirectToLogin, setRedirectToLogin] = useState(false);
 
-  const [userPseudo, setUserPseudo] = useState("");
-
   // ************  Contexts   ************
 
-  const {
-    userConversations,
-    setUserConversations,
-    currentConversation,
-    setCurrentConversation,
-    userConversationsLoading,
-    currentConversationLoading,
-  } = useContext(UserConversationsContext);
+  const { userPseudo, setUserPseudo } = useContext(UserContext);
+  const { currentConversation, userConversationsLoading } = useContext(
+    UserConversationsContext
+  );
+  const { showProfile } = useContext(ShowProfileContext);
 
   // ************  Effects   ************
 
@@ -86,13 +83,13 @@ export const MainPage = () => {
       ) : null}
       <Menu
         conversationsAreLoading={userConversationsLoading}
-        userPseudo={userPseudo}
         logOut={logOut}
       />
       <div id="separator"></div>
       <Conversations loading={userConversationsLoading} />
       <div id="separator"></div>
       <Messages conversation={currentConversation} />
+      <Profile condition={showProfile} />
     </div>
   );
 };

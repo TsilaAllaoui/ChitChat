@@ -26,12 +26,12 @@ const userConversationsProvider = ({ children }: { children: JSX.Element }) => {
 
   useEffect(() => {
     if (!loading) {
-      console.log(loading);
       setUserConversationsLoading(loading);
     }
   }, [loading]);
 
   useEffect(() => {
+    if (!user) return;
     const tmp: IConversation[] = [];
     value?.docs.map((doc) => {
       const data = doc.data();

@@ -5,6 +5,7 @@ import "../Styles/App.scss";
 import Login from "./Login";
 import { MainPage } from "./MainPage";
 import Popup from "./Popup";
+import Profile from "./Profile";
 
 // Sender and Receiver types
 type Receiver = {
@@ -26,7 +27,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/main" element={<MainPage />} />
+        <Route path="/home" element={<MainPage />} />
         <Route path="/login" element={<Login />} />
       </Routes>
       {redirect ? (

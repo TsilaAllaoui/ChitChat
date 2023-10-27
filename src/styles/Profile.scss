@@ -1,0 +1,97 @@
+@import "./Color.scss";
+
+#user-infos-container {
+  transition: transform 250ms;
+  height: 100%;
+  width: 25%;
+  background-color: $secondary;
+  position: absolute;
+  right: 0;
+
+  #arrow {
+    color: white;
+    font-size: 60px;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+
+  #user-infos {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 15px;
+
+    #profile-picture {
+      width: 250px;
+      height: 250px;
+      border-radius: 100%;
+      border: solid 1px white;
+      display: grid;
+      place-items: center;
+      position: relative;
+
+      svg {
+        &:first-of-type {
+          font-size: 150px;
+        }
+
+        &:last-of-type {
+          cursor: pointer;
+          position: absolute;
+          right: 15%;
+          bottom: 015px;
+          font-size: 35px;
+          transition: font-size 250ms;
+
+          &:hover {
+            color: yellow;
+            font-size: 45px;
+          }
+        }
+      }
+    }
+
+    ul {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+
+      li {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        gap: 10px;
+
+        p {
+          font-size: 20px;
+        }
+
+        svg {
+          font-size: 20px;
+          cursor: pointer;
+          transition: font-size 250ms;
+
+          &:hover {
+            color: yellow;
+            font-size: 35px;
+          }
+        }
+      }
+    }
+
+    // .editable {
+    //   display: flex;
+    //   align-items: center;
+    //   gap: 15px;
+    //   font-size: 10px;
+    //   font-weight: lighter;
+    // }
+  }
+}

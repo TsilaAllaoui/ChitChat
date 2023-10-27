@@ -60,10 +60,6 @@ function LoginForm() {
     }, 2000);
   }, [error]);
 
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
-
   // ************** Functions ****************
 
   const setAgreementsError = () => {
@@ -101,7 +97,7 @@ function LoginForm() {
         .then((userCred) => {
           setUser(userCred.user);
           setRedirect(true);
-          setTimeout(() => navigate("/main"), 2000);
+          setTimeout(() => navigate("/home"), 2000);
         })
         .catch((err) => {
           setRedirect(false);
@@ -125,7 +121,7 @@ function LoginForm() {
         .then((userCred) => {
           setUser(userCred.user);
           setRedirect(true);
-          setTimeout(() => navigate("/main"), 2000);
+          setTimeout(() => navigate("/home"), 2000);
         })
         .catch((error) => {
           const errorCode = error.code;

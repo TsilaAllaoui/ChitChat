@@ -1,4 +1,5 @@
 import { createPortal } from "react-dom";
+import "../Styles/ConfirmationDialog.scss";
 
 const ConfirmationDialog = ({
   show,

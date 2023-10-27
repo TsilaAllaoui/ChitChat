@@ -4,7 +4,8 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  width: 10%;
+  max-width: 200px;
+  min-width: 200px;
   color: white;
 
   #menus {
@@ -44,6 +45,27 @@
       border: solid black 1px;
       font-size: 2rem;
       padding: 0.5rem;
+    }
+
+    #edit-container {
+      display: flex;
+      position: relative;
+
+      &:hover {
+        #edit {
+          color: yellow;
+          font-size: 25px;
+        }
+      }
+
+      #edit {
+        cursor: pointer;
+        position: absolute;
+        right: 0;
+        bottom: 5px;
+        font-size: 20px;
+        transition: font-size 250ms;
+      }
     }
 
     #shutdown {
