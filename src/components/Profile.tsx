@@ -56,12 +56,11 @@ const Profile = ({ condition }: { condition: boolean }) => {
     const file = e.currentTarget.files![0];
     file.arrayBuffer().then((arr) => {
       const bytes = new Uint8Array(arr);
-      console.log(arr);
       let str = "";
       for (let byte of bytes) {
         str += String.fromCharCode(byte);
       }
-      str += `data:image/jpg};base64,${btoa(str)}`;
+      str = `data:image/png;base64,${btoa(str)}`;
       console.log(str);
       setUserPicture(str);
       getDocs(query(collection(db, "users"))).then((docs) => {
