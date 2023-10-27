@@ -56,24 +56,27 @@ const Profile = ({ condition }: { condition: boolean }) => {
     const file = e.currentTarget.files![0];
     file.arrayBuffer().then((arr) => {
       const bytes = new Uint8Array(arr);
+      console.log(arr);
       let str = "";
       for (let byte of bytes) {
         str += String.fromCharCode(byte);
       }
       str += `data:image/jpg};base64,${btoa(str)}`;
-    });
-    const URI = URL.createObjectURL(e.currentTarget.files![0]);
-    console.log(URI);
-    setUserPicture(URI);
-    getDocs(query(collection(db, "users"))).then((docs) => {
-      docs.forEach((doc) => {
-        if (doc.data().uid == user!.uid) {
-          updateDoc(doc.ref, {
-            picture: URI,
-          }).catch((err) => console.log(err));
-        }
+      console.log(str);
+      setUserPicture(str);
+      getDocs(query(collection(db, "users"))).then((docs) => {
+        docs.forEach((doc) => {
+          if (doc.data().uid == user!.uid) {
+            updateDoc(doc.ref, {
+              picture: str,
+            }).catch((err) => console.log(err));
+          }
+        });
       });
     });
+
+    // const URI = URL.createObjectURL(e.currentTarget.files![0]);
+    // console.log(URI);
   };
 
   return (
