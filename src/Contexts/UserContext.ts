@@ -6,6 +6,8 @@ export interface IUserCredentials {
   setUser: (u: User) => void;
   userPseudo: string;
   setUserPseudo: (_s: string) => void;
+  userPicture: string;
+  setUserPicture: (_s: string) => void;
 }
 
 export const UserContext = createContext<IUserCredentials>({
@@ -13,4 +15,6 @@ export const UserContext = createContext<IUserCredentials>({
   setUser: (_u: User) => {},
   userPseudo: "",
   setUserPseudo: (_s: string) => {},
+  userPicture: "",
+  setUserPicture: (_s: string) => {},
 });

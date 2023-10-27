@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { UserContext } from "../Contexts/UserContext";
 import { UserConversationsContext } from "../Contexts/UserConversationsContext";
 import "../Styles/Profile.scss";
@@ -9,16 +9,30 @@ import EditDialog from "./EditDialog";
 import { updateProfile } from "firebase/auth";
 import { ShowProfileContext } from "../Contexts/ShowProfileContext";
 import { RiArrowLeftSFill, RiArrowRightSFill } from "react-icons/ri";
+import {
+  collection,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+} from "firebase/firestore";
+import { db } from "../Firebase";
+import imageToBase64 from "image-to-base64";
 
 const Profile = ({ condition }: { condition: boolean }) => {
   /******************* States **********************/
-  const { userPseudo } = useContext(UserContext);
+  const { userPseudo, userPicture, setUserPicture } = useContext(UserContext);
   const [showPopup, setShowPopup] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [label, setLabel] = useState("");
+  const [profilePictureURL, setProfilePictureURL] = useState("");
 
   /******************* Contexts **********************/
-  const user = useContext(UserContext).user;
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  /******************* Contexts **********************/
+  const { user, setUser } = useContext(UserContext);
   const { showProfile, setShowProfile } = useContext(ShowProfileContext);
   const { userConversationsLoading, currentConversation } = useContext(
     UserConversationsContext
@@ -38,6 +52,21 @@ const Profile = ({ condition }: { condition: boolean }) => {
       .catch((err) => console.log(err));
   };
 
+  const getProfilePicture = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const URI = URL.createObjectURL(e.currentTarget.files![0]);
+    console.log(URI);
+    setUserPicture(URI);
+    getDocs(query(collection(db, "users"))).then((docs) => {
+      docs.forEach((doc) => {
+        if (doc.data().uid == user!.uid) {
+          updateDoc(doc.ref, {
+            picture: URI,
+          }).catch((err) => console.log(err));
+        }
+      });
+    });
+  };
+
   return (
     <div
       id="user-infos-container"
@@ -54,9 +83,19 @@ const Profile = ({ condition }: { condition: boolean }) => {
       />
 
       <div id="user-infos">
-        <div id="profile-picture">
-          {user && !user?.photoURL ? <BiUser /> : null}
-          <BiEditAlt onClick={() => setLabel("Name")} />
+        <div
+          id="profile-picture"
+          style={{ backgroundImage: `url(${userPicture})` }}
+        >
+          {userPicture == "" ? <BiUser /> : null}
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={getProfilePicture}
+          />
+          <BiEditAlt onClick={() => fileInputRef.current?.click()} />
         </div>
         <ul>
           <li>
@@ -64,7 +103,7 @@ const Profile = ({ condition }: { condition: boolean }) => {
             <BiEditAlt onClick={() => setLabel("Name")} />
           </li>
           <li>
-            <p>{user!.email}</p>
+            <p>{user?.email}</p>
           </li>
         </ul>
       </div>

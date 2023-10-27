@@ -24,7 +24,7 @@ function Menu({
 
   /****************** Contexts *****************/
 
-  const { userPseudo } = useContext(UserContext);
+  const { user, userPseudo, userPicture } = useContext(UserContext);
   const { setShowProfile } = useContext(ShowProfileContext);
 
   /****************** Functions *******************/
@@ -54,12 +54,21 @@ function Menu({
       </div>
       <div id="others">
         <p>{userPseudo}</p>
-        <div id="edit-container" onClick={() => setShowProfile(true)}>
-          <BiUser
-            data-tooltip-id="user"
-            data-tooltip-content="User Account"
-            id="image-profile"
-          />
+        <div
+          id="picture"
+          onClick={() => setShowProfile(true)}
+          style={{
+            backgroundImage:
+              userPicture != "" ? `url(${userPicture})` : "unset",
+          }}
+        >
+          {userPicture == "" ? (
+            <BiUser
+              data-tooltip-id="user"
+              data-tooltip-content="User Account"
+              id="image-profile"
+            />
+          ) : null}
         </div>
         <RiShutDownLine
           data-tooltip-id="logout"

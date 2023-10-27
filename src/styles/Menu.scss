@@ -39,12 +39,22 @@
     align-items: center;
     margin-bottom: 1rem;
 
-    #image-profile {
+    #picture {
       cursor: pointer;
-      border-radius: 25px;
-      border: solid black 1px;
-      font-size: 2rem;
-      padding: 0.5rem;
+      width: 70px;
+      height: 70px;
+      border-radius: 100%;
+      border: solid 1px white;
+      display: grid;
+      place-items: center;
+      position: relative;
+      background-size: cover;
+
+      svg {
+        &:first-of-type {
+          font-size: 30px;
+        }
+      }
     }
 
     #edit-container {
