@@ -5,7 +5,6 @@ import "../Styles/App.scss";
 import Login from "./Login";
 import { MainPage } from "./MainPage";
 import Popup from "./Popup";
-import Profile from "./Profile";
 
 // Sender and Receiver types
 type Receiver = {
