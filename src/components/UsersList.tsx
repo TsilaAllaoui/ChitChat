@@ -107,11 +107,12 @@ const UserList = ({ close }: { close: () => void }) => {
         email: doc.data().email,
         name: doc.data().name,
         uid: doc.data().uid,
-        picture: "",
+        picture: doc.data().picture,
       });
     });
 
     setUsers(tmp);
+    console.log(tmp);
   }, [usersList]);
 
   return (
@@ -131,7 +132,10 @@ const UserList = ({ close }: { close: () => void }) => {
             else
               return (
                 <li onClick={() => addNewConversation(user)} key={user.uid}>
-                  <div id="profile-pic">
+                  <div
+                    id="profile-pic"
+                    style={{ backgroundImage: `url(${user.picture})` }}
+                  >
                     {user.picture == "" ? <BiUser /> : null}
                   </div>
                   <p>

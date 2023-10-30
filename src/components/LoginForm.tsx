@@ -15,10 +15,11 @@ import { ScaleLoader } from "react-spinners";
 import { IsLoginContext } from "../Contexts/IsLoginContext";
 import { RedirectPopupContext } from "../Contexts/RedirectPopupContext";
 import { UserContext } from "../Contexts/UserContext";
-import app, { auth, gauthProvider } from "../Firebase";
+import app, { auth, db, gauthProvider } from "../Firebase";
 import "../styles/LoginForm.scss";
 import Terms from "./Model/Terms";
 import Popup from "./Popup";
+import { addDoc, collection, getFirestore } from "firebase/firestore";
 
 function LoginForm() {
   // ************** States **************
@@ -101,7 +102,7 @@ function LoginForm() {
                 "verification email sent to " + auth.currentUser?.email
               );
               sendEmailVerification(auth.currentUser, {
-                url: "http://gmail.com",
+                url: "https://chitchat-web-chat.netlify.app/",
                 handleCodeInApp: false,
               });
             }
@@ -128,6 +129,15 @@ function LoginForm() {
     });
   };
 
+  const addNewUser = async (name: string, email: string, uid: string) => {
+    const usersRef = collection(db, "users");
+    await addDoc(usersRef, {
+      name: name,
+      email: email,
+      uid: uid,
+    });
+  };
+
   const loginWithGoolge = () => {
     if (!agreementsChecked) {
       setAgreementsError();
@@ -136,6 +146,30 @@ function LoginForm() {
     setPersistence(auth, browserSessionPersistence).then(() => {
       signInWithPopup(auth, gauthProvider)
         .then((userCred) => {
+          console.log(auth.currentUser);
+          if (!auth.currentUser || !auth.currentUser.emailVerified) {
+            if (auth.currentUser && !auth.currentUser?.emailVerified) {
+              console.log(
+                "verification email sent to " + auth.currentUser?.email
+              );
+              sendEmailVerification(auth.currentUser, {
+                url: "https://chitchat-web-chat.netlify.app/",
+                handleCodeInApp: false,
+              });
+            }
+            setError(
+              "Email not verified. Check your inbox and verify before proceeding."
+            );
+            setLoading(false);
+            return;
+          }
+
+          addNewUser(
+            userCred.user.displayName ? userCred.user.displayName : "",
+            userCred.user.email ? userCred.user.email : "",
+            userCred.user.uid
+          );
+
           setUser(userCred.user);
           setRedirect(true);
           setTimeout(() => navigate("/home"), 2000);
