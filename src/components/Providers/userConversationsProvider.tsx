@@ -36,6 +36,7 @@ const userConversationsProvider = ({ children }: { children: JSX.Element }) => {
 
   useEffect(() => {
     const tmp: any[] = [];
+    console.log("UID: " + user?.uid);
     getDocs(query(collection(db, "conversations")))
       .then((snap) => {
         snap.forEach((doc) => {
@@ -49,11 +50,12 @@ const userConversationsProvider = ({ children }: { children: JSX.Element }) => {
               id: data.id,
               participants: data.participants,
             });
+            console.log(tmp);
           }
         });
+        setUserConversations(tmp);
       })
       .catch((err) => console.log(err));
-    setUserConversations(tmp);
   }, [user, loading, value]);
 
   const [currentConversation, setCurrentConversation] =

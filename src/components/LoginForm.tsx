@@ -7,6 +7,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
+import { addDoc, collection, getDocs, query } from "firebase/firestore";
 import { useContext, useEffect, useRef, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { MdErrorOutline } from "react-icons/md";
@@ -19,7 +20,6 @@ import app, { auth, db, gauthProvider } from "../Firebase";
 import "../styles/LoginForm.scss";
 import Terms from "./Model/Terms";
 import Popup from "./Popup";
-import { addDoc, collection, getFirestore } from "firebase/firestore";
 
 function LoginForm() {
   // ************** States **************
@@ -164,11 +164,23 @@ function LoginForm() {
             return;
           }
 
-          addNewUser(
-            userCred.user.displayName ? userCred.user.displayName : "",
-            userCred.user.email ? userCred.user.email : "",
-            userCred.user.uid
-          );
+          let found = false;
+          getDocs(query(collection(db, "users"))).then((docs) => {
+            docs.forEach((doc) => {
+              if (doc.data().uid == userCred.user.uid) {
+                found = true;
+                return;
+              }
+            });
+          });
+
+          if (!found) {
+            addNewUser(
+              userCred.user.displayName ? userCred.user.displayName : "",
+              userCred.user.email ? userCred.user.email : "",
+              userCred.user.uid
+            );
+          }
 
           setUser(userCred.user);
           setRedirect(true);
