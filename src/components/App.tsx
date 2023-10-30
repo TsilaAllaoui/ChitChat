@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { RedirectPopupContext } from "../Contexts/RedirectPopupContext";
-import "../Styles/App.scss";
+// import "../Styles/App.scss";
 import Login from "./Login";
 import { MainPage } from "./MainPage";
 import Popup from "./Popup";
