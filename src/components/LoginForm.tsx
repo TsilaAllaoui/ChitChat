@@ -1,4 +1,5 @@
 import {
+  browserLocalPersistence,
   browserSessionPersistence,
   getAuth,
   sendEmailVerification,
@@ -24,7 +25,6 @@ import Popup from "./Popup";
 function LoginForm() {
   // ************** States **************
 
-  // For navigation
   const { setRedirect } = useContext(RedirectPopupContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -34,11 +34,11 @@ function LoginForm() {
   const { user, setUser } = useContext(UserContext);
   const setIsLogin = useContext(IsLoginContext).setIsLogin;
 
-  // States for the inputs
   const [emailValue, setEmailValue] = useState("ratsilakwel@gmail.com");
   const [passwordValue, setPasswordValue] = useState("123456789");
   const [agreementsChecked, setAgreementsChecked] = useState(false);
   const [showAgreements, setShowAgreements] = useState(false);
+  const [keepLog, setKeepLog] = useState(false);
 
   const errorRef = useRef<HTMLDivElement>(null);
 
@@ -92,41 +92,45 @@ function LoginForm() {
     }
 
     const auth = getAuth(app);
-    setPersistence(auth, browserSessionPersistence).then(() => {
-      setLoading(true);
-      signInWithEmailAndPassword(auth, emailValue, passwordValue)
-        .then((userCred) => {
-          if (!auth.currentUser || !auth.currentUser.emailVerified) {
-            if (auth.currentUser && !auth.currentUser?.emailVerified) {
-              console.log(
-                "verification email sent to " + auth.currentUser?.email
+    auth
+      .setPersistence(
+        keepLog ? browserLocalPersistence : browserSessionPersistence
+      )
+      .then(() => {
+        setLoading(true);
+        signInWithEmailAndPassword(auth, emailValue, passwordValue)
+          .then((userCred) => {
+            if (!auth.currentUser || !auth.currentUser.emailVerified) {
+              if (auth.currentUser && !auth.currentUser?.emailVerified) {
+                console.log(
+                  "verification email sent to " + auth.currentUser?.email
+                );
+                sendEmailVerification(auth.currentUser, {
+                  url: "https://chitchat-web-chat.netlify.app/",
+                  handleCodeInApp: false,
+                });
+              }
+              setError(
+                "Email not verified. Check your inbox and verify before proceeding."
               );
-              sendEmailVerification(auth.currentUser, {
-                url: "https://chitchat-web-chat.netlify.app/",
-                handleCodeInApp: false,
-              });
+              setLoading(false);
+              return;
             }
-            setError(
-              "Email not verified. Check your inbox and verify before proceeding."
-            );
-            setLoading(false);
-            return;
-          }
 
-          setUser(userCred.user);
-          setRedirect(true);
-          setTimeout(() => navigate("/home"), 2000);
-        })
-        .catch((err) => {
-          setRedirect(false);
-          let e: string = err.message
-            .replace("Firebase: Error (", "")
-            .replace(")", "")
-            .replace("-", " ");
-          setError(e[0].toUpperCase() + e.slice(1));
-          setLoading(false);
-        });
-    });
+            setUser(userCred.user);
+            setRedirect(true);
+            setTimeout(() => navigate("/home"), 2000);
+          })
+          .catch((err) => {
+            setRedirect(false);
+            let e: string = err.message
+              .replace("Firebase: Error (", "")
+              .replace(")", "")
+              .replace("-", " ");
+            setError(e[0].toUpperCase() + e.slice(1));
+            setLoading(false);
+          });
+      });
   };
 
   const addNewUser = async (name: string, email: string, uid: string) => {
@@ -143,60 +147,64 @@ function LoginForm() {
       setAgreementsError();
       return;
     }
-    setPersistence(auth, browserSessionPersistence).then(() => {
-      signInWithPopup(auth, gauthProvider)
-        .then((userCred) => {
-          console.log(auth.currentUser);
-          if (!auth.currentUser || !auth.currentUser.emailVerified) {
-            if (auth.currentUser && !auth.currentUser?.emailVerified) {
-              console.log(
-                "verification email sent to " + auth.currentUser?.email
-              );
-              sendEmailVerification(auth.currentUser, {
-                url: "https://chitchat-web-chat.netlify.app/",
-                handleCodeInApp: false,
-              });
-            }
-            setError(
-              "Email not verified. Check your inbox and verify before proceeding."
-            );
-            setLoading(false);
-            return;
-          }
-
-          let found = false;
-          getDocs(query(collection(db, "users"))).then((docs) => {
-            docs.forEach((doc) => {
-              if (doc.data().uid == userCred.user.uid) {
-                found = true;
-                return;
+    auth
+      .setPersistence(
+        keepLog ? browserLocalPersistence : browserSessionPersistence
+      )
+      .then(() => {
+        signInWithPopup(auth, gauthProvider)
+          .then((userCred) => {
+            console.log(auth.currentUser);
+            if (!auth.currentUser || !auth.currentUser.emailVerified) {
+              if (auth.currentUser && !auth.currentUser?.emailVerified) {
+                console.log(
+                  "verification email sent to " + auth.currentUser?.email
+                );
+                sendEmailVerification(auth.currentUser, {
+                  url: "https://chitchat-web-chat.netlify.app/",
+                  handleCodeInApp: false,
+                });
               }
+              setError(
+                "Email not verified. Check your inbox and verify before proceeding."
+              );
+              setLoading(false);
+              return;
+            }
+
+            let found = false;
+            getDocs(query(collection(db, "users"))).then((docs) => {
+              docs.forEach((doc) => {
+                if (doc.data().uid == userCred.user.uid) {
+                  found = true;
+                  return;
+                }
+              });
             });
-          });
 
-          if (!found) {
-            addNewUser(
-              userCred.user.displayName ? userCred.user.displayName : "",
-              userCred.user.email ? userCred.user.email : "",
-              userCred.user.uid
+            if (!found) {
+              addNewUser(
+                userCred.user.displayName ? userCred.user.displayName : "",
+                userCred.user.email ? userCred.user.email : "",
+                userCred.user.uid
+              );
+            }
+
+            setUser(userCred.user);
+            setRedirect(true);
+            setTimeout(() => navigate("/home"), 2000);
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(
+              "Erreur d'authentification",
+              errorCode,
+              " ",
+              errorMessage
             );
-          }
-
-          setUser(userCred.user);
-          setRedirect(true);
-          setTimeout(() => navigate("/home"), 2000);
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(
-            "Erreur d'authentification",
-            errorCode,
-            " ",
-            errorMessage
-          );
-        });
-    });
+          });
+      });
   };
 
   const clickAgreements = () => {
@@ -286,6 +294,14 @@ function LoginForm() {
             <span>Login</span>
           )}
         </button>
+      </div>
+      <div id="agreements">
+        <input
+          type="checkbox"
+          checked={keepLog}
+          onChange={(e) => setKeepLog(!keepLog)}
+        />
+        <p onClick={() => setKeepLog(!keepLog)}>Keep me logged in</p>
       </div>
       <div className="error" ref={errorRef}>
         <MdErrorOutline id="icon" />
