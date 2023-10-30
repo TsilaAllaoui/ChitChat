@@ -1,25 +1,14 @@
+import { updateProfile } from "firebase/auth";
+import { collection, doc, getDocs, query, updateDoc } from "firebase/firestore";
 import { useContext, useRef, useState } from "react";
+import { BiEditAlt, BiUser } from "react-icons/bi";
+import { RiArrowLeftSFill } from "react-icons/ri";
+import { ShowProfileContext } from "../Contexts/ShowProfileContext";
 import { UserContext } from "../Contexts/UserContext";
 import { UserConversationsContext } from "../Contexts/UserConversationsContext";
-import "../Styles/Profile.scss";
-import Menu from "./Menu";
-import Popup from "./Popup";
-import { BiEditAlt, BiUser } from "react-icons/bi";
-import EditDialog from "./EditDialog";
-import { updateProfile } from "firebase/auth";
-import { ShowProfileContext } from "../Contexts/ShowProfileContext";
-import { RiArrowLeftSFill, RiArrowRightSFill } from "react-icons/ri";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  updateDoc,
-} from "firebase/firestore";
 import { db } from "../Firebase";
-import imageToBase64 from "image-to-base64";
-import { AiOutlineMail } from "react-icons/ai";
+import "../Styles/Profile.scss";
+import EditDialog from "./EditDialog";
 
 const Profile = ({ condition }: { condition: boolean }) => {
   /******************* States **********************/
