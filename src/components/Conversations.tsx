@@ -3,7 +3,7 @@ import { RotateLoader } from "react-spinners";
 import { UserContext } from "../Contexts/UserContext";
 import { UserConversationsContext } from "../Contexts/UserConversationsContext";
 import "../styles/Conversations.scss";
-import ConversationAction from "./ConversationAction";
+import Conversation from "./Conversation";
 
 const Conversations = ({ loading }: { loading: boolean }) => {
   /************ States **************/
@@ -16,8 +16,6 @@ const Conversations = ({ loading }: { loading: boolean }) => {
   const { userConversations, setCurrentConversation } = useContext(
     UserConversationsContext
   );
-
-  /************ Effects **************/
 
   return (
     <div id="convsersations-section">
@@ -32,17 +30,7 @@ const Conversations = ({ loading }: { loading: boolean }) => {
       ) : (
         userConversations.map((conversation) => (
           <div id="conversation-container" key={conversation.id}>
-            <div
-              className="conversation"
-              onClick={(e) => setCurrentConversation(conversation)}
-            >
-              <p>
-                {user!.uid == conversation.hostId
-                  ? conversation.guestName
-                  : conversation.hostName}
-              </p>
-            </div>
-            <ConversationAction conversationId={conversation.id} />
+            <Conversation conversation={conversation} />
           </div>
         ))
       )}
