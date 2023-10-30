@@ -16,7 +16,7 @@ import { IoSend } from "react-icons/io5";
 import { MoonLoader } from "react-spinners";
 import { UserContext } from "../Contexts/UserContext";
 import { db } from "../Firebase";
-import "../Styles/Messages.scss";
+import "../styles/Messages.scss";
 import EmojisPicker from "./EmojisPicker";
 import { IConversation } from "./MainPage";
 import MessageEntry from "./MessageEntry";

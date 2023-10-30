@@ -2,7 +2,7 @@ import { collection, deleteDoc, getDocs } from "firebase/firestore";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { db } from "../Firebase";
-import "../Styles/Action.scss";
+import "../styles/Action.scss";
 import { ActionLabel } from "./Model/ActionModel";
 
 function Action({

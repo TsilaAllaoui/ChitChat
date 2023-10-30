@@ -6,7 +6,7 @@ import { ShowProfileContext } from "../Contexts/ShowProfileContext";
 import { UserContext } from "../Contexts/UserContext";
 import { UserConversationsContext } from "../Contexts/UserConversationsContext";
 import { auth, db } from "../Firebase";
-import "../Styles/MainPage.scss";
+import "../styles/MainPage.scss";
 import Conversations from "./Conversations";
 import Menu from "./Menu";
 import Messages from "./Messages";

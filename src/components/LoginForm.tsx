@@ -16,7 +16,7 @@ import { IsLoginContext } from "../Contexts/IsLoginContext";
 import { RedirectPopupContext } from "../Contexts/RedirectPopupContext";
 import { UserContext } from "../Contexts/UserContext";
 import app, { auth, gauthProvider } from "../Firebase";
-import "../Styles/LoginForm.scss";
+import "../styles/LoginForm.scss";
 import Terms from "./Model/Terms";
 import Popup from "./Popup";
 

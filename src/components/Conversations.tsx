@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { RotateLoader } from "react-spinners";
 import { UserContext } from "../Contexts/UserContext";
 import { UserConversationsContext } from "../Contexts/UserConversationsContext";
-import "../Styles/Conversations.scss";
+import "../styles/Conversations.scss";
 import ConversationAction from "./ConversationAction";
 
 const Conversations = ({ loading }: { loading: boolean }) => {

@@ -1,5 +1,5 @@
 import EmojiPicker from "emoji-picker-react";
-import "../Styles/EmojisPicker.scss";
+import "../styles/EmojisPicker.scss";
 
 const EmojisPicker = ({
   hide,

@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 
 import { IsLoginContext } from "../Contexts/IsLoginContext";
 import { RedirectPopupContext } from "../Contexts/RedirectPopupContext";
-import "../Styles/Login.scss";
+import "../styles/Login.scss";
 import LoginForm from "./LoginForm";
 import SignUp from "./SignUpForm";
 

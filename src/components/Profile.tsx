@@ -7,7 +7,7 @@ import { ShowProfileContext } from "../Contexts/ShowProfileContext";
 import { UserContext } from "../Contexts/UserContext";
 import { UserConversationsContext } from "../Contexts/UserConversationsContext";
 import { db } from "../Firebase";
-import "../Styles/Profile.scss";
+import "../styles/Profile.scss";
 import EditDialog from "./EditDialog";
 
 const Profile = ({ condition }: { condition: boolean }) => {

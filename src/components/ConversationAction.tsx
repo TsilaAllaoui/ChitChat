@@ -4,7 +4,7 @@ import { AiFillDelete } from "react-icons/ai";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { UserConversationsContext } from "../Contexts/UserConversationsContext";
 import { db } from "../Firebase";
-import "../Styles/ConverstationAction.scss";
+import "../styles/ConverstationAction.scss";
 import ConfirmationDialog from "./ConfirmationDialog";
 
 const ConversationAction = ({ conversationId }: { conversationId: string }) => {

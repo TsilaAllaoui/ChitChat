@@ -15,7 +15,7 @@ import { MoonLoader } from "react-spinners";
 import { UserContext } from "../Contexts/UserContext";
 import { UserConversationsContext } from "../Contexts/UserConversationsContext";
 import { db } from "../Firebase";
-import "../Styles/UsersList.scss";
+import "../styles/UsersList.scss";
 
 export type IUser = {
   email: string;

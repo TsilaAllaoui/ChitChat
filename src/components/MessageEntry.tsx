@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { AiFillDelete } from "react-icons/ai";
 import { BsFillReplyFill, BsThreeDotsVertical } from "react-icons/bs";
 import { UserContext } from "../Contexts/UserContext";
-import "../Styles/MessageEntry.scss";
+import "../styles/MessageEntry.scss";
 import Action from "./Action";
 import { ActionLabel } from "./Model/ActionModel";
 

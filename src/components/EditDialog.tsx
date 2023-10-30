@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { ScaleLoader } from "react-spinners";
-import "../Styles/EditDialog.scss";
+import "../styles/EditDialog.scss";
 
 const EditDialog = ({
   label,

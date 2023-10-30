@@ -6,7 +6,7 @@ import { RiShutDownLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import { UserContext } from "../Contexts/UserContext";
-import "../Styles/Menu.scss";
+import "../styles/Menu.scss";
 import { ShowProfileContext } from "../Contexts/ShowProfileContext";
 import UsersList from "./UsersList";
 

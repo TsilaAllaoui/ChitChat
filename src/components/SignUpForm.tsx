@@ -16,7 +16,7 @@ import { useNavigate } from "react-router";
 import { ScaleLoader } from "react-spinners";
 import { IsLoginContext } from "../Contexts/IsLoginContext";
 import { auth, db, gauthProvider } from "../Firebase";
-import "../Styles/SignUpForm.scss";
+import "../styles/SignUpForm.scss";
 import Terms from "./Model/Terms";
 import Popup from "./Popup";
 
