@@ -1,5 +1,5 @@
 import { User } from "firebase/auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UserContext } from "../../Contexts/UserContext";
 
 const UserProvider = ({ children }: { children: any }) => {

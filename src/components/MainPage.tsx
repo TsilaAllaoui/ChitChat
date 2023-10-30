@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { UserContext } from "../Contexts/UserContext";
 import { UserConversationsContext } from "../Contexts/UserConversationsContext";
-import { auth } from "../Firebase";
+import { auth, db } from "../Firebase";
 import "../Styles/MainPage.scss";
 import Conversations from "./Conversations";
 import Menu from "./Menu";
@@ -12,6 +12,13 @@ import "./Model/Modules";
 import Popup from "./Popup";
 import Profile from "./Profile";
 import { ShowProfileContext } from "../Contexts/ShowProfileContext";
+import {
+  Firestore,
+  collection,
+  getDoc,
+  getDocs,
+  query,
+} from "firebase/firestore";
 
 export type IConversation = {
   guestId: string;
@@ -25,7 +32,7 @@ export type IConversation = {
 export const MainPage = () => {
   // ************  States   ************
 
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser, setUserPicture } = useContext(UserContext);
   const [redirectToLogin, setRedirectToLogin] = useState(false);
 
   // ************  Contexts   ************
@@ -46,6 +53,13 @@ export const MainPage = () => {
   auth.onAuthStateChanged((user) => {
     if (user) {
       setUser(user);
+      getDocs(query(collection(db, "users"))).then((docs) => {
+        docs.forEach((doc) => {
+          if (doc.data().uid == user.uid) {
+            setUserPicture(doc.data().picture);
+          }
+        });
+      });
     } else {
       navigate("/login");
     }
@@ -93,3 +107,9 @@ export const MainPage = () => {
     </div>
   );
 };
+function colleciton(
+  db: Firestore,
+  arg1: string
+): import("@firebase/firestore").DocumentReference<unknown> {
+  throw new Error("Function not implemented.");
+}

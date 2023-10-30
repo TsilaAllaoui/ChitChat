@@ -73,9 +73,6 @@ const Profile = ({ condition }: { condition: boolean }) => {
         });
       });
     });
-
-    // const URI = URL.createObjectURL(e.currentTarget.files![0]);
-    // console.log(URI);
   };
 
   return (
