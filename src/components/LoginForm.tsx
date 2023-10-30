@@ -1,6 +1,7 @@
 import {
   browserSessionPersistence,
   getAuth,
+  sendEmailVerification,
   sendPasswordResetEmail,
   setPersistence,
   signInWithEmailAndPassword,
@@ -50,14 +51,13 @@ function LoginForm() {
   useEffect(() => {
     if (error != "") {
       errorRef.current!.style.opacity = "1";
-    }
-
-    setTimeout(() => {
-      errorRef.current!.style.opacity = "0";
       setTimeout(() => {
-        setError("");
-      }, 500);
-    }, 2000);
+        errorRef.current!.style.opacity = "0";
+        setTimeout(() => {
+          setError("");
+        }, 2000);
+      }, 2000);
+    }
   }, [error]);
 
   // ************** Functions ****************
@@ -91,10 +91,27 @@ function LoginForm() {
     }
 
     const auth = getAuth(app);
-    setLoading(true);
     setPersistence(auth, browserSessionPersistence).then(() => {
+      setLoading(true);
       signInWithEmailAndPassword(auth, emailValue, passwordValue)
         .then((userCred) => {
+          if (!auth.currentUser || !auth.currentUser.emailVerified) {
+            if (auth.currentUser && !auth.currentUser?.emailVerified) {
+              console.log(
+                "verification email sent to " + auth.currentUser?.email
+              );
+              sendEmailVerification(auth.currentUser, {
+                url: "http://gmail.com",
+                handleCodeInApp: false,
+              });
+            }
+            setError(
+              "Email not verified. Check your inbox and verify before proceeding."
+            );
+            setLoading(false);
+            return;
+          }
+
           setUser(userCred.user);
           setRedirect(true);
           setTimeout(() => navigate("/home"), 2000);

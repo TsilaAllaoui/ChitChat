@@ -1,6 +1,8 @@
 import { signOut } from "@firebase/auth";
+import { Firestore, collection, getDocs, query } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { ShowProfileContext } from "../Contexts/ShowProfileContext";
 import { UserContext } from "../Contexts/UserContext";
 import { UserConversationsContext } from "../Contexts/UserConversationsContext";
 import { auth, db } from "../Firebase";
@@ -11,14 +13,6 @@ import Messages from "./Messages";
 import "./Model/Modules";
 import Popup from "./Popup";
 import Profile from "./Profile";
-import { ShowProfileContext } from "../Contexts/ShowProfileContext";
-import {
-  Firestore,
-  collection,
-  getDoc,
-  getDocs,
-  query,
-} from "firebase/firestore";
 
 export type IConversation = {
   guestId: string;
@@ -67,12 +61,7 @@ export const MainPage = () => {
 
   useEffect(() => {
     if (user) {
-      setUserPseudo(
-        user!.displayName
-          ? user?.displayName![0].toUpperCase() + user?.displayName!.slice(1)!
-          : user?.email![0].toUpperCase() +
-              user?.email!.slice(1, user?.email?.indexOf("@"))!
-      );
+      setUserPseudo(user?.email!.slice(0, user?.email?.indexOf("@"))!);
     }
   }, [user]);
 

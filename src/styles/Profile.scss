@@ -7,6 +7,7 @@
   background-color: $secondary;
   position: absolute;
   right: 0;
+  box-shadow: 0 0 5px rgba(128, 128, 128, 0.593);
 
   #arrow {
     color: white;
@@ -62,6 +63,7 @@
       flex-direction: column;
       align-items: center;
       width: 100%;
+      gap: 10px;
 
       li {
         display: flex;
@@ -71,28 +73,23 @@
         gap: 10px;
 
         p {
-          font-size: 20px;
+          font-size: 15px;
+          margin: 0;
         }
 
         svg {
-          font-size: 20px;
-          cursor: pointer;
-          transition: font-size 250ms;
+          &:last-of-type {
+            font-size: 20px;
+            cursor: pointer;
+            transition: font-size 250ms;
 
-          &:hover {
-            color: yellow;
-            font-size: 35px;
+            &:hover {
+              color: yellow;
+              font-size: 35px;
+            }
           }
         }
       }
     }
-
-    // .editable {
-    //   display: flex;
-    //   align-items: center;
-    //   gap: 15px;
-    //   font-size: 10px;
-    //   font-weight: lighter;
-    // }
   }
 }

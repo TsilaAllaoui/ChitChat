@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { AiFillHome, AiFillSetting } from "react-icons/ai";
 import { BiCommentAdd, BiEditAlt, BiUser } from "react-icons/bi";
@@ -7,8 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import { UserContext } from "../Contexts/UserContext";
 import "../Styles/Menu.scss";
-import UsersList from "./UsersList";
 import { ShowProfileContext } from "../Contexts/ShowProfileContext";
+import UsersList from "./UsersList";
 
 function Menu({
   logOut,
@@ -21,11 +21,18 @@ function Menu({
 
   const [showUsersList, setShowUsersList] = useState(false);
   const navigate = useNavigate();
+  const [userName, setUserName] = useState("");
 
   /****************** Contexts *****************/
 
   const { user, userPseudo, userPicture } = useContext(UserContext);
   const { setShowProfile } = useContext(ShowProfileContext);
+
+  // /****************** Effects *******************/
+
+  // useEffect(() => {
+  //   setUserName(user?.displayName ? user.displayName : userPseudo);
+  // }, [user]);
 
   /****************** Functions *******************/
 
@@ -53,7 +60,7 @@ function Menu({
         />
       </div>
       <div id="others">
-        <p>{userPseudo}</p>
+        <p>{user?.displayName ? user.displayName : userPseudo}</p>
         <div
           id="picture"
           onClick={() => setShowProfile(true)}
@@ -62,7 +69,7 @@ function Menu({
               userPicture != "" ? `url(${userPicture})` : "unset",
           }}
         >
-          {userPicture == "" ? (
+          {userPicture == "" || userPicture == undefined ? (
             <BiUser
               data-tooltip-id="user"
               data-tooltip-content="User Account"

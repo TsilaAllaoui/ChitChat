@@ -40,7 +40,7 @@ const userConversationsProvider = ({ children }: { children: JSX.Element }) => {
       .then((snap) => {
         snap.forEach((doc) => {
           const data = doc.data();
-          if (data.guestId == user!.uid || data.hostId == user!.uid) {
+          if (user && (data.guestId == user!.uid || data.hostId == user!.uid)) {
             tmp.push({
               guestId: data.guestId,
               guestName: data.guestName,

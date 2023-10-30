@@ -11,6 +11,7 @@ import { ShowProfileContext } from "../Contexts/ShowProfileContext";
 import { RiArrowLeftSFill, RiArrowRightSFill } from "react-icons/ri";
 import {
   collection,
+  doc,
   getDoc,
   getDocs,
   query,
@@ -18,10 +19,12 @@ import {
 } from "firebase/firestore";
 import { db } from "../Firebase";
 import imageToBase64 from "image-to-base64";
+import { AiOutlineMail } from "react-icons/ai";
 
 const Profile = ({ condition }: { condition: boolean }) => {
   /******************* States **********************/
-  const { userPseudo, userPicture, setUserPicture } = useContext(UserContext);
+  const { userPseudo, setUserPseudo, userPicture, setUserPicture } =
+    useContext(UserContext);
   const [showPopup, setShowPopup] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [label, setLabel] = useState("");
@@ -45,6 +48,16 @@ const Profile = ({ condition }: { condition: boolean }) => {
       displayName: newName,
     })
       .then(() => {
+        getDocs(query(collection(db, "users"))).then((docs) => {
+          docs.forEach((d) => {
+            if (d.data().uid == user!.uid) {
+              setUserPseudo(newName);
+              updateDoc(doc(db, "users", d.id), {
+                name: newName,
+              });
+            }
+          });
+        });
         setLabel("");
         setShowEditForm(false);
         setShowPopup(true);
@@ -95,7 +108,7 @@ const Profile = ({ condition }: { condition: boolean }) => {
           id="profile-picture"
           style={{ backgroundImage: `url(${userPicture})` }}
         >
-          {userPicture == "" ? <BiUser /> : null}
+          {userPicture == "" || userPicture == undefined ? <BiUser /> : null}
           <input
             type="file"
             ref={fileInputRef}
@@ -107,7 +120,11 @@ const Profile = ({ condition }: { condition: boolean }) => {
         </div>
         <ul>
           <li>
-            <p>{user && user!.displayName ? user!.displayName : "No name"}</p>
+            <p>
+              {user && user!.displayName
+                ? user!.displayName
+                : user?.email!.slice(0, user?.email?.indexOf("@"))!}
+            </p>
             <BiEditAlt onClick={() => setLabel("Name")} />
           </li>
           <li>

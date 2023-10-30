@@ -1,8 +1,8 @@
-import { createPortal } from "react-dom";
-import "../Styles/EditDialog.scss";
-import { AiOutlineCloseCircle } from "react-icons/ai";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { AiOutlineCloseCircle } from "react-icons/ai";
 import { ScaleLoader } from "react-spinners";
+import "../Styles/EditDialog.scss";
 
 const EditDialog = ({
   label,
@@ -23,7 +23,7 @@ const EditDialog = ({
 
   useEffect(() => {
     setPending(false);
-  }, []);
+  }, [label]);
 
   /****************  Refs *****************/
 

@@ -13,6 +13,7 @@ import { FaLock } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { MdErrorOutline, MdOutlineAlternateEmail } from "react-icons/md";
 import { useNavigate } from "react-router";
+import { ScaleLoader } from "react-spinners";
 import { IsLoginContext } from "../Contexts/IsLoginContext";
 import { auth, db, gauthProvider } from "../Firebase";
 import "../Styles/SignUpForm.scss";
@@ -27,6 +28,7 @@ function SignUpForm() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [showError, setShowError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Error state
   const [error, setError] = useState("");
@@ -102,6 +104,7 @@ function SignUpForm() {
     }
 
     // Create user into firebase
+    setLoading(true);
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCreds) => {
         addNewUser(name, email, userCreds.user.uid);
@@ -128,11 +131,13 @@ function SignUpForm() {
           .replace("-", " ");
         console.log(msg);
         setError(msg[0].toUpperCase() + msg.slice(1));
+        setLoading(false);
       });
   };
 
   // To sign up with google
   const signUpWithGoogle = () => {
+    setLoading(true);
     setPersistence(auth, browserSessionPersistence).then(() => {
       signInWithPopup(auth, gauthProvider)
         .then((result) => {
@@ -151,6 +156,7 @@ function SignUpForm() {
             });
             if (found) {
               setShowError(true);
+              setLoading(false);
             } else {
               addNewUser(
                 result.user.displayName!,
@@ -239,7 +245,20 @@ function SignUpForm() {
             />
             <p onClick={clickAgreements}>Accept all agreements</p>
           </div>
-          <button type="submit">Sign up</button>
+          <button type="submit">
+            {loading ? (
+              <ScaleLoader
+                color="#FFFFFF"
+                loading={loading}
+                height={10}
+                width={2}
+                radius={15}
+                margin={1}
+              ></ScaleLoader>
+            ) : (
+              <span>SignUp</span>
+            )}
+          </button>
         </div>
         <div className="error" ref={errorRef}>
           <MdErrorOutline id="icon" />
@@ -260,7 +279,7 @@ function SignUpForm() {
       </form>
       {redirectToLogin ? (
         <Popup
-          content="Account created successfully... Redirection to login..."
+          content="Account created successfully... Check Email for verification..."
           hidePopup={() => setRedirectToLogin(false)}
         />
       ) : null}

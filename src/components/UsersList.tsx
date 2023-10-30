@@ -5,6 +5,7 @@ import {
   query,
   serverTimestamp,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
 import { useCollection } from "react-firebase-hooks/firestore";
@@ -94,7 +95,9 @@ const UserList = ({ close }: { close: () => void }) => {
   /**************** Firebase Hooks ****************/
 
   const usersRef = collection(db, "users");
-  const [usersList, loading, error] = useCollection(query(usersRef));
+  const [usersList, loading, error] = useCollection(
+    query(usersRef, where("uid", "!=", user?.uid))
+  );
 
   useEffect(() => {
     let tmp: IUser[] = [];
