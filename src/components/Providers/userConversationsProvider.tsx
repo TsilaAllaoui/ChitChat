@@ -22,10 +22,6 @@ const userConversationsProvider = ({ children }: { children: JSX.Element }) => {
     query(collection(db, "conversations"))
   );
 
-  useEffect(() => {
-    if (error) console.log("Conversations fetch error: " + error);
-  }, [error]);
-
   const user = useContext(UserContext).user;
 
   useEffect(() => {
@@ -36,7 +32,6 @@ const userConversationsProvider = ({ children }: { children: JSX.Element }) => {
 
   useEffect(() => {
     const tmp: any[] = [];
-    console.log("UID: " + user?.uid);
     getDocs(query(collection(db, "conversations")))
       .then((snap) => {
         snap.forEach((doc) => {
@@ -50,7 +45,6 @@ const userConversationsProvider = ({ children }: { children: JSX.Element }) => {
               id: data.id,
               participants: data.participants,
             });
-            console.log(tmp);
           }
         });
         setUserConversations(tmp);

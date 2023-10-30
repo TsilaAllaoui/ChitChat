@@ -49,10 +49,6 @@ const Conversation = ({ conversation }: { conversation: IConversation }) => {
     loadProfilePicture();
   }, [user, userConversations]);
 
-  useEffect(() => {
-    console.log("Picture: " + picture);
-  }, [picture]);
-
   return (
     <>
       <div

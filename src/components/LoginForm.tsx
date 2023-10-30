@@ -102,9 +102,6 @@ function LoginForm() {
           .then((userCred) => {
             if (!auth.currentUser || !auth.currentUser.emailVerified) {
               if (auth.currentUser && !auth.currentUser?.emailVerified) {
-                console.log(
-                  "verification email sent to " + auth.currentUser?.email
-                );
                 sendEmailVerification(auth.currentUser, {
                   url: "https://chitchat-web-chat.netlify.app/",
                   handleCodeInApp: false,
@@ -154,12 +151,8 @@ function LoginForm() {
       .then(() => {
         signInWithPopup(auth, gauthProvider)
           .then((userCred) => {
-            console.log(auth.currentUser);
             if (!auth.currentUser || !auth.currentUser.emailVerified) {
               if (auth.currentUser && !auth.currentUser?.emailVerified) {
-                console.log(
-                  "verification email sent to " + auth.currentUser?.email
-                );
                 sendEmailVerification(auth.currentUser, {
                   url: "https://chitchat-web-chat.netlify.app/",
                   handleCodeInApp: false,

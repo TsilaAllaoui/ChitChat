@@ -121,7 +121,6 @@ function SignUpForm() {
       // Catching possible error
       .catch((err) => {
         let msg: string = err.message;
-        console.log(msg);
         msg = msg
           .replace("Firebase: ", "")
           .replace("Error (", "")
@@ -129,7 +128,6 @@ function SignUpForm() {
           .replace("auth/weak", "")
           .replace("(", "")
           .replace("-", " ");
-        console.log(msg);
         setError(msg[0].toUpperCase() + msg.slice(1));
         setLoading(false);
       });

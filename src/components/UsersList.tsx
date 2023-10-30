@@ -28,6 +28,7 @@ const UserList = ({ close }: { close: () => void }) => {
   /**************** States ****************/
 
   const [users, setUsers] = useState<IUser[]>([]);
+  const [noUserAvailable, setNoUserAvailable] = useState(false);
 
   /**************** Contexts ****************/
 
@@ -99,6 +100,8 @@ const UserList = ({ close }: { close: () => void }) => {
     query(usersRef, where("uid", "!=", user?.uid))
   );
 
+  /**************** Effects ****************/
+
   useEffect(() => {
     let tmp: IUser[] = [];
 
@@ -111,13 +114,18 @@ const UserList = ({ close }: { close: () => void }) => {
       });
     });
 
+    if (tmp.length == 0) setNoUserAvailable(true);
+
     setUsers(tmp);
-    console.log(tmp);
-  }, [usersList]);
+  }, [usersList, loading]);
+
+  useEffect(() => {
+    console.log(noUserAvailable);
+  }, [noUserAvailable]);
 
   return (
     <div id="users-list-container" onClick={close}>
-      <ul id="users-list">
+      <ul id="users-list" onClick={(e) => e.stopPropagation()}>
         <div id="header">
           <h1>All available users for discussions</h1>
           <AiOutlineCloseCircle id="icon" onClick={close} />

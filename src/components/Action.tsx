@@ -62,7 +62,6 @@ function Action({
               .replace("rgb", "rgba")
               .replace(")", ",0.75)");
             e.currentTarget.style.backgroundColor = a;
-            console.log(a);
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = action.color;

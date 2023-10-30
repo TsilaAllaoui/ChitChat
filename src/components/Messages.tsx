@@ -65,7 +65,6 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
     messageList?.docs.forEach((doc: any) => {
       tmp.push({ ...doc.data(), id: doc.data().id });
     });
-    console.log(tmp);
     setMessages(tmp);
     setRefresh(true);
   }, [messageList]);
@@ -74,21 +73,15 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
   useEffect(() => {
     setTimeout(() => {
       const ul = document.querySelector("#messages-list") as HTMLElement;
-      console.log(ul.scrollHeight);
       ul.scrollTo({ top: ul.scrollHeight, behavior: "smooth" });
     }, 20);
   }, [loading]);
-
-  useEffect(() => {
-    console.log(error);
-  }, [error]);
 
   useEffect(() => {
     if (refresh) {
       const element = messagesListRef.current;
       if (element) {
         const ul = document.querySelector("#messages-list") as HTMLElement;
-        console.log(ul.scrollHeight);
         ul.scrollTo({ top: ul.scrollHeight, behavior: "smooth" });
       }
       setRefresh(false);
@@ -130,14 +123,12 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
     messageList?.docs.forEach((doc) => {
       tmp.push({ ...doc.data(), id: doc.data().id });
     });
-    console.log("last message: ", messages[messages.length - 1]);
 
     const element = messagesListRef.current;
     if (
       element?.scrollHeight! > element?.clientHeight! ||
       element?.scrollWidth! > element?.clientWidth!
     ) {
-      console.log("overflow");
       const last = messagesListRef.current?.lastChild as HTMLLIElement;
       last?.scrollIntoView();
     }

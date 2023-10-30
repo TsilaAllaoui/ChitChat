@@ -139,7 +139,6 @@ function MessageEntry({
                 onMouseEnter={() => setOpacity("1")}
                 onMouseLeave={() => {
                   setOpacity("0");
-                  console.log(document.activeElement);
                 }}
                 onClick={() => setToggleMenu(true)}
               >

@@ -63,7 +63,6 @@ const Profile = ({ condition }: { condition: boolean }) => {
         str += String.fromCharCode(byte);
       }
       str = `data:image/png;base64,${btoa(str)}`;
-      console.log(str);
       setUserPicture(str);
       getDocs(query(collection(db, "users"))).then((docs) => {
         docs.forEach((doc) => {
