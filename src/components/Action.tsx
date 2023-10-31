@@ -55,10 +55,12 @@ function Action({
           style={{ backgroundColor: action.color }}
           id={action.label}
           onClick={() => {
-            setCurrentAction({
-              method: actions[action.label == "Delete" ? 0 : 1].method,
-            });
-            setShowConfirmation(true);
+            if (action.label == "Delete") {
+              setShowConfirmation(true);
+              setCurrentAction({ method: actions[0].method });
+            } else if (action.label == "Reply") {
+              actions[1].method();
+            } else console.log("Action not implemented yet!");
           }}
         >
           <action.icon />

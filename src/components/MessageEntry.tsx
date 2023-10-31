@@ -7,6 +7,7 @@ import Action from "./Action";
 import { ActionLabel } from "./Model/ActionModel";
 import { collection, deleteDoc, getDocs } from "firebase/firestore";
 import { db } from "../Firebase";
+import { ReplyEntryContext } from "../Contexts/ReplyEntryContext";
 
 function MessageEntry({
   content,
@@ -26,6 +27,9 @@ function MessageEntry({
   // ************ Contexts ************
 
   const user = useContext(UserContext).user;
+
+  const { originContent, setOriginContent, scrollToOrigin, setScrollToOrigin } =
+    useContext(ReplyEntryContext);
 
   // ************  States   ************
 
@@ -109,6 +113,11 @@ function MessageEntry({
     });
   };
 
+  const replyMessageEntry = () => {
+    console.log(content);
+    setOriginContent(content);
+  };
+
   const actions: ActionLabel[] = [
     {
       icon: AiFillDelete,
@@ -120,18 +129,31 @@ function MessageEntry({
       icon: BsFillReplyFill,
       label: "Reply",
       color: "rgb(156, 156, 157)",
-      method: () => {
-        console.log("TAY2");
-      },
+      method: replyMessageEntry,
     },
   ];
 
-  // ************  Rendering   ************
+  useEffect(() => {
+    console.log(originContent);
+  }, [originContent]);
+
+  // ************  Effects   ************
+
+  useEffect(() => {
+    if (content == originContent && scrollToOrigin) {
+      const entry = document.querySelector(
+        ".message-entry-container"
+      ) as HTMLElement;
+      entry.scrollIntoView({ behavior: "smooth" });
+      setScrollToOrigin(false);
+    }
+  }, [scrollToOrigin]);
 
   return (
     <div
       className="message-entry-container"
       style={{ alignSelf: condition ? "flex-start" : "flex-end" }}
+      onClick={(e) => e.stopPropagation()}
     >
       <li
         className="message"
@@ -166,31 +188,19 @@ function MessageEntry({
             </div>
           </>
         ) : null}
-        <div id="content">
-          <div
-            className="reply-to"
-            style={{
-              borderRadius: condition ? "10px 10px 0 10px" : "10px 10px 10px 0",
-            }}
-          >
-            Lorem, ipsum dolor.
-          </div>
-          <div
-            style={{
-              backgroundColor: condition
-                ? "rgb(188, 199, 212)"
-                : "rgb(20,147,251)",
-              borderRadius: !condition
-                ? "10px 10px 0 10px"
-                : "10px 10px 10px 0",
-              alignItems: parts.length === 1 ? "center" : "",
-            }}
-            className="message-container"
-          >
-            {parts.map((part, index) => (
-              <p key={content + index}>{part}</p>
-            ))}
-          </div>
+        <div
+          style={{
+            backgroundColor: condition
+              ? "rgb(188, 199, 212)"
+              : "rgb(20,147,251)",
+            borderRadius: !condition ? "10px 10px 0 10px" : "10px 10px 10px 0",
+            alignItems: parts.length === 1 ? "center" : "",
+          }}
+          className="message-container"
+        >
+          {parts.map((part, index) => (
+            <p key={content + index}>{part}</p>
+          ))}
         </div>
         {!condition ? null : (
           <>

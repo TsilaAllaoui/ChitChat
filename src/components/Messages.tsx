@@ -21,6 +21,8 @@ import EmojisPicker from "./EmojisPicker";
 import { IConversation } from "./MainPage";
 import MessageEntry from "./MessageEntry";
 import { Message } from "./Model/Models";
+import ReplyEntry from "./ReplyEntry";
+import { ReplyEntryContext } from "../Contexts/ReplyEntryContext";
 
 const Messages = ({ conversation }: { conversation: IConversation | null }) => {
   if (!conversation)
@@ -49,6 +51,7 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
   // ************* Contexts ***************
 
   const { user, setUser } = useContext(UserContext);
+  const { setOriginContent } = useContext(ReplyEntryContext);
 
   // ************  Firebase Hooks   ************
 
@@ -138,7 +141,7 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
   // ************  Rendering   ************
 
   return (
-    <div id="messages-section">
+    <div id="messages-section" onClick={() => setOriginContent("")}>
       <div id="messages-container">
         <div id="root-message">
           <div id="messages-list">
@@ -161,6 +164,7 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
                 })}
             </ul>
           </div>
+          <ReplyEntry />
         </div>
         <div>
           <div id="input">
