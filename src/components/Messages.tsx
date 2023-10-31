@@ -163,7 +163,7 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
     }
   }, [sendReply]);
 
-  useEffect(() => {});
+  useEffect(() => { });
 
   return (
     <div id="messages-section" onClick={() => setOriginContent("")}>
@@ -203,25 +203,27 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
                 placeholder="Type message here..."
                 onChange={(e) => handleChange(e)}
               />
-              <ImAttachment className="icon" />
-              <AiOutlineCamera className="icon" />
-              <GoSmiley
-                className="icon"
-                onClick={() => setShowEmojiPicker(true)}
-              />
+              <div id="actions">
+                <ImAttachment className="icon" />
+                <AiOutlineCamera className="icon" />
+                <GoSmiley
+                  className="icon"
+                  onClick={() => setShowEmojiPicker(true)}
+                />
+              </div>
               {showEmojiPicker
                 ? createPortal(
-                    <EmojisPicker
-                      updateMessage={(val: string) => {
-                        if (originContent != "") {
-                          let tmp = content + val;
-                          setContent(tmp);
-                        } else setInputValue(inputValue + val);
-                      }}
-                      hide={() => setShowEmojiPicker(false)}
-                    />,
-                    document.getElementById("portal") as HTMLElement
-                  )
+                  <EmojisPicker
+                    updateMessage={(val: string) => {
+                      if (originContent != "") {
+                        let tmp = content + val;
+                        setContent(tmp);
+                      } else setInputValue(inputValue + val);
+                    }}
+                    hide={() => setShowEmojiPicker(false)}
+                  />,
+                  document.getElementById("portal") as HTMLElement
+                )
                 : null}
               <div id="send-container">
                 <IoSend onClick={(e) => sendToFirebase(e)} />

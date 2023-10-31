@@ -199,8 +199,8 @@ function MessageEntry({
           <div
             style={{
               backgroundColor: condition
-                ? "rgb(188, 199, 212)"
-                : "rgb(20,147,251)",
+                ? "rgb(118, 125, 135)"
+                : "rgba(20, 147, 251, 0.641)",
               borderRadius: !condition
                 ? "10px 10px 0 10px"
                 : "10px 10px 10px 0",

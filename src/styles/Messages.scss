@@ -25,6 +25,7 @@
   justify-content: center;
   align-items: center;
   width: 75%;
+  height: 100%;
 
   #arrow-icon {
     color: white;
@@ -37,19 +38,35 @@
 
   #messages-container {
     width: 90%;
+    height: 90%;
 
     #input {
       margin-top: 1rem;
       width: 100%;
+      height: 100%;
 
       form {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        height: 100%;
+
+        #actions {
+          display: flex;
+          justify-content: center;
+          gap: 2rem;
+          flex-grow: 1;
+          margin: 0 13px;
+
+          svg {
+            font-size: 2rem;
+          }
+        }
 
         #text-input {
           width: 75%;
-          height: 40px;
+          min-width: 230px;
+          min-height: 50px;
           background-color: rgba(255, 255, 255, 0.218);
           border-radius: 10px;
           border: none;
@@ -97,15 +114,16 @@
           cursor: pointer;
           background-color: $main-blue;
           border-radius: 100%;
-          width: 40px;
-          height: 40px;
+          width: 5%;
+          min-width: 50px;
+          aspect-ratio: 1;
           display: grid;
           place-items: center;
 
           svg {
             color: white;
             transition: color 250ms;
-            font-size: 23px;
+            font-size: 30px;
           }
 
           &:hover {

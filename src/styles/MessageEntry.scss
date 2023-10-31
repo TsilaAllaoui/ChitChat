@@ -9,6 +9,7 @@
   color: white;
   font-weight: 500;
 
+
   .message {
     display: flex;
     align-items: center;
@@ -54,8 +55,8 @@
       margin: 0 5px 5px 0;
       flex-direction: column;
       text-align: left;
-      min-height: 35px;
       padding-right: 10px;
+      min-height: 3rem;
 
       p {
         all: unset;

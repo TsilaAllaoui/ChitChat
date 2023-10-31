@@ -105,7 +105,7 @@ function LoginForm() {
                 sendEmailVerification(auth.currentUser, {
                   url: "https://chitchat-web-chat.netlify.app/",
                   handleCodeInApp: false,
-                });
+                }).catch((err) => console.log("Error Sending Email: " + err));
               }
               setError(
                 "Email not verified. Check your inbox and verify before proceeding."
@@ -156,7 +156,7 @@ function LoginForm() {
                 sendEmailVerification(auth.currentUser, {
                   url: "https://chitchat-web-chat.netlify.app/",
                   handleCodeInApp: false,
-                });
+                }).catch((err) => console.log("Email error"));
               }
               setError(
                 "Email not verified. Check your inbox and verify before proceeding."
@@ -190,6 +190,7 @@ function LoginForm() {
           .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
+
             console.log(
               "Erreur d'authentification",
               errorCode,
