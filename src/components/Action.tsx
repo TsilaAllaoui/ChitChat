@@ -1,9 +1,10 @@
 import { collection, deleteDoc, getDocs } from "firebase/firestore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { db } from "../Firebase";
 import "../styles/Action.scss";
 import { ActionLabel } from "./Model/ActionModel";
+import ConfirmationDialog from "./ConfirmationDialog";
 
 function Action({
   actions,
@@ -23,26 +24,11 @@ function Action({
   let height = actions.length * 20;
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  // ************* Functions
+  // **************** States ***************** /
 
-  // To delete message entry
-  const deleteMessageEntry = () => {
-    getDocs(
-      collection(db, "conversations", currentConversationId, "mess")
-    ).then((snap) => {
-      snap.forEach((doc) => {
-        const data = { ...doc.data() };
-        if (data.message === infos.content && data.senderId === infos.senderId)
-          deleteDoc(doc.ref);
-      });
-    });
-  };
-
-  const replyMessageEntry = () => {
-    /*TODO*/
-  };
-
-  // **************** Rendering ************************
+  const [currentAction, setCurrentAction] = useState({
+    method: (...params: any) => {},
+  });
 
   return (
     <div
@@ -54,7 +40,7 @@ function Action({
         hideAction();
       }}
     >
-      {actions.map((action) => (
+      {actions.map((action, i) => (
         <button
           key={action.label}
           onMouseEnter={(e) => {
@@ -69,43 +55,21 @@ function Action({
           style={{ backgroundColor: action.color }}
           id={action.label}
           onClick={() => {
-            if (action.label === "Delete") {
-              setShowConfirmation(true);
-            } else if (action.label === "Reply") replyMessageEntry();
+            setCurrentAction({
+              method: actions[action.label == "Delete" ? 0 : 1].method,
+            });
+            setShowConfirmation(true);
           }}
         >
           <action.icon />
           {action.label}
+          <ConfirmationDialog
+            show={showConfirmation}
+            hide={() => setShowConfirmation(false)}
+            action={() => currentAction.method(infos.content, infos.senderId)}
+          />
         </button>
       ))}
-      {showConfirmation
-        ? createPortal(
-            <>
-              <div id="confirmation" onClick={() => setShowConfirmation(false)}>
-                <div id="container" onClick={(e) => e.stopPropagation()}>
-                  <h1>Delete message?</h1>
-                  <div id="separator"></div>
-                  <h2>
-                    This action is irreversible. Proceed carrefully before
-                    choosing.
-                  </h2>
-                  <div id="buttons">
-                    <button onClick={() => deleteMessageEntry()}>Yes</button>
-                    <button
-                      onClick={() => {
-                        setShowConfirmation(false);
-                        hideAction();
-                      }}
-                    >
-                      No
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </>,
-            document.getElementById("portal") as HTMLElement
-          )
-        : null}
     </div>
   );
 }

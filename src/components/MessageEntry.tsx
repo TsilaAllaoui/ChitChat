@@ -5,6 +5,8 @@ import { UserContext } from "../Contexts/UserContext";
 import "../styles/MessageEntry.scss";
 import Action from "./Action";
 import { ActionLabel } from "./Model/ActionModel";
+import { collection, deleteDoc, getDocs } from "firebase/firestore";
+import { db } from "../Firebase";
 
 function MessageEntry({
   content,
@@ -94,110 +96,130 @@ function MessageEntry({
 
   // **************** Functions ********************
 
+  // To delete message entry
+  const deleteMessageEntry = (content: string, senderId: string) => {
+    getDocs(
+      collection(db, "conversations", currentConversationId, "mess")
+    ).then((snap) => {
+      snap.forEach((doc) => {
+        const data = { ...doc.data() };
+        if (data.message === content && data.senderId === senderId)
+          deleteDoc(doc.ref);
+      });
+    });
+  };
+
   const actions: ActionLabel[] = [
     {
       icon: AiFillDelete,
       label: "Delete",
       color: "rgb(255,0,0)",
+      method: deleteMessageEntry,
     },
     {
       icon: BsFillReplyFill,
       label: "Reply",
-      color: "rgb(81, 81, 172)",
+      color: "rgb(156, 156, 157)",
+      method: () => {
+        console.log("TAY2");
+      },
     },
   ];
 
   // ************  Rendering   ************
 
   return (
-    <>
-      {content.includes("data:image") ? null : (
-        <li
-          className="message"
-          style={{ alignSelf: condition ? "flex-start" : "flex-end" }}
-          onMouseEnter={() => setOpacity("75%")}
-          onMouseLeave={() => setOpacity("0")}
-        >
-          {!condition ? (
-            <>
-              {toggleMenu ? (
-                <div id="action-container">
-                  <Action
-                    actions={actions}
-                    currentConversationId={currentConversationId}
-                    hideAction={() => setToggleMenu(false)}
-                    infos={{
-                      content: content,
-                      senderId: senderId,
-                    }}
-                  />
-                </div>
-              ) : null}
-              <div
-                className="message-dots"
-                style={{ opacity: opacity }}
-                onMouseEnter={() => setOpacity("1")}
-                onMouseLeave={() => {
-                  setOpacity("0");
-                }}
-                onClick={() => setToggleMenu(true)}
-              >
-                <BsThreeDotsVertical id="icon" />
+    <div
+      className="message-entry-container"
+      style={{ alignSelf: condition ? "flex-start" : "flex-end" }}
+    >
+      <li
+        className="message"
+        onMouseEnter={() => setOpacity("75%")}
+        onMouseLeave={() => setOpacity("0")}
+      >
+        {!condition ? (
+          <>
+            {toggleMenu ? (
+              <div id="action-container">
+                <Action
+                  actions={actions}
+                  currentConversationId={currentConversationId}
+                  hideAction={() => setToggleMenu(false)}
+                  infos={{
+                    content: content,
+                    senderId: senderId,
+                  }}
+                />
               </div>
-            </>
-          ) : null}
+            ) : null}
+            <div
+              className="message-dots"
+              style={{ opacity: opacity }}
+              onMouseEnter={() => setOpacity("1")}
+              onMouseLeave={() => {
+                setOpacity("0");
+              }}
+              onClick={() => setToggleMenu(true)}
+            >
+              <BsThreeDotsVertical id="icon" />
+            </div>
+          </>
+        ) : null}
+        <div id="content">
+          <div
+            className="reply-to"
+            style={{
+              borderRadius: condition ? "10px 10px 0 10px" : "10px 10px 10px 0",
+            }}
+          >
+            Lorem, ipsum dolor.
+          </div>
           <div
             style={{
-              width: width === 12 ? width + 10 : width,
-              height: height,
               backgroundColor: condition
                 ? "rgb(188, 199, 212)"
                 : "rgb(20,147,251)",
-              borderRadius: condition ? "10px 10px 0 10px" : "10px 10px 10px 0",
+              borderRadius: !condition
+                ? "10px 10px 0 10px"
+                : "10px 10px 10px 0",
               alignItems: parts.length === 1 ? "center" : "",
             }}
             className="message-container"
           >
             {parts.map((part, index) => (
-              <p
-                key={content + index}
-                style={{
-                  marginTop: parts.length === 1 ? "5px" : "0",
-                }}
-              >
-                {part}
-              </p>
+              <p key={content + index}>{part}</p>
             ))}
           </div>
-          {!condition ? null : (
-            <>
-              <div
-                className="message-dots"
-                style={{ opacity: opacity }}
-                onMouseEnter={() => setOpacity("100%")}
-                onMouseLeave={() => setOpacity("0")}
-                onClick={() => setToggleMenu(true)}
-              >
-                <BsThreeDotsVertical id="icon" />
+        </div>
+        {!condition ? null : (
+          <>
+            <div
+              className="message-dots"
+              style={{ opacity: opacity }}
+              onMouseEnter={() => setOpacity("100%")}
+              onMouseLeave={() => setOpacity("0")}
+              onClick={() => setToggleMenu(true)}
+            >
+              <BsThreeDotsVertical id="icon" />
+            </div>
+            {toggleMenu ? (
+              <div id="action-container">
+                <Action
+                  actions={actions}
+                  currentConversationId={currentConversationId}
+                  hideAction={() => setToggleMenu(false)}
+                  infos={{
+                    content: content,
+                    senderId: senderId,
+                  }}
+                />
               </div>
-              {toggleMenu ? (
-                <div id="action-container">
-                  <Action
-                    actions={actions}
-                    currentConversationId={currentConversationId}
-                    hideAction={() => setToggleMenu(false)}
-                    infos={{
-                      content: content,
-                      senderId: senderId,
-                    }}
-                  />
-                </div>
-              ) : null}
-            </>
-          )}
-        </li>
-      )}
-    </>
+            ) : null}
+          </>
+        )}
+      </li>
+    </div>
   );
 }
 

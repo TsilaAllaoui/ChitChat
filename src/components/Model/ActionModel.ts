@@ -1,9 +1,8 @@
 import { IconType } from "react-icons";
 
-interface ActionLabel {
+export type ActionLabel = {
   label: string;
   icon: IconType;
   color: string;
-}
-
-export type { ActionLabel };
+  method: (...params: any) => void;
+};
