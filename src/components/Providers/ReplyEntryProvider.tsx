@@ -5,6 +5,8 @@ const ReplyEntryProvider = ({ children }: { children: JSX.Element }) => {
   const [originContent, setOriginContent] = useState("");
   const [content, setContent] = useState("");
   const [scrollToOrigin, setScrollToOrigin] = useState(false);
+  const [sendReply, setSendReply] = useState(false);
+  const [repliedMessage, setRepliedMessage] = useState("");
   return (
     <ReplyEntryContext.Provider
       value={{
@@ -14,6 +16,10 @@ const ReplyEntryProvider = ({ children }: { children: JSX.Element }) => {
         setContent,
         scrollToOrigin,
         setScrollToOrigin,
+        sendReply,
+        setSendReply,
+        repliedMessage,
+        setRepliedMessage,
       }}
     >
       {children}

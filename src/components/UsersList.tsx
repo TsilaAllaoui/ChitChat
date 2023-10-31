@@ -119,10 +119,6 @@ const UserList = ({ close }: { close: () => void }) => {
     setUsers(tmp);
   }, [usersList, loading]);
 
-  useEffect(() => {
-    console.log(noUserAvailable);
-  }, [noUserAvailable]);
-
   return (
     <div id="users-list-container" onClick={close}>
       <ul id="users-list" onClick={(e) => e.stopPropagation()}>

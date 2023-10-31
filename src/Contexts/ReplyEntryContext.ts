@@ -7,6 +7,10 @@ export type Reply = {
   setContent: (_s: string) => void;
   scrollToOrigin: boolean;
   setScrollToOrigin: (_b: boolean) => void;
+  sendReply: boolean;
+  setSendReply: (_b: boolean) => void;
+  repliedMessage: string;
+  setRepliedMessage: (_s: string) => void;
 };
 
 export const ReplyEntryContext = createContext<Reply>({
@@ -16,4 +20,8 @@ export const ReplyEntryContext = createContext<Reply>({
   setOriginContent: (_s: string) => {},
   scrollToOrigin: false,
   setScrollToOrigin: (_b: boolean) => {},
+  sendReply: false,
+  setSendReply: (_b: boolean) => {},
+  repliedMessage: "",
+  setRepliedMessage: (_s: string) => {},
 });

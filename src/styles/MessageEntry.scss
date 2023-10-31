@@ -22,12 +22,29 @@
     }
 
     #content {
+      padding-left: 1px;
+
       .reply-to {
-        padding: 5px 10px;
         border-radius: 5px;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         color: rgba(255, 255, 255, 0.661);
+        position: relative;
+
+        svg {
+          transform: scaleX(-1);
+          position: absolute;
+          left: 5px;
+          top: 8px;
+          font-size: 13px;
+        }
+
+        #replied-content {
+          font-size: 12px;
+          margin: 5px;
+          margin-left: 10px;
+        }
       }
     }
 
@@ -38,6 +55,7 @@
       flex-direction: column;
       text-align: left;
       min-height: 35px;
+      padding-right: 10px;
 
       p {
         all: unset;

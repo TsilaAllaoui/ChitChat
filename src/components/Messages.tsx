@@ -51,7 +51,14 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
   // ************* Contexts ***************
 
   const { user, setUser } = useContext(UserContext);
-  const { setOriginContent } = useContext(ReplyEntryContext);
+  const {
+    originContent,
+    setOriginContent,
+    content,
+    setContent,
+    sendReply,
+    setSendReply,
+  } = useContext(ReplyEntryContext);
 
   // ************  Firebase Hooks   ************
 
@@ -138,7 +145,25 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
     setMessages(tmp);
   };
 
-  // ************  Rendering   ************
+  // ************  Effects   ************
+
+  useEffect(() => {
+    if (sendReply) {
+      const messRef = collection(db, "conversations", conversation!.id, "mess");
+      addDoc(messRef, {
+        message: content,
+        senderId: user!.uid,
+        hostId: conversation!.hostId,
+        sentTime: serverTimestamp(),
+        repliedContent: originContent,
+      });
+      setContent("");
+      setOriginContent("");
+      setSendReply(false);
+    }
+  }, [sendReply]);
+
+  useEffect(() => {});
 
   return (
     <div id="messages-section" onClick={() => setOriginContent("")}>
@@ -159,6 +184,7 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
                       senderId={message.senderId}
                       hostId={conversation.hostId}
                       currentConversationId={conversation.id}
+                      repliedContent={message.repliedContent}
                     />
                   );
                 })}
@@ -166,7 +192,7 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
           </div>
           <ReplyEntry />
         </div>
-        <div>
+        <div onClick={(e) => e.stopPropagation()}>
           <div id="input">
             <form onSubmit={(e) => sendToFirebase(e)}>
               <input
@@ -186,9 +212,12 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
               {showEmojiPicker
                 ? createPortal(
                     <EmojisPicker
-                      updateMessage={(val: string) =>
-                        setInputValue(inputValue + val)
-                      }
+                      updateMessage={(val: string) => {
+                        if (originContent != "") {
+                          let tmp = content + val;
+                          setContent(tmp);
+                        } else setInputValue(inputValue + val);
+                      }}
                       hide={() => setShowEmojiPicker(false)}
                     />,
                     document.getElementById("portal") as HTMLElement

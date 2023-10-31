@@ -8,51 +8,48 @@ import { ActionLabel } from "./Model/ActionModel";
 import { collection, deleteDoc, getDocs } from "firebase/firestore";
 import { db } from "../Firebase";
 import { ReplyEntryContext } from "../Contexts/ReplyEntryContext";
+import { MdReply } from "react-icons/md";
 
 function MessageEntry({
   content,
   senderId,
   hostId,
   currentConversationId,
+  repliedContent,
 }: {
   content: string;
   senderId: string;
   hostId: string;
   currentConversationId: string;
+  repliedContent: string;
 }) {
   // ************ Refs ***************
 
   const menu = useRef<HTMLDivElement>(null);
+  const replyRef = useRef<HTMLDivElement>(null);
 
   // ************ Contexts ************
 
   const user = useContext(UserContext).user;
 
-  const { originContent, setOriginContent, scrollToOrigin, setScrollToOrigin } =
-    useContext(ReplyEntryContext);
+  const {
+    originContent,
+    setOriginContent,
+    scrollToOrigin,
+    setScrollToOrigin,
+    repliedMessage,
+    setRepliedMessage,
+  } = useContext(ReplyEntryContext);
 
   // ************  States   ************
-
-  // Characters limit by line
   const [limit, setLimit] = useState(45);
-
-  // State for the width of the message body
   const [width, setWidth] = useState(0);
-
-  // State for the heigth of the message body
   const [height, setHeight] = useState(0);
-
-  // State for message parts
   const [parts, setParts] = useState<string[]>([]);
-
-  // State for condition to align message
   const [condition, setCondition] = useState(false);
-
-  // State to show/hide dots button
   const [opacity, setOpacity] = useState("0");
-
-  // State to toggle dots menu actions
   const [toggleMenu, setToggleMenu] = useState(false);
+  const [repliedEntry, setRepliedEntry] = useState("");
 
   // ************ Effects **************
 
@@ -114,7 +111,6 @@ function MessageEntry({
   };
 
   const replyMessageEntry = () => {
-    console.log(content);
     setOriginContent(content);
   };
 
@@ -133,10 +129,6 @@ function MessageEntry({
     },
   ];
 
-  useEffect(() => {
-    console.log(originContent);
-  }, [originContent]);
-
   // ************  Effects   ************
 
   useEffect(() => {
@@ -149,11 +141,26 @@ function MessageEntry({
     }
   }, [scrollToOrigin]);
 
+  useEffect(() => {
+    if (repliedMessage != "" && content == repliedMessage) {
+      console.log(repliedMessage);
+      const entry = document.querySelector(
+        ".message-entry-container"
+      ) as HTMLElement;
+      replyRef.current!.scrollIntoView({ behavior: "smooth" });
+      setScrollToOrigin(false);
+      setRepliedMessage("");
+    }
+  }, [repliedMessage]);
+
   return (
     <div
       className="message-entry-container"
       style={{ alignSelf: condition ? "flex-start" : "flex-end" }}
-      onClick={(e) => e.stopPropagation()}
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+      ref={replyRef}
     >
       <li
         className="message"
@@ -188,20 +195,60 @@ function MessageEntry({
             </div>
           </>
         ) : null}
-        <div
-          style={{
-            backgroundColor: condition
-              ? "rgb(188, 199, 212)"
-              : "rgb(20,147,251)",
-            borderRadius: !condition ? "10px 10px 0 10px" : "10px 10px 10px 0",
-            alignItems: parts.length === 1 ? "center" : "",
-          }}
-          className="message-container"
-        >
-          {parts.map((part, index) => (
-            <p key={content + index}>{part}</p>
-          ))}
-        </div>
+        {!repliedContent || repliedContent == "" ? (
+          <div
+            style={{
+              backgroundColor: condition
+                ? "rgb(188, 199, 212)"
+                : "rgb(20,147,251)",
+              borderRadius: !condition
+                ? "10px 10px 0 10px"
+                : "10px 10px 10px 0",
+              alignItems: parts.length === 1 ? "center" : "",
+            }}
+            className="message-container"
+          >
+            {parts.map((part, index) => (
+              <p key={content + index}>{part}</p>
+            ))}
+          </div>
+        ) : (
+          <div id="content">
+            <div
+              className="reply-to"
+              onClick={(e) => {
+                if (repliedContent != "") {
+                  setRepliedMessage(repliedContent);
+                }
+                e.stopPropagation();
+              }}
+            >
+              <MdReply />
+              <p id="replied-content">
+                {repliedContent.length > 50
+                  ? repliedContent.slice(0, 50) + "..."
+                  : repliedContent}
+              </p>
+              <div
+                style={{
+                  backgroundColor: condition
+                    ? "rgb(188, 199, 212)"
+                    : "rgb(20,147,251)",
+                  borderRadius: !condition
+                    ? "10px 10px 0 10px"
+                    : "10px 10px 10px 0",
+                  alignItems: parts.length === 1 ? "center" : "",
+                }}
+                className="message-container"
+              >
+                {parts.map((part, index) => (
+                  <p key={content + index}>{part}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {!condition ? null : (
           <>
             <div

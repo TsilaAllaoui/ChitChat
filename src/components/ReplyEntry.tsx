@@ -8,28 +8,54 @@ import { UserConversationsContext } from "../Contexts/UserConversationsContext";
 import { MdReply } from "react-icons/md";
 
 const ReplyEntry = () => {
+  // ************ States ************
+
+  const [inputValue, setInputValue] = useState("");
+
   // ************ Contexts ************
 
-  const { originContent, setScrollToOrigin } = useContext(ReplyEntryContext);
-  const { currentConversation } = useContext(UserConversationsContext);
-
-  // ************  States   ************
-
-  // ************ Effects **************
+  const {
+    originContent,
+    setScrollToOrigin,
+    content,
+    setContent,
+    setSendReply,
+  } = useContext(ReplyEntryContext);
   if (originContent == "") return;
 
+  // ************ Functions **************
+  const submit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSendReply(true);
+  };
+
+  // ************ Effects **************
+  // useEffect(() => {
+  //   // setINp;
+  // }, [content]);
+
   return (
-    <div className="reply-entry-container" onClick={(e) => e.stopPropagation()}>
-      <div className="origin" onClick={() => setScrollToOrigin(true)}>
-        <MdReply />
-        <p>
-          {originContent.length > 50
-            ? originContent.slice(0, 50) + "..."
-            : originContent}
-        </p>
-        <input type="text" />
+    <form onSubmit={submit}>
+      <div
+        className="reply-entry-container"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="origin" onClick={() => setScrollToOrigin(true)}>
+          <MdReply />
+          <p>
+            {originContent.length > 50
+              ? originContent.slice(0, 50) + "..."
+              : originContent}
+          </p>
+          <input
+            onChange={(e) => setContent(e.currentTarget.value)}
+            type="text"
+            onClick={(e) => e.stopPropagation()}
+            value={content}
+          />
+        </div>
       </div>
-    </div>
+    </form>
   );
 };
 
