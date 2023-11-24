@@ -55,6 +55,8 @@ const ConversationAction = ({ conversationId }: { conversationId: string }) => {
         </div>
       ) : null}
       <ConfirmationDialog
+        header="Delete?"
+        content="Do you really want to do this action?"
         show={showConfirmation}
         hide={() => setShowConfirmation(false)}
         action={deleteConversation}

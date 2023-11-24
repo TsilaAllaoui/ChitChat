@@ -66,6 +66,8 @@ function Action({
           <action.icon />
           {action.label}
           <ConfirmationDialog
+            header="Delete?"
+            content="Do you really want to do this action?"
             show={showConfirmation}
             hide={() => setShowConfirmation(false)}
             action={() => currentAction.method(infos.content, infos.senderId)}

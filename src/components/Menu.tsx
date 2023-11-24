@@ -9,6 +9,7 @@ import { UserContext } from "../Contexts/UserContext";
 import "../styles/Menu.scss";
 import { ShowProfileContext } from "../Contexts/ShowProfileContext";
 import UsersList from "./UsersList";
+import ConfirmationDialog from "./ConfirmationDialog";
 
 function Menu({
   logOut,
@@ -22,17 +23,12 @@ function Menu({
   const [showUsersList, setShowUsersList] = useState(false);
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
+  const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
 
   /****************** Contexts *****************/
 
   const { user, userPseudo, userPicture } = useContext(UserContext);
   const { setShowProfile } = useContext(ShowProfileContext);
-
-  // /****************** Effects *******************/
-
-  // useEffect(() => {
-  //   setUserName(user?.displayName ? user.displayName : userPseudo);
-  // }, [user]);
 
   /****************** Functions *******************/
 
@@ -81,7 +77,7 @@ function Menu({
           data-tooltip-id="logout"
           data-tooltip-content="Log Out"
           id="shutdown"
-          onClick={logOut}
+          onClick={() => setShowConfirmationDialog(true)}
         />
       </div>
       <Tooltip id="new-conversation" />
@@ -94,6 +90,13 @@ function Menu({
             document.getElementById("portal") as HTMLElement
           )
         : null}
+      <ConfirmationDialog
+        header="Log out?"
+        content="Do you really want to log out?"
+        show={showConfirmationDialog}
+        hide={() => setShowConfirmationDialog(false)}
+        action={logOut}
+      />
     </div>
   );
 }

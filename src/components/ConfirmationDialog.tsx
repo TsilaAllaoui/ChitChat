@@ -2,10 +2,14 @@ import { createPortal } from "react-dom";
 import "../styles/ConfirmationDialog.scss";
 
 const ConfirmationDialog = ({
+  content,
+  header,
   show,
   hide,
   action,
 }: {
+  content: string;
+  header: string;
   show: boolean;
   hide: () => void;
   action: () => void;
@@ -18,11 +22,9 @@ const ConfirmationDialog = ({
         <>
           <div id="confirmation" onClick={hide}>
             <div id="container" onClick={(e) => e.stopPropagation()}>
-              <h1>Delete message?</h1>
+              <h1>{header}</h1>
               <div id="separator"></div>
-              <h2>
-                This action is irreversible. Proceed carrefully before choosing.
-              </h2>
+              <h2>{content}</h2>
               <div id="buttons">
                 <button
                   onClick={() => {
