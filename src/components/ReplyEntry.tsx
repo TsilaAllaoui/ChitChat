@@ -21,7 +21,7 @@ const ReplyEntry = () => {
     setContent,
     setSendReply,
   } = useContext(ReplyEntryContext);
-  if (originContent == "") return;
+  if (originContent == "") return null;
 
   // ************ Functions **************
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
