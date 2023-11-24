@@ -8,7 +8,7 @@ Chat app with multiple conversations and messages management with ReactJS and Fi
 - Working credentials reset
 
 ## 📝 TODO:
-- [ ] Better UI
+- [X] Better UI
 - [ ] Support for sending images and document
 
 ## 📷 Screenshots
