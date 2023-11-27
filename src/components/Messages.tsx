@@ -5,6 +5,7 @@ import {
   query,
   serverTimestamp,
 } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useCollection } from "react-firebase-hooks/firestore";
@@ -14,15 +15,15 @@ import { GoSmiley } from "react-icons/go";
 import { ImAttachment } from "react-icons/im";
 import { IoSend } from "react-icons/io5";
 import { MoonLoader } from "react-spinners";
+import { ReplyEntryContext } from "../Contexts/ReplyEntryContext";
 import { UserContext } from "../Contexts/UserContext";
-import { db } from "../Firebase";
+import { db, storage } from "../Firebase";
 import "../styles/Messages.scss";
 import EmojisPicker from "./EmojisPicker";
 import { IConversation } from "./MainPage";
 import MessageEntry from "./MessageEntry";
 import { Message } from "./Model/Models";
 import ReplyEntry from "./ReplyEntry";
-import { ReplyEntryContext } from "../Contexts/ReplyEntryContext";
 
 const Messages = ({ conversation }: { conversation: IConversation | null }) => {
   if (!conversation)
@@ -48,6 +49,7 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
   const messagesListRef = useRef<null | HTMLUListElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const attachmentInputRef = useRef<HTMLInputElement>(null);
 
   // ************* Contexts ***************
 
@@ -154,7 +156,6 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
   const uploadPicture = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.currentTarget.files) return;
     const file = e.currentTarget.files[0];
-    console.log(file);
     file.arrayBuffer().then((arr) => {
       const bytes = new Uint8Array(arr);
       let str = "";
@@ -164,6 +165,25 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
       str = `data:image/png;base64,${btoa(str)}`;
       sendMessageToFirebase(str);
     });
+  };
+
+  const uploadAttachmentFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.currentTarget.files) return;
+    const file = e.currentTarget.files[0];
+    if (file.size > 30000000) {
+      console.log("File too large");
+    }
+    console.log(file);
+    const imageRef = ref(storage, conversation.id + "/" + file.name);
+    uploadBytes(imageRef, file)
+      .then((snapshot) => {
+        console.log("file" + snapshot.ref.fullPath + "uploaded");
+        getDownloadURL(imageRef).then((url) => {
+          console.log(url);
+          sendMessageToFirebase("attachment@" + url + "@" + file.name);
+        });
+      })
+      .catch((err) => console.error(err));
   };
 
   return (
@@ -205,7 +225,10 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
                 onChange={(e) => handleChange(e)}
               />
               <div id="actions">
-                <ImAttachment className="icon" />
+                <ImAttachment
+                  className="icon"
+                  onClick={() => attachmentInputRef.current?.click()}
+                />
                 <AiOutlineCamera
                   className="icon"
                   onClick={() => fileInputRef.current?.click()}
@@ -214,9 +237,17 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
                   ref={fileInputRef}
                   type="file"
                   name="picture"
-                  className="picture"
+                  className="file"
                   onChange={uploadPicture}
                   accept="image/*"
+                />
+                <input
+                  ref={attachmentInputRef}
+                  type="file"
+                  name="picture"
+                  className="file"
+                  onChange={uploadAttachmentFile}
+                  accept=".docx, .pdf, .xlsx, .csv, .txt, .rar, .zip"
                 />
                 <GoSmiley
                   className="icon"
