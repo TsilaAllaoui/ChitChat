@@ -55,6 +55,11 @@ function MessageEntry({
 
   // Getting and splitting messages on first render
   useEffect(() => {
+    if (content.includes("data:image")) {
+      console.log(content);
+      return;
+    }
+
     // Splitting the content if there is new lines
     let parts: string[] = content.split("\\n");
 
@@ -153,6 +158,18 @@ function MessageEntry({
     }
   }, [repliedMessage]);
 
+  const MessageContent = content.includes("data:image") ? (
+    <img src={content} />
+  ) : (
+    <>
+      {parts.map((part, index) => (
+        <p key={content + index}>{part}</p>
+      ))}
+    </>
+  );
+
+  console.log(MessageContent);
+
   return (
     <div
       className="message-entry-container"
@@ -208,9 +225,7 @@ function MessageEntry({
             }}
             className="message-container"
           >
-            {parts.map((part, index) => (
-              <p key={content + index}>{part}</p>
-            ))}
+            {MessageContent}
           </div>
         ) : (
           <div id="content">
@@ -225,9 +240,15 @@ function MessageEntry({
             >
               <MdReply />
               <p id="replied-content">
-                {repliedContent.length > 50
-                  ? repliedContent.slice(0, 50) + "..."
-                  : repliedContent}
+                {repliedContent.includes("data:image") ? (
+                  <img src={repliedContent} />
+                ) : (
+                  <span>
+                    {repliedContent.length > 50
+                      ? repliedContent.slice(0, 50) + "..."
+                      : repliedContent}
+                  </span>
+                )}
               </p>
               <div
                 style={{
@@ -241,14 +262,11 @@ function MessageEntry({
                 }}
                 className="message-container"
               >
-                {parts.map((part, index) => (
-                  <p key={content + index}>{part}</p>
-                ))}
+                {MessageContent}
               </div>
             </div>
           </div>
         )}
-
         {!condition ? null : (
           <>
             <div

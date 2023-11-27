@@ -47,10 +47,11 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
 
   const messagesListRef = useRef<null | HTMLUListElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // ************* Contexts ***************
 
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const {
     originContent,
     setOriginContent,
@@ -110,16 +111,10 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
   };
 
   // Send new message
-  const sendToFirebase = (
-    e:
-      | React.MouseEvent<SVGElement, MouseEvent>
-      | React.FormEvent<HTMLFormElement>
-  ) => {
-    e.preventDefault();
-
+  const sendMessageToFirebase = (message: string) => {
     const messRef = collection(db, "conversations", conversation!.id, "mess");
     addDoc(messRef, {
-      message: inputValue,
+      message,
       senderId: user!.uid,
       hostId: conversation!.hostId,
       sentTime: serverTimestamp(),
@@ -128,21 +123,14 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
     setInputValue("");
   };
 
-  const scrollToLastMessage = () => {
-    let tmp: any[] = [];
-    messageList?.docs.forEach((doc) => {
-      tmp.push({ ...doc.data(), id: doc.data().id });
-    });
+  const sendToFirebase = (
+    e:
+      | React.MouseEvent<SVGElement, MouseEvent>
+      | React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
 
-    const element = messagesListRef.current;
-    if (
-      element?.scrollHeight! > element?.clientHeight! ||
-      element?.scrollWidth! > element?.clientWidth!
-    ) {
-      const last = messagesListRef.current?.lastChild as HTMLLIElement;
-      last?.scrollIntoView();
-    }
-    setMessages(tmp);
+    sendMessageToFirebase(inputValue);
   };
 
   // ************  Effects   ************
@@ -163,7 +151,20 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
     }
   }, [sendReply]);
 
-  useEffect(() => { });
+  const uploadPicture = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.currentTarget.files) return;
+    const file = e.currentTarget.files[0];
+    console.log(file);
+    file.arrayBuffer().then((arr) => {
+      const bytes = new Uint8Array(arr);
+      let str = "";
+      for (let byte of bytes) {
+        str += String.fromCharCode(byte);
+      }
+      str = `data:image/png;base64,${btoa(str)}`;
+      sendMessageToFirebase(str);
+    });
+  };
 
   return (
     <div id="messages-section" onClick={() => setOriginContent("")}>
@@ -205,7 +206,17 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
               />
               <div id="actions">
                 <ImAttachment className="icon" />
-                <AiOutlineCamera className="icon" />
+                <AiOutlineCamera
+                  className="icon"
+                  onClick={() => fileInputRef.current?.click()}
+                />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  name="picture"
+                  className="picture"
+                  onChange={uploadPicture}
+                />
                 <GoSmiley
                   className="icon"
                   onClick={() => setShowEmojiPicker(true)}
@@ -213,17 +224,17 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
               </div>
               {showEmojiPicker
                 ? createPortal(
-                  <EmojisPicker
-                    updateMessage={(val: string) => {
-                      if (originContent != "") {
-                        let tmp = content + val;
-                        setContent(tmp);
-                      } else setInputValue(inputValue + val);
-                    }}
-                    hide={() => setShowEmojiPicker(false)}
-                  />,
-                  document.getElementById("portal") as HTMLElement
-                )
+                    <EmojisPicker
+                      updateMessage={(val: string) => {
+                        if (originContent != "") {
+                          let tmp = content + val;
+                          setContent(tmp);
+                        } else setInputValue(inputValue + val);
+                      }}
+                      hide={() => setShowEmojiPicker(false)}
+                    />,
+                    document.getElementById("portal") as HTMLElement
+                  )
                 : null}
               <div id="send-container">
                 <IoSend onClick={(e) => sendToFirebase(e)} />
