@@ -24,6 +24,7 @@ import { IConversation } from "./MainPage";
 import MessageEntry from "./MessageEntry";
 import { Message } from "./Model/Models";
 import ReplyEntry from "./ReplyEntry";
+import ToastNotification from "./ToastNotification";
 
 const Messages = ({ conversation }: { conversation: IConversation | null }) => {
   if (!conversation)
@@ -36,13 +37,21 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
       </>
     );
 
-  // ************* States ***************
+  // ************* States **************
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const [lastMessage, setLastMessage] = useState<Message>();
   const [refresh, setRefresh] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showNotification, setShowNotification] = useState<{
+    state: boolean;
+    content: string;
+    color: string;
+  }>({
+    state: false,
+    content: "",
+    color: "",
+  });
 
   // ************* References **************
 
@@ -170,10 +179,35 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
   const uploadAttachmentFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.currentTarget.files) return;
     const file = e.currentTarget.files[0];
+
     if (file.size > 30000000) {
-      console.log("File too large");
+      setShowNotification({
+        state: true,
+        content: "File too large (must be less or equal to 30MB)",
+        color: "red",
+      });
+      setTimeout(() => {
+        const toast = document.querySelector(".toast-content") as HTMLElement;
+        toast.style.animation = "fade-out 250ms forwards";
+        setTimeout(
+          () =>
+            setShowNotification({
+              state: false,
+              content: "",
+              color: "",
+            }),
+          1000
+        );
+      }, 3000);
+      return;
     }
-    console.log(file);
+
+    setShowNotification({
+      state: true,
+      content: "Uploading file...",
+      color: "green",
+    });
+
     const imageRef = ref(storage, conversation.id + "/" + file.name);
     uploadBytes(imageRef, file)
       .then((snapshot) => {
@@ -182,100 +216,120 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
           console.log(url);
           sendMessageToFirebase("attachment@" + url + "@" + file.name);
         });
+        setTimeout(() => {
+          const toast = document.querySelector(".toast-content") as HTMLElement;
+          toast.style.animation = "fade-out 250ms forwards";
+          setTimeout(
+            () =>
+              setShowNotification({
+                state: false,
+                content: "",
+                color: "",
+              }),
+            1000
+          );
+        }, 3000);
       })
       .catch((err) => console.error(err));
   };
 
   return (
-    <div id="messages-section" onClick={() => setOriginContent("")}>
-      <div id="messages-container">
-        <div id="root-message">
-          <div id="messages-list">
-            <ul
-              ref={messagesListRef}
-              style={{ justifyContent: loading ? "center" : "flex-start" }}
-            >
-              {loading && <MoonLoader size={20} color="#ffffff" />}
-              {messages &&
-                messages.map((message: Message, i) => {
-                  return (
-                    <MessageEntry
-                      key={i}
-                      content={message.message}
-                      senderId={message.senderId}
-                      hostId={conversation.hostId}
-                      currentConversationId={conversation.id}
-                      repliedContent={message.repliedContent}
-                    />
-                  );
-                })}
-            </ul>
+    <>
+      <div id="messages-section" onClick={() => setOriginContent("")}>
+        <div id="messages-container">
+          <div id="root-message">
+            <div id="messages-list">
+              <ul
+                ref={messagesListRef}
+                style={{ justifyContent: loading ? "center" : "flex-start" }}
+              >
+                {loading && <MoonLoader size={20} color="#ffffff" />}
+                {messages &&
+                  messages.map((message: Message, i) => {
+                    return (
+                      <MessageEntry
+                        key={i}
+                        content={message.message}
+                        senderId={message.senderId}
+                        hostId={conversation.hostId}
+                        currentConversationId={conversation.id}
+                        repliedContent={message.repliedContent}
+                      />
+                    );
+                  })}
+              </ul>
+            </div>
+            <ReplyEntry />
           </div>
-          <ReplyEntry />
-        </div>
-        <div onClick={(e) => e.stopPropagation()}>
-          <div id="input">
-            <form onSubmit={(e) => sendToFirebase(e)}>
-              <input
-                ref={inputRef}
-                type="text"
-                name="texts"
-                id="text-input"
-                placeholder="Type message here..."
-                onChange={(e) => handleChange(e)}
-              />
-              <div id="actions">
-                <ImAttachment
-                  className="icon"
-                  onClick={() => attachmentInputRef.current?.click()}
-                />
-                <AiOutlineCamera
-                  className="icon"
-                  onClick={() => fileInputRef.current?.click()}
-                />
+          <div onClick={(e) => e.stopPropagation()}>
+            <div id="input">
+              <form onSubmit={(e) => sendToFirebase(e)}>
                 <input
-                  ref={fileInputRef}
-                  type="file"
-                  name="picture"
-                  className="file"
-                  onChange={uploadPicture}
-                  accept="image/*"
+                  ref={inputRef}
+                  type="text"
+                  name="texts"
+                  id="text-input"
+                  placeholder="Type message here..."
+                  onChange={(e) => handleChange(e)}
                 />
-                <input
-                  ref={attachmentInputRef}
-                  type="file"
-                  name="picture"
-                  className="file"
-                  onChange={uploadAttachmentFile}
-                  accept=".docx, .pdf, .xlsx, .csv, .txt, .rar, .zip"
-                />
-                <GoSmiley
-                  className="icon"
-                  onClick={() => setShowEmojiPicker(true)}
-                />
-              </div>
-              {showEmojiPicker
-                ? createPortal(
-                    <EmojisPicker
-                      updateMessage={(val: string) => {
-                        if (originContent != "") {
-                          let tmp = content + val;
-                          setContent(tmp);
-                        } else setInputValue(inputValue + val);
-                      }}
-                      hide={() => setShowEmojiPicker(false)}
-                    />,
-                    document.getElementById("portal") as HTMLElement
-                  )
-                : null}
-              <div id="send-container">
-                <IoSend onClick={(e) => sendToFirebase(e)} />
-              </div>
-            </form>
+                <div id="actions">
+                  <ImAttachment
+                    className="icon"
+                    onClick={() => attachmentInputRef.current?.click()}
+                  />
+                  <AiOutlineCamera
+                    className="icon"
+                    onClick={() => fileInputRef.current?.click()}
+                  />
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    name="picture"
+                    className="file"
+                    onChange={uploadPicture}
+                    accept="image/*"
+                  />
+                  <input
+                    ref={attachmentInputRef}
+                    type="file"
+                    name="picture"
+                    className="file"
+                    onChange={uploadAttachmentFile}
+                    accept=".docx, .pdf, .xlsx, .csv, .txt, .rar, .zip"
+                  />
+                  <GoSmiley
+                    className="icon"
+                    onClick={() => setShowEmojiPicker(true)}
+                  />
+                </div>
+                {showEmojiPicker
+                  ? createPortal(
+                      <EmojisPicker
+                        updateMessage={(val: string) => {
+                          if (originContent != "") {
+                            let tmp = content + val;
+                            setContent(tmp);
+                          } else setInputValue(inputValue + val);
+                        }}
+                        hide={() => setShowEmojiPicker(false)}
+                      />,
+                      document.getElementById("portal") as HTMLElement
+                    )
+                  : null}
+                <div id="send-container">
+                  <IoSend onClick={(e) => sendToFirebase(e)} />
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      <ToastNotification
+        content={showNotification.content}
+        showCondition={showNotification.state}
+        color={showNotification.color}
+      />
+    </>
   );
 };
 

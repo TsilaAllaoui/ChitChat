@@ -4,13 +4,17 @@ import "../styles/ToastNotification.scss";
 const ToastNotification = ({
   content,
   showCondition,
+  color,
 }: {
   content: string;
   showCondition: boolean;
+  color: string;
 }) => {
   return showCondition
     ? createPortal(
-        <div>{content}</div>,
+        <div className="toast-content" style={{ backgroundColor: color }}>
+          {content}
+        </div>,
         document.querySelector("#portal") as HTMLElement
       )
     : null;
