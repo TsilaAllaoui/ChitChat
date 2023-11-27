@@ -216,6 +216,7 @@ const Messages = ({ conversation }: { conversation: IConversation | null }) => {
                   name="picture"
                   className="picture"
                   onChange={uploadPicture}
+                  accept="image/*"
                 />
                 <GoSmiley
                   className="icon"
