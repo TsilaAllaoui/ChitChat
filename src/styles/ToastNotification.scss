@@ -1,0 +1,19 @@
+@import "./Keyframes.scss";
+
+.toast-content {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    height: 100px;
+    width: 400px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    border-radius: 5px;
+    box-shadow: 0 0 5px grey;
+    transition: opacity 250ms;
+    animation: fade-in 250ms forwards;
+    user-select: none;
+}

@@ -1,14 +1,15 @@
+import { collection, deleteDoc, getDocs } from "firebase/firestore";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AiFillDelete } from "react-icons/ai";
 import { BsFillReplyFill, BsThreeDotsVertical } from "react-icons/bs";
+import { FaFileDownload } from "react-icons/fa";
+import { MdReply } from "react-icons/md";
+import { ReplyEntryContext } from "../Contexts/ReplyEntryContext";
 import { UserContext } from "../Contexts/UserContext";
+import { db } from "../Firebase";
 import "../styles/MessageEntry.scss";
 import Action from "./Action";
 import { ActionLabel } from "./Model/ActionModel";
-import { collection, deleteDoc, getDocs } from "firebase/firestore";
-import { db } from "../Firebase";
-import { ReplyEntryContext } from "../Contexts/ReplyEntryContext";
-import { MdReply } from "react-icons/md";
 
 function MessageEntry({
   content,
@@ -55,6 +56,10 @@ function MessageEntry({
 
   // Getting and splitting messages on first render
   useEffect(() => {
+    if (content.includes("data:image")) {
+      return;
+    }
+
     // Splitting the content if there is new lines
     let parts: string[] = content.split("\\n");
 
@@ -153,6 +158,21 @@ function MessageEntry({
     }
   }, [repliedMessage]);
 
+  const MessageContent = content.includes("data:image") ? (
+    <img src={content} />
+  ) : content.includes("attachment@") ? (
+    <a className="attachment-file" href={content.split("@")[1]}>
+      <FaFileDownload />
+      <span>{content.split("@")[2]}</span>
+    </a>
+  ) : (
+    <>
+      {parts.map((part, index) => (
+        <p key={content + index}>{part}</p>
+      ))}
+    </>
+  );
+
   return (
     <div
       className="message-entry-container"
@@ -208,9 +228,7 @@ function MessageEntry({
             }}
             className="message-container"
           >
-            {parts.map((part, index) => (
-              <p key={content + index}>{part}</p>
-            ))}
+            {MessageContent}
           </div>
         ) : (
           <div id="content">
@@ -225,9 +243,15 @@ function MessageEntry({
             >
               <MdReply />
               <p id="replied-content">
-                {repliedContent.length > 50
-                  ? repliedContent.slice(0, 50) + "..."
-                  : repliedContent}
+                {repliedContent.includes("data:image") ? (
+                  <img src={repliedContent} />
+                ) : (
+                  <span>
+                    {repliedContent.length > 50
+                      ? repliedContent.slice(0, 50) + "..."
+                      : repliedContent}
+                  </span>
+                )}
               </p>
               <div
                 style={{
@@ -241,14 +265,11 @@ function MessageEntry({
                 }}
                 className="message-container"
               >
-                {parts.map((part, index) => (
-                  <p key={content + index}>{part}</p>
-                ))}
+                {MessageContent}
               </div>
             </div>
           </div>
         )}
-
         {!condition ? null : (
           <>
             <div

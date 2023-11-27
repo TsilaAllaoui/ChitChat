@@ -58,6 +58,13 @@
       padding-right: 10px;
       min-height: 3rem;
 
+      a {
+        all: unset;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
       p {
         all: unset;
         margin: 3px;
