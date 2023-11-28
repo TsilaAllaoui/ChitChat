@@ -6,10 +6,12 @@ Chat app with multiple conversations and messages management with ReactJS and Fi
 - Working end to end discussion in real time
 - Working login and signin (Google Account or Email)
 - Working credentials reset
+- Image and file sending
+- Live Video Call
 
 ## 📝 TODO:
 - [X] Better UI
-- [ ] Support for sending images and document
+- [X] Support for sending images and document
 
 ## 📷 Screenshots
 
