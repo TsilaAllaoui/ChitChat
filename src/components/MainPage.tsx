@@ -13,6 +13,8 @@ import Messages from "./Messages";
 import "./Model/Modules";
 import Popup from "./Popup";
 import Profile from "./Profile";
+import Webcam from "react-webcam";
+import { IoMdClose } from "react-icons/io";
 
 export type IConversation = {
   guestId: string;
@@ -28,6 +30,7 @@ export const MainPage = () => {
 
   const { user, setUser, setUserPicture } = useContext(UserContext);
   const [redirectToLogin, setRedirectToLogin] = useState(false);
+  const [useWebCam, setUseWebCam] = useState(false);
 
   // ************  Contexts   ************
 
@@ -91,7 +94,18 @@ export const MainPage = () => {
       <div id="separator"></div>
       <Conversations loading={userConversationsLoading} />
       <div id="separator"></div>
-      <Messages conversation={currentConversation} />
+      {useWebCam ? (
+        <div className="webcam-container">
+          <IoMdClose className="close" onClick={() => setUseWebCam(false)} />
+          <Webcam className="webcam" />
+        </div>
+      ) : (
+        <Messages
+          setUseWebcam={setUseWebCam}
+          conversation={currentConversation}
+        />
+      )}
+
       <Profile condition={showProfile} />
     </div>
   );
