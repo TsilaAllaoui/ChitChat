@@ -36,15 +36,20 @@ import MessageEntry from "./MessageEntry";
 import { Message } from "./Model/Models";
 import ReplyEntry from "./ReplyEntry";
 import ToastNotification from "./ToastNotification";
+import { RiLoader5Line } from "react-icons/ri";
 
 const Messages = ({
   conversation,
   videoCall,
   setVideoCall,
+  answered,
+  setAnswered,
 }: {
   conversation: IConversation | null;
   videoCall: boolean;
   setVideoCall: (v: boolean) => void;
+  answered: boolean;
+  setAnswered: (v: boolean) => void;
 }) => {
   if (!conversation)
     return (
@@ -71,6 +76,7 @@ const Messages = ({
     content: "",
     color: "",
   });
+  const [pending, setPending] = useState(false);
 
   const props: PropsInterface = {
     rtcProps: {
@@ -171,10 +177,14 @@ const Messages = ({
   useEffect(() => {
     if (callsError) console.error(callsError.message);
     if (calls) {
-      console.log(calls.docs.length);
       if (calls.docs.length == 0) {
         console.log(calls.docs);
         setVideoCall(false);
+        setAnswered(false);
+      } else if (calls.docs.length == 1 && answered) {
+        console.log(calls.docs.length + " : " + answered);
+        // && videoCall) {
+        setVideoCall(true);
       }
     }
   }, [callsLoading, calls, callsError]);
@@ -307,7 +317,11 @@ const Messages = ({
         conversation.hostId == user?.uid
           ? conversation.guestName
           : conversation.hostName,
-    }).then(() => setVideoCall(true));
+      conversationId: conversation.id,
+    }).then(() => {
+      setPending(false);
+      setVideoCall(true);
+    });
   };
 
   // ************  Effects   ************
@@ -333,18 +347,20 @@ const Messages = ({
       <div className="container">
         <div className="header">
           <h1>{conversation.hostName}</h1>
-          {videoCall ? null : (
+          {videoCall ? null : pending ? (
+            <RiLoader5Line className="spinner" />
+          ) : (
             <BiSolidVideo
               className="webcam"
               title="Video call"
               onClick={() => {
+                setPending(true);
                 call();
-                // setVideoCall(true)
               }}
             />
           )}
         </div>
-        {videoCall ? (
+        {videoCall || answered ? (
           <div className="video-call">
             <AgoraUIKit
               styleProps={props.styleProps}

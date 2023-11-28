@@ -15,14 +15,13 @@ import { UserContext } from "../Contexts/UserContext";
 import { UserConversationsContext } from "../Contexts/UserConversationsContext";
 import { auth, db } from "../Firebase";
 import "../styles/MainPage.scss";
+import CallNotification from "./CallNotification";
 import Conversations from "./Conversations";
 import Menu from "./Menu";
 import Messages from "./Messages";
 import "./Model/Modules";
 import Popup from "./Popup";
 import Profile from "./Profile";
-import ToastNotification from "./ToastNotification";
-import CallNotification from "./CallNotification";
 
 export type IConversation = {
   guestId: string;
@@ -46,13 +45,19 @@ export const MainPage = () => {
     name: "",
   });
   const [videoCall, setVideoCall] = useState(false);
+  const [answered, setAnswered] = useState(false);
+  const [pendingAnswer, setPendingAnswer] = useState(false);
+  const [pendingEnd, setPendingEnd] = useState(false);
 
   // ************  Contexts   ************
 
   const { setUserPseudo } = useContext(UserContext);
-  const { currentConversation, userConversationsLoading } = useContext(
-    UserConversationsContext
-  );
+  const {
+    currentConversation,
+    setCurrentConversation,
+    userConversations,
+    userConversationsLoading,
+  } = useContext(UserConversationsContext);
   const { showProfile } = useContext(ShowProfileContext);
 
   // ************  Effects   ************
@@ -109,6 +114,11 @@ export const MainPage = () => {
           id: associatedCalls[0].data().callerId,
           name: associatedCalls[0].data().callerName,
         });
+      } else {
+        setCaller({
+          id: "",
+          name: "",
+        });
       }
     } else if (!calls) {
       setVideoCall(false);
@@ -116,6 +126,7 @@ export const MainPage = () => {
   }, [loading, calls]);
 
   const endCall = async () => {
+    setPendingEnd(true);
     const userIsCaller = user?.uid == caller.id;
     const conversationCall = userIsCaller
       ? await getDocs(
@@ -126,13 +137,50 @@ export const MainPage = () => {
         );
 
     conversationCall.forEach((doc) => deleteDoc(doc.ref));
+    setAnswered(false);
     setVideoCall(false);
+    setPendingEnd(false);
     setCaller({ id: "", name: "" });
   };
 
-  const respondCall = () => {
-    setVideoCall(true);
+  const respondCall = async () => {
+    setPendingAnswer(true);
+    const userIsCaller = user?.uid == caller.id;
+    const conversationCall = userIsCaller
+      ? await getDocs(
+          query(collection(db, "calls"), where("callerId", "==", user?.uid))
+        )
+      : await getDocs(
+          query(collection(db, "calls"), where("calledId", "==", user?.uid))
+        );
+
+    const conversationCallId = conversationCall.docs[0].data().conversationId;
+
+    const callConversation = userConversations.find(
+      (conversation) => conversation.id == conversationCallId
+    );
+
+    if (!callConversation) {
+      console.error(
+        "No conversation with ID: " + conversationCallId + " found"
+      );
+      return;
+    }
+
+    setCaller({
+      id: "",
+      name: "",
+    });
+    setAnswered(true);
+    setPendingAnswer(false);
+    setCurrentConversation(callConversation);
   };
+
+  useEffect(() => {
+    if (currentConversation && caller.name != "" && caller.id != "") {
+      setVideoCall(true);
+    }
+  }, [currentConversation]);
 
   return (
     <div id="main">
@@ -153,6 +201,8 @@ export const MainPage = () => {
         conversation={currentConversation}
         setVideoCall={setVideoCall}
         videoCall={videoCall}
+        answered={answered}
+        setAnswered={setAnswered}
       />
       <Profile condition={showProfile} />
       <CallNotification
@@ -160,6 +210,8 @@ export const MainPage = () => {
         showCondition={caller.id != "" && caller.name != ""}
         action={respondCall}
         onClose={endCall}
+        pendingAnswer={pendingAnswer}
+        pendingEnd={pendingEnd}
       />
     </div>
   );
