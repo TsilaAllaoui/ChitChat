@@ -74,7 +74,7 @@ const Messages = ({
     rtcProps: {
       appId: import.meta.env.VITE_AGORA_APP_ID!,
       channel: conversation.id,
-      token: null, // pass in channel token if the app is in secure mode
+      token: null,
     },
     callbacks: {
       EndCall: () => setVideoCall(false),
@@ -82,9 +82,6 @@ const Messages = ({
     styleProps: {
       localBtnContainer: { backgroundColor: "red" },
       UIKitContainer: {
-        // position: "absolute",
-        // top: "0",
-        // left: "0",
         height: "100%",
         width: "50%",
         zIndex: "5",

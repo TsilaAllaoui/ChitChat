@@ -56,6 +56,9 @@ function MessageEntry({
 
   // Getting and splitting messages on first render
   useEffect(() => {
+    // Condition to know if message entry was sent by who
+    setCondition(user!.uid != senderId);
+
     if (content.includes("data:image")) {
       return;
     }
@@ -95,9 +98,6 @@ function MessageEntry({
 
     // Set parts
     setParts(parts);
-
-    // Condition to know if message entry was sent by who
-    setCondition(user!.uid != senderId);
   }, []);
 
   // **************** Functions ********************
