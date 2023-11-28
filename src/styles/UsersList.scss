@@ -94,6 +94,11 @@
         display: grid;
         place-items: center;
         background-size: cover;
+
+        svg {
+          color: white;
+          font-size: 1rem;
+        }
       }
 
       p {

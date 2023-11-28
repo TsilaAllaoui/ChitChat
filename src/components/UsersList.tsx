@@ -140,7 +140,9 @@ const UserList = ({ close }: { close: () => void }) => {
                     id="profile-pic"
                     style={{ backgroundImage: `url(${user.picture})` }}
                   >
-                    {user.picture == "" ? <BiUser /> : null}
+                    {user.picture == "" || user.picture == undefined ? (
+                      <BiUser />
+                    ) : null}
                   </div>
                   <p>
                     {user.name == ""
