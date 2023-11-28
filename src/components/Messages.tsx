@@ -19,14 +19,14 @@ import React, {
 import { createPortal } from "react-dom";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { AiOutlineCamera } from "react-icons/ai";
-import { BiMessageRoundedX, BiSolidVideo, BiUser } from "react-icons/bi";
+import { BiMessageRoundedX, BiSolidVideo } from "react-icons/bi";
 import { GoSmiley } from "react-icons/go";
 import { ImAttachment } from "react-icons/im";
 import { IoSend } from "react-icons/io5";
 import { MoonLoader } from "react-spinners";
 import { ReplyEntryContext } from "../Contexts/ReplyEntryContext";
 import { UserContext } from "../Contexts/UserContext";
-import { db, servers, storage } from "../Firebase";
+import { db, storage } from "../Firebase";
 import "../styles/Messages.scss";
 import EmojisPicker from "./EmojisPicker";
 import { IConversation } from "./MainPage";
@@ -42,11 +42,6 @@ const Messages = ({
   conversation: IConversation | null;
   setUseWebcam: Dispatch<SetStateAction<boolean>>;
 }) => {
-  // global states
-  const pc = new RTCPeerConnection(servers);
-  let localStream: MediaStream | null = null;
-  let remoteStream: MediaStream | null = null;
-
   if (!conversation)
     return (
       <>
