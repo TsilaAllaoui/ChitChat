@@ -1,6 +1,14 @@
 import { signOut } from "@firebase/auth";
-import { Firestore, collection, getDocs, query } from "firebase/firestore";
+import {
+  Firestore,
+  collection,
+  deleteDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
+import { useCollection } from "react-firebase-hooks/firestore";
 import { useNavigate } from "react-router";
 import { ShowProfileContext } from "../Contexts/ShowProfileContext";
 import { UserContext } from "../Contexts/UserContext";
@@ -13,8 +21,8 @@ import Messages from "./Messages";
 import "./Model/Modules";
 import Popup from "./Popup";
 import Profile from "./Profile";
-import Webcam from "react-webcam";
-import { IoMdClose } from "react-icons/io";
+import ToastNotification from "./ToastNotification";
+import CallNotification from "./CallNotification";
 
 export type IConversation = {
   guestId: string;
@@ -30,11 +38,18 @@ export const MainPage = () => {
 
   const { user, setUser, setUserPicture } = useContext(UserContext);
   const [redirectToLogin, setRedirectToLogin] = useState(false);
-  const [useWebCam, setUseWebCam] = useState(false);
+  const [caller, setCaller] = useState<{
+    id: string;
+    name: string;
+  }>({
+    id: "",
+    name: "",
+  });
+  const [videoCall, setVideoCall] = useState(false);
 
   // ************  Contexts   ************
 
-  const { userPseudo, setUserPseudo } = useContext(UserContext);
+  const { setUserPseudo } = useContext(UserContext);
   const { currentConversation, userConversationsLoading } = useContext(
     UserConversationsContext
   );
@@ -68,6 +83,10 @@ export const MainPage = () => {
     }
   }, [user]);
 
+  // ************  Firebase Hooks   ************
+
+  const [calls, loading, error] = useCollection(query(collection(db, "calls")));
+
   // ************* Functions **************
 
   // To log out
@@ -77,6 +96,42 @@ export const MainPage = () => {
       setRedirectToLogin(true);
       navigate("/login");
     });
+  };
+
+  useEffect(() => {
+    if (!loading && calls) {
+      const associatedCalls = calls.docs.filter(
+        (doc) => doc.data().calledId == user?.uid
+      );
+      if (associatedCalls.length == 1) {
+        console.log(associatedCalls[0].data());
+        setCaller({
+          id: associatedCalls[0].data().callerId,
+          name: associatedCalls[0].data().callerName,
+        });
+      }
+    } else if (!calls) {
+      setVideoCall(false);
+    }
+  }, [loading, calls]);
+
+  const endCall = async () => {
+    const userIsCaller = user?.uid == caller.id;
+    const conversationCall = userIsCaller
+      ? await getDocs(
+          query(collection(db, "calls"), where("callerId", "==", user?.uid))
+        )
+      : await getDocs(
+          query(collection(db, "calls"), where("calledId", "==", user?.uid))
+        );
+
+    conversationCall.forEach((doc) => deleteDoc(doc.ref));
+    setVideoCall(false);
+    setCaller({ id: "", name: "" });
+  };
+
+  const respondCall = () => {
+    setVideoCall(true);
   };
 
   return (
@@ -94,19 +149,18 @@ export const MainPage = () => {
       <div id="separator"></div>
       <Conversations loading={userConversationsLoading} />
       <div id="separator"></div>
-      {useWebCam ? (
-        <div className="webcam-container">
-          <IoMdClose className="close" onClick={() => setUseWebCam(false)} />
-          <Webcam className="webcam" />
-        </div>
-      ) : (
-        <Messages
-          setUseWebcam={setUseWebCam}
-          conversation={currentConversation}
-        />
-      )}
-
+      <Messages
+        conversation={currentConversation}
+        setVideoCall={setVideoCall}
+        videoCall={videoCall}
+      />
       <Profile condition={showProfile} />
+      <CallNotification
+        caller={caller.name}
+        showCondition={caller.id != "" && caller.name != ""}
+        action={respondCall}
+        onClose={endCall}
+      />
     </div>
   );
 };

@@ -2,10 +2,12 @@ import AgoraUIKit, { PropsInterface } from "agora-react-uikit";
 import {
   addDoc,
   collection,
+  deleteDoc,
   getDocs,
   orderBy,
   query,
   serverTimestamp,
+  where,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, {
@@ -37,10 +39,12 @@ import ToastNotification from "./ToastNotification";
 
 const Messages = ({
   conversation,
-  setUseWebcam,
+  videoCall,
+  setVideoCall,
 }: {
   conversation: IConversation | null;
-  setUseWebcam: Dispatch<SetStateAction<boolean>>;
+  videoCall: boolean;
+  setVideoCall: (v: boolean) => void;
 }) => {
   if (!conversation)
     return (
@@ -67,9 +71,7 @@ const Messages = ({
     content: "",
     color: "",
   });
-  const [hostPicture, setHostPicture] = useState("");
 
-  const [videoCall, setVideoCall] = useState(false);
   const props: PropsInterface = {
     rtcProps: {
       appId: import.meta.env.VITE_AGORA_APP_ID!,
@@ -77,7 +79,17 @@ const Messages = ({
       token: null,
     },
     callbacks: {
-      EndCall: () => setVideoCall(false),
+      EndCall: async () => {
+        const conversationCall = await getDocs(
+          query(
+            collection(db, "calls"),
+            where("conversationId", "==", conversation.id)
+          )
+        );
+
+        conversationCall.forEach((doc) => deleteDoc(doc.ref));
+        setVideoCall(false);
+      },
     },
     styleProps: {
       localBtnContainer: { backgroundColor: "red" },
@@ -113,6 +125,10 @@ const Messages = ({
   const messRefs = collection(db, "conversations", conversation!.id, "mess");
   const [messageList, loading, error] = useCollection(
     query(messRefs, orderBy("sentTime", "asc"))
+  );
+
+  const [calls, callsLoading, callsError] = useCollection(
+    query(collection(db, "calls"))
   );
 
   // ************  Effects   ************
@@ -151,6 +167,17 @@ const Messages = ({
       inputRef.current.value = inputValue;
     }
   }, [inputValue]);
+
+  useEffect(() => {
+    if (callsError) console.error(callsError.message);
+    if (calls) {
+      console.log(calls.docs.length);
+      if (calls.docs.length == 0) {
+        console.log(calls.docs);
+        setVideoCall(false);
+      }
+    }
+  }, [callsLoading, calls, callsError]);
 
   // ************ Functions **************
 
@@ -255,25 +282,32 @@ const Messages = ({
 
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const loadProfilePicture = () => {
-    const id =
-      user?.uid == conversation.hostId
-        ? conversation.guestId
-        : conversation.hostId;
-    getDocs(query(collection(db, "users"))).then((docs) => {
-      docs.forEach((doc) => {
-        if (doc.data().uid == id) {
-          const element = document.querySelector(
-            "#" + conversation.id
-          ) as HTMLElement;
-          element.style.backgroundImage =
-            doc.data().picture && doc.data().picture != ""
-              ? `url(${doc.data().picture})`
-              : "";
-          setHostPicture(doc.data().picture);
-        }
-      });
-    });
+  const call = async () => {
+    const conversationCall = await getDocs(
+      query(
+        collection(db, "calls"),
+        where("conversationId", "==", conversation.id)
+      )
+    );
+
+    if (conversationCall.size > 0) {
+      console.log("Call already in...");
+      return;
+    }
+
+    const callRef = collection(db, "calls");
+    addDoc(callRef, {
+      callerId: user?.uid,
+      callerName: user?.displayName,
+      calledId:
+        conversation.hostId == user?.uid
+          ? conversation.guestId
+          : conversation.hostId,
+      calledName:
+        conversation.hostId == user?.uid
+          ? conversation.guestName
+          : conversation.hostName,
+    }).then(() => setVideoCall(true));
   };
 
   // ************  Effects   ************
@@ -294,10 +328,6 @@ const Messages = ({
     }
   }, [sendReply]);
 
-  useEffect(() => {
-    loadProfilePicture();
-  }, []);
-
   return (
     <>
       <div className="container">
@@ -307,7 +337,10 @@ const Messages = ({
             <BiSolidVideo
               className="webcam"
               title="Video call"
-              onClick={() => setVideoCall(true)}
+              onClick={() => {
+                call();
+                // setVideoCall(true)
+              }}
             />
           )}
         </div>
